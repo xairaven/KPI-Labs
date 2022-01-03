@@ -3,6 +3,7 @@
 - Преподаватель: Барабаш О. В.
 - Вариант: 23
 - Оценка: 100/100<br>
+
 ![](https://img.shields.io/badge/Programming%20Lang-Java-informational?style=flat-square&logo=java&logoColor=white&color=5194f0)
 
 ### Лабораторные работы
