@@ -3,7 +3,9 @@
 
 ![](https://img.shields.io/badge/Programming%20lang-Java-informational?style=flat-square&logo=java&logoColor=white&color=5194f0)
 
-### Дисциплины, которые вошли в этот репозиторий:
+## Дисциплины, которые вошли в этот репозиторий:
+
+### I семестр
 
 1. Программирование алгоритмических структур (Java)
 
