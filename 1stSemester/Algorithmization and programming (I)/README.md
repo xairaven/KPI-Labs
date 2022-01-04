@@ -13,5 +13,6 @@
 3. [Циклы For, While, Do-While](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab3)
 4. [Одномерные массивы, работа с указателями, сортировка пузырьком](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab4)
 5. [Двумерные массивы, работа с указателями, перестановка элементов.](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab5)
+6. [Work in progress ...](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab6)
 
 Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.
