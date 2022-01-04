@@ -11,6 +11,7 @@
 1. [Математические формулы, применение](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab1)
 2. [Инструкция If-Else](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab2)
 3. [Циклы For, While, Do-While](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab3)
-4. [Одноразмерные массивы, работа с указателями, сортировка пузырьком](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab4)
+4. [Одномерные массивы, работа с указателями, сортировка пузырьком](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab4)
+5. [Двумерные массивы, работа с указателями, перестановка элементов.](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab5)
 
 Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.
