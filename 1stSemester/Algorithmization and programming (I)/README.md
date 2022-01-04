@@ -9,5 +9,6 @@
 
 ### Лабораторные работы
 1. [Математические формулы, применение](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab1)
+2. [Инструкция If-Else](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab2)
 
 Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.
