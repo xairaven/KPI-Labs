@@ -1,18 +1,24 @@
 #include "xaiMatrix.h"
 
-#define ORIG_SIZE 4 //dimensions of array. USER INPUT
+#define ORIG_SIZE 3 //dimensions of array. USER INPUT
 int main(void) {
-    int rawMatrix[ORIG_SIZE][ORIG_SIZE] = { //Matrix. USER INPUT
-            {2, 4, 1, 1},
-            {0, 2, 1, 0},
-            {2, 1, 1, 3},
-            {4, 0, 2, 3},
+    int rawMatrix[ORIG_SIZE][ORIG_SIZE] = { //Matrix, quadratic. USER INPUT
+            {2, 1, 2},
+            {3, 2, 1},
+            {2, 2, 2},
     };
 
     int SIZE = ORIG_SIZE;
-    int** matrix = declareMatrix(SIZE);
-    initialisingMatrix(matrix, (int*) rawMatrix, SIZE);
+    int** matrix = declareMatrix(SIZE); //declaring matrix
+    initialisingMatrix(matrix, (int*) rawMatrix, SIZE); //initialising matrix
 
-    int det = getDet(matrix, SIZE);
-    printf("Determinant = %d\n", det);
+    printf("Matrix:\n");
+    printMatrix(matrix, SIZE); //printing matrix
+
+    int det = getDet(matrix, SIZE); //calculating determinant
+    printf("\nDeterminant = %d\n", det);
+
+    float** invMat = inverseMatrix(matrix,SIZE); //inversing matrix
+    printf("\nInverse matrix:\n");
+    printFloatMatrix(invMat, SIZE); //printing matrix
 }
