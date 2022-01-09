@@ -21,4 +21,8 @@ int main(void) {
     float** invMat = inverseMatrix(matrix,SIZE); //inversing matrix
     printf("\nInverse matrix:\n");
     printFloatMatrix(invMat, SIZE); //printing matrix
+
+    float** identityMatrix = multMat(matrix, invMat, SIZE, SIZE);
+    printf("\nIdentity matrix: \n");
+    printFloatMatrix(identityMatrix, SIZE);
 }
