@@ -3,6 +3,14 @@
 //
 #include "xaiMatrix.h"
 
+bool legalMultiplicationOperation(int SIZE1, int SIZE2) {
+    bool legal = true;
+    if(SIZE1 != SIZE2) {
+        legal = false;
+    }
+    return legal;
+}
+
 int getDet(int** matrix, int SIZE) {
     if (SIZE == 2) {
         return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0];
@@ -64,6 +72,14 @@ int** matrixTranspose(int** matrix, int SIZE) {
     return transposeMatrix;
 }
 
+float multRowCol (int** matrix1, float** matrix2, int SIZE1, int SIZE2, int row, int col) {
+    float result = 0;
+    for (int k = 0; k < SIZE1; k++) {
+        result += (float) matrix1[row][k] * matrix2[k][col];
+    }
+    return result;
+}
+
 float** declareFloatMatrix(int SIZE) {
     float** matrix = (float **) malloc(SIZE * sizeof(float *));
     for(int i = 0; i < SIZE; i++) {
@@ -97,6 +113,21 @@ float** matrixFloatTranspose(float** matrix, int SIZE) {
         }
     }
     return transposeMatrix;
+}
+
+float** multMat(int** matrix1, float** matrix2, int SIZE1, int SIZE2) {
+    if (legalMultiplicationOperation(SIZE1, SIZE2)) {
+        float** result = declareFloatMatrix(SIZE1);
+        for (int i = 0; i < SIZE1; i++) {
+            for (int j = 0; j < SIZE2; j++) {
+                result[i][j] = multRowCol(matrix1, matrix2, SIZE1,SIZE2, i, j);
+            }
+        }
+        return result;
+    } else {
+        printf("\nMultiplication operation is illegal\n");
+        return NULL;
+    }
 }
 
 void initialisingMatrix(int** matrix, const int* rawMatrix, int SIZE) {
