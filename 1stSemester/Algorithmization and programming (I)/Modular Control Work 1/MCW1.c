@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 int** declareMatrix(int SIZE); //creating dynamic array
 void initialisingMatrix(int** matrix, int* rawMatrix, int SIZE);//static array -> dynamic array
-int** getMinor(int** matrix, int h, int v, int* minorSIZE);//get matrix minor
+int** getQuadMinor(int** matrix, int h, int v, int* minorSIZE);//get matrix minor
 void printMatrix(int** matrix, int SIZE); //print matrix
+void cleanMatrix(int** matrix, int SIZE); //cleaning memory
 
 #define ORIG_SIZE 3 //dimensions of array. USER INPUT
 int main(void) {
@@ -19,11 +19,13 @@ int main(void) {
     int** matrix = declareMatrix(SIZE);
     initialisingMatrix(matrix, (int*) rawMatrix, SIZE);
 
-    int** minor = getMinor(matrix, 2, 1, &minorSIZE);
+    int** minor = getQuadMinor(matrix, 2, 1, &minorSIZE);
     printMatrix(minor, minorSIZE);
+    cleanMatrix(matrix, SIZE);
+    cleanMatrix(minor, minorSIZE);
 }
 
-int** getMinor(int** matrix, int h, int v, int* minorSIZE) {
+int** getQuadMinor(int** matrix, int h, int v, int* minorSIZE) {
     *minorSIZE -= 1;
     int** newData = declareMatrix((*minorSIZE) - 1);
     for (int i = 0; i < *minorSIZE; i++) {
@@ -72,4 +74,11 @@ void initialisingMatrix(int** matrix, int* rawMatrix, int SIZE) {
             matrix[i][j] = rawMatrix[k];
         }
     }
+}
+
+void cleanMatrix(int** matrix, int SIZE) {
+    for(int i = 0; i < SIZE; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
 }
