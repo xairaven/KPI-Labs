@@ -1,27 +1,51 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-int** declareMatrix(int SIZE);
-void initialisingMatrix(int** matrix, int* rawMatrix, int SIZE);
-void getMinor(int** matrix, int h, int v, int SIZE);
-void printMatrix(int** matrix, int SIZE);
+int** declareMatrix(int SIZE); //creating dynamic array
+void initialisingMatrix(int** matrix, int* rawMatrix, int SIZE);//static array -> dynamic array
+int** getMinor(int** matrix, int h, int v, int* minorSIZE);//get matrix minor
+void printMatrix(int** matrix, int SIZE); //print matrix
 
-#define ORIG_SIZE 3
+#define ORIG_SIZE 3 //dimensions of array. USER INPUT
 int main(void) {
-    int rawMatrix[ORIG_SIZE][ORIG_SIZE] = {
+    int rawMatrix[ORIG_SIZE][ORIG_SIZE] = { //Matrix. USER INPUT
             {2, 1, 2},
             {3, 2, 1},
             {2, 2, 2}
     };
 
     int SIZE = ORIG_SIZE;
+    int minorSIZE = SIZE;
     int** matrix = declareMatrix(SIZE);
     initialisingMatrix(matrix, (int*) rawMatrix, SIZE);
-    printMatrix(matrix, SIZE);
+
+    int** minor = getMinor(matrix, 2, 1, &minorSIZE);
+    printMatrix(minor, minorSIZE);
 }
 
-void getMinor(int** matrix, int h, int v, int SIZE) {
-    int** newData = declareMatrix(SIZE - 1);
+int** getMinor(int** matrix, int h, int v, int* minorSIZE) {
+    *minorSIZE -= 1;
+    int** newData = declareMatrix((*minorSIZE) - 1);
+    for (int i = 0; i < *minorSIZE; i++) {
+        if (i < h - 1) {
+            for (int j = 0; j < *minorSIZE; j++) {
+                if (j < v - 1) {
+                    newData[i][j] = matrix[i][j];
+                } else {
+                    newData[i][j] = matrix[i][j + 1];
+                }
+            }
+        } else {
+            for (int j = 0; j < *minorSIZE; j++) {
+                if (j < v - 1) {
+                    newData[i][j] = matrix[i + 1][j];
+                } else {
+                    newData[i][j] = matrix[i + 1][j + 1];
+                }
+            }
+        }
+    }
+    return newData;
 }
 
 void printMatrix(int** matrix, int SIZE) {
