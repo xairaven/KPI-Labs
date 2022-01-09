@@ -15,4 +15,10 @@
 5. [Двумерные массивы, работа с указателями, перестановка элементов](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab5)
 6. [Массивы char'ов, работа с ними](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Lab6)
 
+### Модульные контрольные работы
+#### 1. [Матрицы и операции с ними](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Modular%20Control%20Work%201)
+- (Присутствует работа с личными библиотеками, динамической памятью и т.д)
+
+
 Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.
+
