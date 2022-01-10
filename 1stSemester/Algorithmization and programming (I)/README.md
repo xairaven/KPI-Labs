@@ -18,7 +18,7 @@
 ## Модульные контрольные работы
 1. [Матрицы и операции с ними](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Modular%20Control%20Work%201)
 - (Присутствует работа с личными библиотеками, динамической памятью и т.д)
-2. [Work in progress..](google.com)
+2. [Work in progress..](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I)/Modular%20Control%20Work%202)
 
 Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.
 
