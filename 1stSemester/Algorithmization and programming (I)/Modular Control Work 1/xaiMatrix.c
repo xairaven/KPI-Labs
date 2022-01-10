@@ -12,6 +12,9 @@ bool legalMultiplicationOperation(int SIZE1, int SIZE2) {
 }
 
 int getDet(int** matrix, int SIZE) {
+    if (SIZE == 1) {
+        return matrix[0][0];
+    }
     if (SIZE == 2) {
         return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0];
     }
