@@ -31,3 +31,30 @@ float** inverseCryptoMatrix(int** matrix, int SIZE) {
     tempMatrix = matrixFloatTranspose(tempMatrix,SIZE);
     return tempMatrix;
 }
+
+float** multCryptoMat(int** matrix1, float** matrix2, int SIZE1, int SIZE2) {
+    if (legalMultiplicationOperation(SIZE1, SIZE2)) {
+        float** result = declareFloatMatrix(SIZE1);
+        for (int i = 0; i < SIZE1; i++) {
+            for (int j = 0; j < SIZE2; j++) {
+                result[i][j] = multRowCol(matrix1, matrix2, SIZE1,SIZE2, i, j);
+                result[i][j] = fmod(result[i][j], 26);
+            }
+        }
+        return result;
+    } else {
+        printf("\nMultiplication operation is illegal\n");
+        return NULL;
+    }
+}
+
+int* multCryptoLetterMat(int* matrix1, float** matrix2, int SIZE1, int SIZE2) {
+    int* result = malloc(SIZE1 * sizeof(int));
+    result[0] = 0; result[1] = 0;
+    for (int i = 0; i < SIZE1; i++) {
+        for (int j = 0; j < SIZE2; j++) {
+            result[i] += (int) matrix2[i][j] * matrix1[j];
+        }
+    }
+    return result;
+}

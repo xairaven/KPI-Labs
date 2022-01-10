@@ -102,7 +102,6 @@ float** inverseMatrix(int** matrix, int SIZE) {
                 num *= -1;
             }
             tempMatrix[i][j] = (float) num / (float) det;
-            printf("\nnum  = %d, det = %d\n", num, det);
         }
     }
     tempMatrix = matrixFloatTranspose(tempMatrix,SIZE);
