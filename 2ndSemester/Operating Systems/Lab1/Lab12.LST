@@ -1,0 +1,146 @@
+Turbo Assembler	 Version 3.1	    02/03/22 00:32:33	    Page 1
+Lab12.ASM
+
+
+
+      1				     title Lab12.asm
+      2
+      3	0000			     .MODEL tiny
+      4	0000			     .data
+      5
+      6	0000  F8		     k db -8
+      7	0001  F6		     db	-10
+      8	0002  FFF6		     dw	-10
+      9	0004  0F		     db	15
+     10	0005  F1		     db	-15
+     11	0006  FE		     db	0feh
+     12				     ;db 0b12h		      ;	2834 in	decimal, byte 0-255
+     13	0007  66		     db	01100110b
+     14	0008  008B		     dw	10001011b
+     15	000A  000D		     dw	13
+     16	000C  3066		     dw	'0f'
+     17	000E  0245		     dw	0245h
+     18	0010  0005		     dw	0101b
+     19	0012  0A32		     dw	0a32h
+     20	0014  0F45		     dw	0f45h
+     21	0016  0037		     dw	55
+     22	0018  0C47		     dw	0c47h
+     23	001A  00AF		     dw	0afh
+     24	001C  00000004 00000008	  +  dd	4, 8, 0ah, 0ffh
+     25	      0000000A 000000FF
+     26	002C  FFF1		     dw	-15
+     27	002E  F0		     db	-16
+     28	002F  FFF0		     dw	-16
+     29	0031  7F		     r db 127
+     30	0032  81		     q db -127
+     31	0033  FF81		     t1	dw -127
+     32	0035  80		     db	128
+     33	0036  80		     i db -128
+     34	0037  FF80		     i1	dw -128
+     35				     ;w	db -129			; value	out of range, -128 - 127
+     36	0039  FF7F		     p dw -129
+     37	003B  FF		     db	255
+     38				     ;db -255			; value	out of range, -128 - 127
+     39				     ;db 256			; value	out of range, byte 0-255
+     40	003C  0100		     dw	256
+     41				     ;q	dw -32768		; variable already declared as byte
+     42				     ;rr1 df -32768		; 6byte	directive
+     43	003E  FFFF8000		     zz1 dd -32768
+     44	0042  7FFF		     j dw 32767
+     45	0044  FFFF		     a dw 65535
+     46				     ;dw -65535			; value	out of range, -32768 - 32767
+     47	0046  FFFF0001		     dd	-65535
+     48				     ;dd -2147583648		; value	out of range LongInt
+     49				     ;dd 2147583647		; value	out of range Longint
+     50	004A  FFFFFFFF7FFE7960	     dq	-2147583648
+     51	0052  000000008001869F	     dq	2147583647
+     52	005A  00A8		     ll	dw 10101000b
+     53				     ;ff db 12,	"№", 0b12h	  ; 2834, byte 0-255
+     54				     ;f1 dw 12,	"№", 0b12h	  ; "№"
+     55	005C  05		     g5	db 0101b
+     56				     ;ss dw 00000101b		; segment of stack has the same	name
+     57	005D  000000000000001A	     xx	dq 26
+Turbo Assembler	 Version 3.1	    02/03/22 00:32:33	    Page 2
+POVNI_~1.ASM
+
+
+
+     58	0065  0F45 0037	0042	     c1	dw 0f45h, 55, 66
+     59	006B  8F		     a1	db -113
+     60	006C  FF8F		     a2	dw -113
+     61	006E  61		     ii	db -159
+     62	006F  FF61		     i11 dw -159
+     63	0071  A7		     s1	db -89
+     64	0072  FFA7		     ss5 dw -89
+     65	0074  A4		     s2	db -92
+     66	0075  FFA4		     ff2 dw -92
+     67	0077  FF19		     s3	dw -231
+     68	0079  73 69 67 6D 61	     a11 db "sigma"
+     69				     ;a22 dw e301h		 ; must	be 0 before letters in HEXADECIMAL
+     70	007E  0C		     a33 db 12
+     71	007F  0079r		     a55 dw offset a11
+     72	0081  000D		     a66 dw 13
+     73	0083  FF85		     gg	dw -123
+     74	0085  FFF7		     hh	dw -9
+     75
+     76				     end
+Turbo Assembler	 Version 3.1	    02/03/22 00:32:33	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "02/03/22"
+??FILENAME			  Text	 "Lab12"
+??TIME				  Text	 "00:32:33"
+??VERSION			  Number 030A
+@32BIT				  Text	 0
+@CODE				  Text	 DGROUP
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 _DATA
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 Lab12
+@INTERFACE			  Text	 00H
+@MODEL				  Text	 1
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+A				  Word	 DGROUP:0044
+A1				  Byte	 DGROUP:006B
+A11				  Byte	 DGROUP:0079
+A2				  Word	 DGROUP:006C
+A33				  Byte	 DGROUP:007E
+A55				  Word	 DGROUP:007F
+A66				  Word	 DGROUP:0081
+C1				  Word	 DGROUP:0065
+FF2				  Word	 DGROUP:0075
+G5				  Byte	 DGROUP:005C
+GG				  Word	 DGROUP:0083
+HH				  Word	 DGROUP:0085
+I				  Byte	 DGROUP:0036
+I1				  Word	 DGROUP:0037
+I11				  Word	 DGROUP:006F
+II				  Byte	 DGROUP:006E
+J				  Word	 DGROUP:0042
+K				  Byte	 DGROUP:0000
+LL				  Word	 DGROUP:005A
+P				  Word	 DGROUP:0039
+Q				  Byte	 DGROUP:0032
+R				  Byte	 DGROUP:0031
+S1				  Byte	 DGROUP:0071
+S2				  Byte	 DGROUP:0074
+S3				  Word	 DGROUP:0077
+SS5				  Word	 DGROUP:0072
+T1				  Word	 DGROUP:0033
+XX				  Qword	 DGROUP:005D
+ZZ1				  Dword	 DGROUP:003E
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  16  0087 Word	  Public  DATA
+  _TEXT				  16  0000 Word	  Public  CODE
+
