@@ -23,5 +23,5 @@
 ## C
 [Алгоритмизация и программирование](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I))
 
-## Assmebler TASM
+## Assembler TASM
 [Операционные системы](https://github.com/xairaven/kpi_labs/tree/main/2ndSemester/Operating%20Systems)
