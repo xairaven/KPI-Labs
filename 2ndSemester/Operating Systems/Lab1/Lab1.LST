@@ -1,5 +1,5 @@
-Turbo Assembler	 Version 3.1	    02/02/22 22:29:16	    Page 1
-Lab1.ASM
+Turbo Assembler	 Version 3.1	    02/09/22 22:56:01	    Page 1
+lab1.ASM
 
 
 
@@ -14,27 +14,27 @@ Lab1.ASM
       9	0003  80 7F		     ii	db -128, 127
      10
      11				     ; my values (byte)
-     12	0005  8D		     i2	db -115
-     13	0006  73		     i3	db 115
-     14	0007  63		     i4	db -157		; must be WORD value. 63h in decimal = 99
-     15	0008  9D		     i5	db 157
-     16
-     17				     ; word
-     18	0009  FF01		     r0	dw -255
-     19	000B  0000 FFFF		     r dw 0, 65535
-     20	000F  FFFF 8000		     r1	dw -1, -32768
-     21	0013  0001 7FFF		     r2	dw 1, 32767
-     22	0017  0001		     r3	dw -65535	 ; must	be DOUBLE WORD value 0001h in decimal = 1
-     23	0019  FFFF0001		     r4	dd -65535
-     24
-     25				     ; my values (word)
-     26	001D  F958		     r5	dw -1704
-     27	001F  06A8		     r6	dw 1704
-     28	0021  F92E		     r7	dw -1746
-     29	0023  06D2		     r8	dw 1746
+     12	0005  8D			db -115
+     13	0006  73			db 115
+     14	0007  9D			db 157
+     15
+     16				     ; word
+     17	0008  FF01		     r0	dw -255
+     18	000A  0000 FFFF		     r dw 0, 65535
+     19	000E  FFFF 8000		     r1	dw -1, -32768
+     20	0012  0001 7FFF		     r2	dw 1, 32767
+     21	0016  0001		     r3	dw -65535	 ; must	be DOUBLE WORD value
+     22	0018  FFFF0001		     r4	dd -65535
+     23
+     24				     ; my values (word)
+     25	001C  FF63			dw -157
+     26	001E  F958			dw -1704
+     27	0020  06A8			dw 1704
+     28	0022  F92E			dw -1746
+     29	0024  06D2			dw 1746
      30
      31				     end
-Turbo Assembler	 Version 3.1	    02/02/22 22:29:16	    Page 2
+Turbo Assembler	 Version 3.1	    02/09/22 22:56:01	    Page 2
 Symbol Table
 
 
@@ -42,9 +42,9 @@ Symbol Table
 
 Symbol Name			  Type	 Value
 
-??DATE				  Text	 "02/02/22"
-??FILENAME			  Text	 "Lab1"
-??TIME				  Text	 "22:29:16"
+??DATE				  Text	 "02/09/22"
+??FILENAME			  Text	 "lab1"
+??TIME				  Text	 "22:56:01"
 ??VERSION			  Number 030A
 @32BIT				  Text	 0
 @CODE				  Text	 DGROUP
@@ -53,32 +53,24 @@ Symbol Name			  Type	 Value
 @CURSEG				  Text	 _DATA
 @DATA				  Text	 DGROUP
 @DATASIZE			  Text	 0
-@FILENAME			  Text	 Lab1
+@FILENAME			  Text	 lab1
 @INTERFACE			  Text	 00H
 @MODEL				  Text	 1
 @STACK				  Text	 DGROUP
 @WORDSIZE			  Text	 2
 I				  Byte	 DGROUP:0000
 I1				  Byte	 DGROUP:0002
-I2				  Byte	 DGROUP:0005
-I3				  Byte	 DGROUP:0006
-I4				  Byte	 DGROUP:0007
-I5				  Byte	 DGROUP:0008
 II				  Byte	 DGROUP:0003
-R				  Word	 DGROUP:000B
-R0				  Word	 DGROUP:0009
-R1				  Word	 DGROUP:000F
-R2				  Word	 DGROUP:0013
-R3				  Word	 DGROUP:0017
-R4				  Dword	 DGROUP:0019
-R5				  Word	 DGROUP:001D
-R6				  Word	 DGROUP:001F
-R7				  Word	 DGROUP:0021
-R8				  Word	 DGROUP:0023
+R				  Word	 DGROUP:000A
+R0				  Word	 DGROUP:0008
+R1				  Word	 DGROUP:000E
+R2				  Word	 DGROUP:0012
+R3				  Word	 DGROUP:0016
+R4				  Dword	 DGROUP:0018
 
 Groups & Segments		  Bit Size Align  Combine Class
 
 DGROUP				  Group
-  _DATA				  16  0025 Word	  Public  DATA
+  _DATA				  16  0026 Word	  Public  DATA
   _TEXT				  16  0000 Word	  Public  CODE
 
