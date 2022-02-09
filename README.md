@@ -14,11 +14,13 @@
 ### II семестр
 
 1. Операционные системы (Assembler, TASM)
+2. Программирование сложных алгоритмов (Java)
 
 Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.
 
 ## Java
-[Программирование алгоритмических структур](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Programming%20algorithmic%20structures)
+[Программирование алгоритмических структур](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Programming%20algorithmic%20structures)<br>
+[Программирование сложных алгоритмов](https://github.com/xairaven/kpi_labs/tree/main/2ndSemester/Programming%20complex%20algorithms)
 
 ## C
 [Алгоритмизация и программирование](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I))
