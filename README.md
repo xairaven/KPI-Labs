@@ -21,6 +21,7 @@
 ## Java
 [Программирование алгоритмических структур](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Programming%20algorithmic%20structures)<br>
 [Программирование сложных алгоритмов](https://github.com/xairaven/kpi_labs/tree/main/2ndSemester/Programming%20complex%20algorithms)
+[Алгоритмизация и программирование](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Algorithmization%20and%20programming%20(II))
 
 ## C
 [Алгоритмизация и программирование](https://github.com/xairaven/kpi_labs/tree/main/1stSemester/Algorithmization%20and%20programming%20(I))
