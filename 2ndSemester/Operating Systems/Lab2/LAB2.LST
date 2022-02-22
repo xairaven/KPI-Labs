@@ -1,0 +1,61 @@
+Turbo Assembler	 Version 3.1	    02/22/22 21:29:00	    Page 1
+LAB2.ASM
+
+
+
+      1				     title Lab2.asm
+      2	0000			     .model SMALL
+      3
+      4	0000			     text    segment
+      5				     assume  CS:text, DS:data
+      6
+      7	0000  B8 0000s		     begin:  mov     AX, data
+      8	0003  8E D8			     mov     DS, AX
+      9	0005  B4 09			     mov     AH, 09h
+     10	0007  BA 0000r			     mov     DX, offset	mesg
+     11	000A  CD 21			     int     21h
+     12	000C  B4 4C			     mov     AH, 4Ch
+     13	000E  B0 00			     mov     Al, 0
+     14	0010  CD 21			     int     21h
+     15	0012			     text    ends
+     16
+     17	0000			     data    segment
+     18	0000  4E 41 43 48 49 4E	41+  mesg    db	"NACHINAEM ! $"
+     19	      45 4D 20 21 20 24
+     20	000D			     data    ends
+     21					     end begin
+Turbo Assembler	 Version 3.1	    02/22/22 21:29:00	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "02/22/22"
+??FILENAME			  Text	 "LAB2	  "
+??TIME				  Text	 "21:29:00"
+??VERSION			  Number 030A
+@32BIT				  Text	 0
+@CODE				  Text	 _TEXT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 DATA
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 LAB2
+@INTERFACE			  Text	 00H
+@MODEL				  Text	 2
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+BEGIN				  Near	 TEXT:0000
+MESG				  Byte	 DATA:0000
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DATA				  16  000D Para	  none
+DGROUP				  Group
+  _DATA				  16  0000 Word	  Public  DATA
+TEXT				  16  0012 Para	  none
+_TEXT				  16  0000 Word	  Public  CODE
+
