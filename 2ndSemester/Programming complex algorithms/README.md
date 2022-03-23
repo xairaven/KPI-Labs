@@ -2,15 +2,16 @@
 
 ![](https://img.shields.io/badge/Programming%20lang-Java-informational?style=flat-square&logo=java&logoColor=white&color=5194f0)
 
-- Задания: -
+- Задания: в папках работ
 - Преподаватель: Онысько Андрей Ильич
 - Вариант: 21
 - Оценка: -<br>
 
 ### Лабораторные работы
-1. -.
-   - Оценка: -
+1. [**Сложность алгоритмов**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab1)
+   - Оценка: 5/5
+2. [**-**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab2)
+   - Оценка: 
 
-
-Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.
-
+Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.<br>
+Все права на учебные материалы принадлежат преподавателю. 
