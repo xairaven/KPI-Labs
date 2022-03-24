@@ -10,7 +10,7 @@
 ### Лабораторные работы
 1. [**Сложность алгоритмов**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab1)
    - Оценка: 5/5
-2. [**-**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab2)
+2. [**Рекурсивные алгоритмы**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab2)
    - Оценка: 
 
 Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.<br>
