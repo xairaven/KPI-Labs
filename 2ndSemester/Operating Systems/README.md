@@ -2,12 +2,16 @@
 
 ![](https://img.shields.io/badge/Programming%20lang-Assembler-informational?style=flat-square&logoColor=white&color=5194f0)
 
-- Задания: -
+- Задания: в папках работ
 - Преподаватель: Левченко Л. А.
-- Вариант: 21 *?*
+- Вариант: 21 
 - Оценка: семестр не закончен<br>
 
 ### Лабораторные работы
-1. [Внутреннее представление целочисленных данных в IBM PC](https://github.com/xairaven/kpi_labs/tree/main/2ndSemester/Operating%20Systems/Lab1)
+ 1. [Внутреннее представление целочисленных данных в IBM PC](https://github.com/xairaven/kpi_labs/tree/main/2ndSemester/Operating%20Systems/Lab1)<br>
+ 2. [Технологии работы с системными средствами при создании программ](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Operating%20Systems/Lab2)<br>
+ 3. [Организация программ .EXE и .COM (3-4 одна работа)](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Operating%20Systems/Lab4)<br>
+ 4. [Организация программ .EXE и .COM (3-4 одна работа)](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Operating%20Systems/Lab4)<br>
 
-Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.
+Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.<br>
+Все права на учебные материалы принадлежат преподавателю.
