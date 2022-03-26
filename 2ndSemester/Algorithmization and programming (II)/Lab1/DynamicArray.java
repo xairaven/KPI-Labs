@@ -67,7 +67,7 @@ public class DynamicArray<Item extends Comparable<Item>> implements Iterable<Ite
      * Selection sort
      * @param arr - DynamicArray
      */
-    public static void Sort(DynamicArray arr) {
+    public static void SortSelection(DynamicArray arr) {
         for (int i = 0; i < arr.size(); i++) {
             int minId = i;
             for (int j = i + 1; j < arr.size(); j++) {
@@ -76,6 +76,18 @@ public class DynamicArray<Item extends Comparable<Item>> implements Iterable<Ite
                 }
             }
             arr.exch(i, minId);
+        }
+    }
+
+    /**
+     * Insertion sort
+     * @param arr - DynamicArray
+     */
+    public static void SortInsertion(DynamicArray arr) {
+        for (int i = 1; i < arr.size(); i++) {
+            for (int j = i; j > 0 && less(arr.get(j), arr.get(j - 1)); j--) {
+                arr.exch(j, j - 1);
+            }
         }
     }
 
@@ -194,7 +206,7 @@ public class DynamicArray<Item extends Comparable<Item>> implements Iterable<Ite
         System.out.printf("\nМассив відсортований: %b\n", arr.isSorted());
 
         System.out.println("\nСортування масиву");
-        Sort(arr);
+        SortInsertion(arr);
 
         System.out.println("Друк масиву");
         for (int i : arr) {
