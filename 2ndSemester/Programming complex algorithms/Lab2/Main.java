@@ -1,82 +1,42 @@
-package Lab3;
+package Lab2;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        // checking args
-        if (args.length < 2) {
-            System.out.println("Введіть розмірність масиву та визначіться, випадковий масив чи ні");
-            System.out.println("Приклад: 10 true (створює масив випадкових чисел 10х10");
-            return;
+        System.out.println("-- Lab 2 --");
+
+        System.out.println("Input N:");
+        Scanner scan = new Scanner(System.in);
+        int n = scan.nextInt();
+        if (n < 1) throw new IllegalArgumentException("N must be greater than 1");
+
+        System.out.println("Loop based algorithm");
+        long start = System.nanoTime();
+        System.out.printf("Result: %.20f\n", loop(n));
+        long time = System.nanoTime() - start;
+        System.out.printf("Time: %d ns.", time);
+        
+        System.out.println("\n\nRecursive based algorithm");
+        start = System.nanoTime();
+        try {
+            System.out.printf("Result: %.20f\n", recursive(n));
+        } catch (StackOverflowError e) {
+            System.out.println("Stack overflow exception");
         }
-
-        // parsing values from console
-        final int SIZE = Integer.parseInt(args[0]);
-        final boolean RANDOM = Boolean.parseBoolean(args[1]);
-
-        // generate matrix
-        int[][] matrix = genMatrix(SIZE, RANDOM);
-
-        // show start matrix
-        System.out.println("*Початкова матриця*");
-        showMatrix(matrix);
-
-        // bubble-sort
-        sort(matrix);
-
-        // show sorted matrix
-        System.out.println("\n\n*Відсортована матриця*");
-        showMatrix(matrix);
+        time = System.nanoTime() - start;
+        System.out.printf("Time: %d ns.", time);
     }
 
-    private static int[][] genMatrix(int size, boolean random) {
-        int[][] arr = new int[size][size];
-        if (random) {
-            for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++) {
-                    arr[i][j] = getRandomNum(0, 100);
-                }
-            }
-        } else {
-            for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++) {
-                    arr[i][j] = (size - i)*10 - j;
-                }
-            }
-        }
-
-        return arr;
+    public static double recursive(int n) {
+        if (n < 1) return 1;
+        return ((2 * n + 1) / Math.pow(n, 3)) * recursive(n - 1);
     }
 
-    private static int getRandomNum(int min, int max) {
-        return (int) (Math.random() * (max - min + 1) + min);
-    }
-
-    private static void showMatrix(int[][] arr) {
-        for (int[] a : arr) {
-            for (int i : a) {
-                System.out.printf("%d\t", i);
-            }
-            System.out.println();
+    public static double loop(int n) {
+        double result = 1;
+        for (int i = 1; i <= n; i++) {
+            result *= (2 * i + 1) / Math.pow(i, 3);
         }
-    }
-
-    private static void sort(int[][] arr) {
-        final int SIZE = arr.length;
-        for (int j = 0; j < SIZE; j++) {
-            boolean sorted = false;
-            while (!sorted) {
-                sorted = true;
-                // i < j && j < (SIZE - i - 1) - Верхній трикутник матриці.
-                for (int i = 0; i < j && j < (SIZE - i - 1); i++) {
-                    if (arr[i][j] > arr[i+1][j]) {
-                        // обмін значень
-                        int temp = arr[i][j];
-                        arr[i][j] = arr[i+1][j];
-                        arr[i+1][j] = temp;
-                        sorted = false;
-                    }
-                }
-            }
-        }
+        return result;
     }
 }
