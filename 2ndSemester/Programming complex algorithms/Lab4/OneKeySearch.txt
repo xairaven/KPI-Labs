@@ -1,0 +1,28 @@
+100 TIMES:
+AVG Linear: 383078 ns.
+AVG Linear: 408905 ns.
+AVG Linear: 393087 ns.
+
+AVG Barrier: 484798 ns.
+AVG Barrier: 320961 ns.
+AVG Barrier: 209066 ns.
+
+AVG Binary: 4285 ns.
+AVG Binary: 4043 ns.
+AVG Binary: 4015 ns.
+
+10000 TIMES:
+AVG Linear: 160079 ns.
+AVG Linear: 158771 ns.
+AVG Linear: 158894 ns.
+AVG Linear: 161001 ns.
+
+AVG Barrier: 151004 ns.
+AVG Barrier: 151136 ns.
+AVG Barrier: 152463 ns.
+AVG Barrier: 152942 ns.
+
+AVG Binary: 1287 ns.
+AVG Binary: 1295 ns.
+AVG Binary: 1267 ns.
+AVG Binary: 1266 ns.

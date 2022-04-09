@@ -1,0 +1,15 @@
+100 TIMES:
+AVG SubSequence: 1472964 ns.
+AVG SubSequence: 1351664 ns.
+AVG SubSequence: 1383796 ns.
+AVG Rabin-Karp Al.: 9 ns.
+AVG Rabin-Karp Al.: 9 ns.
+AVG Rabin-Karp Al.: 9 ns.
+
+500 TIMES:
+AVG SubSequence: 1233830 ns.
+AVG SubSequence: 1249559 ns.
+AVG SubSequence: 1245568 ns.
+AVG Rabin-Karp Al.: 8.51 ns.
+AVG Rabin-Karp Al.: 8.90 ns.
+AVG Rabin-Karp Al.: 8.67 ns.
