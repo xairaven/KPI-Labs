@@ -1,0 +1,131 @@
+Turbo Assembler	 Version 3.1	    04/13/22 21:09:36	    Page 1
+LAB5.ASM
+
+
+
+      1				     title Lab5.asm			     ; Title of	program
+      2	0000			     .model SMALL			     ; Model of	memory for exe file
+      3	0000			     .stack 100h			     ; Reserving memory	for stack
+      4
+      5	0000			     code    segment
+      6				     assume  CS:code, DS:data		     ; Linking label code with CS and label data with DS
+      7
+      8	0000  B8 0000s		     begin:  MOV     AX, data		     ; Moving data to DS
+      9	0003  8E D8			     MOV     DS, AX
+     10
+     11	0005  B4 09			     MOV     AH, 09h		     ; Displaying string "Before"
+     12	0007  BA 0003r			     LEA     DX, BEFORE
+     13	000A  CD 21			     INT     21h
+     14
+     15	000C  B4 40			     MOV     AH, 40h		     ; Function	code
+     16	000E  BB 0001			     MOV     BX, 01h		     ; Descriptor (01 for display, 00 for files)
+     17	0011  B9 000E			     MOV     CX, 0Eh		     ; Displaying 14 symbols (TEXT length, 0Eh in hex)
+     18	0014  BA 0016r			     LEA     DX, TEXT
+     19	0017  CD 21			     INT     21h
+     20
+     21	0019  B4 09			     MOV     AH, 09h		     ; Carriage	return,	line feed (or LINE BREAK)
+     22	001B  BA 0000r			     LEA     DX, CR_LF
+     23	001E  CD 21			     INT     21h
+     24	0020  B4 09			     MOV     AH, 09h
+     25	0022  BA 0000r			     LEA     DX, CR_LF
+     26	0025  CD 21			     INT     21h
+     27
+     28	0027  A0 0027r			     MOV     AL, SYMBOL		     ; Moving "*" to AL
+     29
+     30	002A  B9 0004			     MOV     CX, 4		     ; Loop with 4 iterations
+     31	002D  BB 0003			     MOV     BX, 3		     ; Index 3,	because	we need	exchange 9001 in TEXT to "*"
+     32	0030			     L1:				     ; Loop start
+     33	0030  88 87 0016r		     MOV     TEXT[BX], AL	     ; Moving "*" to TEXT symbol with index BX (3, 4, 5, 6)
+     34	0034  43			     INC     BX			     ; Incrementing BX (3, 4, 5, 6)
+     35	0035  E2 F9		     LOOP L1				     ; Jumping to start	of the loop
+     36
+     37
+     38	0037  B9 0002			     MOV     CX, 2		     ; Second loop with	2 iterations
+     39	003A  BB 0009			     MOV     BX, 9		     ; Index 9,	because	we need	exchange 12 in TEXT to "*"
+     40	003D			     L2:				     ; Second loop start
+     41	003D  88 87 0016r		     MOV     TEXT[BX], AL	     ; Moving "*" to TEXT symbol with index BX (9, 10)
+     42	0041  43			     INC     BX			     ; Incrementing BX (9, 10)
+     43	0042  E2 F9		     LOOP L2				     ; Jumping to start	of the loop
+     44	0044  A2 0022r			     MOV     TEXT[12], AL	     ; Changing	12th symbol in TEXT by the traditional way
+     45	0047  A2 0023r			     MOV     TEXT[13], AL	     ; Changing	13th symbol in TEXT by the traditional way
+     46
+     47	004A  B4 09			     MOV     AH, 09h		     ; Displaying string "After"
+     48	004C  BA 000Dr			     LEA     DX, AFTER
+     49	004F  CD 21			     INT     21h
+     50
+     51	0051  B4 40			     MOV     AH, 40h		     ; Function	code
+     52	0053  BB 0001			     MOV     BX, 01h		     ; Descriptor (01 for display, 00 for files)
+     53	0056  B9 000E			     MOV     CX, 0Eh		     ; Displaying 14 symbols (TEXT length, 0Eh in hex)
+     54	0059  BA 0016r			     LEA     DX, TEXT
+     55	005C  CD 21			     INT     21h
+     56
+     57	005E  B4 09			     MOV     AH, 09h		     ; Carriage	return,	line feed (or LINE BREAK)
+Turbo Assembler	 Version 3.1	    04/13/22 21:09:36	    Page 2
+LAB5.ASM
+
+
+
+     58	0060  BA 0000r			     LEA     DX, CR_LF
+     59	0063  CD 21			     INT     21h
+     60
+     61	0065  B4 4C			     MOV     AH, 4Ch		     ; Exit function
+     62	0067  B0 00			     MOV     Al, 0		     ; Code 0
+     63	0069  CD 21			     INT     21h
+     64	006B			     code    ends
+     65
+     66	0000			     data    segment
+     67	      =	0dh, 0ah, '$'		     L_BREAK EQU     0dh, 0ah, '$'   ; L_BREAK - constant of CR_LF
+     68	0000  0D 0A 24			     CR_LF   DB	     0dh, 0ah, '$'
+     69	0003  42 65 66 6F 72 65	3A+	     BEFORE  DB	     "Before:",	L_BREAK
+     70	      0D 0A 24
+     71	000D  41 66 74 65 72 3A	0D+	     AFTER   DB	     "After:", L_BREAK
+     72	      0A 24
+     73	0016  49 53 4F 39 30 30	31+	     TEXT    DB	     "ISO9001GR12H45", L_BREAK
+     74	      47 52 31 32 48 34	35+
+     75	      0D 0A 24
+     76	0027  2A			     SYMBOL  DB	     "*"
+     77	0028			     data    ends
+     78					     end begin
+Turbo Assembler	 Version 3.1	    04/13/22 21:09:36	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "04/13/22"
+??FILENAME			  Text	 "LAB5	  "
+??TIME				  Text	 "21:09:36"
+??VERSION			  Number 030A
+@32BIT				  Text	 0
+@CODE				  Text	 _TEXT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 DATA
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 LAB5
+@INTERFACE			  Text	 00H
+@MODEL				  Text	 2
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+AFTER				  Byte	 DATA:000D
+BEFORE				  Byte	 DATA:0003
+BEGIN				  Near	 CODE:0000
+CR_LF				  Byte	 DATA:0000
+L1				  Near	 CODE:0030
+L2				  Near	 CODE:003D
+L_BREAK				  Text	 0dh, 0ah, '$'
+SYMBOL				  Byte	 DATA:0027
+TEXT				  Byte	 DATA:0016
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+CODE				  16  006B Para	  none
+DATA				  16  0028 Para	  none
+DGROUP				  Group
+  STACK				  16  0100 Para	  Stack	  STACK
+  _DATA				  16  0000 Word	  Public  DATA
+_TEXT				  16  0000 Word	  Public  CODE
+
