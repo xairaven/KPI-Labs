@@ -1,0 +1,163 @@
+Turbo Assembler	 Version 3.1	    04/20/22 01:43:19	    Page 1
+LAB6.ASM
+
+
+
+      1				     ; Task - to calculate (12/c - d*4 + 73)/(a*a + 1)
+      2				     ; 16-bit
+      3
+      4				     title Lab6.asm				     ; Title of	the program
+      5	0000			     .model SMALL				     ; Model of	memory for .ехе file
+      6	0000			     .stack 100h				     ; Reserving memory	for stack
+      7
+      8	0000			     code    segment
+      9				     assume  CS:code, DS:data
+     10
+     11	0000  B8 0000s		     begin:  MOV     AX, data			     ; Initialising DS register
+     12	0003  8E D8			     MOV     DS, AX			     ; with the	adress of data segment
+     13	0005  B8 0000			     MOV     AX, 0			     ; Move the	value 0	to the register	AX
+     14	0008  3B 06 0002r		     CMP     AX, C			     ; We compare it with C. If	C = 0 -	then
+     15	000C  74 66			     JE	     ERROR			     ; we pass to a label ERROR	(JE - JUMP EQUAL)
+     16										     ; otherwise we go further.
+     17	000E  B8 000C			     MOV     AX, 12			     ; (12/c) Moving 12	to AL.
+     18	0011  99			     CWD				     ; Word to double word conversion command
+     19	0012  F7 3E 0002r		     IDIV    C				     ; (12/c) Division with a sign on C
+     20	0016  50			     PUSH    AX				     ; (12/c) The result is temporarily	moved to the+
+     21				     stack
+     22	0017  B8 0004			     MOV     AX, 4			     ; (d*4) Moving 4 to АХ
+     23	001A  99			     CWD				     ; Word to double word conversion command
+     24	001B  F7 2E 0004r		     IMUL    D				     ; (d*4) Multiply by D
+     25	001F  8B D8			     MOV     BX, AX			     ; (d*4) Temporarily move the result to BX
+     26	0021  58			     POP     AX				     ; (12/c) Get the value from the stack to АХ
+     27	0022  1B C3			     SBB     AX, BX			     ; (12/c - d*4) Subtraction	with borrow
+     28	0024  15 0049			     ADC     AX, 73			     ; (12/c - d*4 + 73) Adding	with borrow
+     29	0027  50			     PUSH    AX				     ; (12/c - d*4 + 73) Moving	to stack
+     30	0028  A1 0000r			     MOV     AX, A			     ; (a*a) Transfer the value	of variable A to AX
+     31	002B  99			     CWD				     ; Word to double word conversion command
+     32	002C  F7 2E 0000r		     IMUL    A				     ; (a*a) Multiplication
+     33	0030  40			     INC     AX				     ; (a*a + 1) Increment
+     34	0031  8B D8			     MOV     BX, AX			     ; (a*a + 1) Temporarily move the result to	ВХ
+     35	0033  58			     POP     AX				     ; (12/c - d*4 + 73) Get the value from the	    +
+     36				     stack to АХ
+     37	0034  99			     CWD				     ; Word to double word conversion command
+     38	0035  F7 FB			     IDIV    BX				     ; (The whole formula) Divide by BX
+     39	0037  A3 0006r			     MOV     X,	AX			     ; The result is written in	a variable Х
+     40	003A  EB 01 90			     JMP     OUTPUT_START		     ; Go to the "Output_Start"	label
+     41
+     42	003D			     OUTPUT_START:				     ; Label, start output
+     43	003D  B4 09			     MOV     AH, 09h			     ; Display the message "Result:"
+     44	003F  BA 0008r			     MOV     DX, OFFSET	SUCCESS_MSG
+     45	0042  CD 21			     INT     21h
+     46
+     47	0044  33 C0			     XOR     AX, AX			     ; Reset the register АХ
+     48	0046  A1 0006r			     MOV     AX, X			     ; Returning result
+     49	0049  50			     PUSH    AX				     ; Store in	a stack
+     50	004A  3D 0000			     CMP     AX, 0			     ; Comparing with 0
+     51	004D  79 09			     JNS     PLUS			     ; Test, negative or positive
+     52	004F  B4 02			     MOV     AH, 02h			     ; The number is negative, we displaying a minus+
+     53				     sign
+     54	0051  B2 2D			     MOV     DL, '-'
+     55	0053  CD 21			     INT     21h
+     56	0055  58			     POP     AX				     ; Unload values ​​from	the stack
+     57	0056  F7 D8			     NEG     AX				     ; Turning negative	into positive
+Turbo Assembler	 Version 3.1	    04/20/22 01:43:19	    Page 2
+LAB6.ASM
+
+
+
+     58
+     59	0058			     PLUS:
+     60	0058  33 C9			     XOR     CX, CX			     ; Remainder of division counter
+     61	005A  BB 000A			     MOV     BX, 10			     ; Moving the basis	of the 10th number system
+     62
+     63	005D			     DIVISION:
+     64	005D  33 D2			     XOR     DX, DX			     ; The remainder of	the division
+     65	005F  F7 F3			     DIV     BX				     ; Divide by 10
+     66	0061  52			     PUSH    DX				     ; Place in	a stack, LIFO
+     67	0062  41			     INC     CX				     ; Increase	the counter
+     68	0063  85 C0			     TEST    AX, AX			     ; Check if	the whole part = 0
+     69	0065  75 F6			     JNZ     DIVISION			     ; Divide until the	whole part is equal 0
+     70	0067  B4 02			     MOV     AH, 02h			     ; Removing	the remainder
+     71
+     72	0069			     OUTPUT:
+     73	0069  5A			     POP     DX				     ; Getting numbers from the	stack
+     74	006A  80 C2 30			     ADD     DL, 30h			     ; Translating them	into ASCII-коди
+     75	006D  CD 21			     INT     21h			     ; Interrupting
+     76	006F  E2 F8			     LOOP    OUTPUT			     ; Repeat until the	counter	is equal 0
+     77	0071  EB 0B 90			     JMP     EXIT			     ; Exit
+     78
+     79	0074			     ERROR:					     ; Label, transition is made in case of error
+     80	0074  B4 09			     MOV     AH, 09h			     ; Display the message of division by 0
+     81	0076  BA 0013r			     MOV     DX, OFFSET	ERROR_MSG
+     82	0079  CD 21			     INT     21h
+     83	007B  EB 01 90			     JMP     EXIT			     ; Go to the "End of program" label
+     84
+     85	007E			     EXIT:					     ; Label, transition anyway
+     86	007E  B4 4C			     MOV     AH, 4Ch			     ; Completion of the program
+     87	0080  B0 00			     MOV     AL, 0			     ; Code 0 -	code of	successful completion
+     88	0082  CD 21			     INT     21h
+     89	0084			     code    ends
+     90
+     91	0000			     data    segment
+     92	0000  0001			     A DW 1
+     93	0002  000C			     C DW 12
+     94	0004  0005			     D DW 5
+     95	0006  ????			     X DW ?
+     96
+     97	      =	0dh, 0ah, '$'		     L_BREAK	     EQU     0dh, 0ah, '$'   ; L_BREAK - constant of CR_LF
+     98	0008  52 65 73 75 6C 74	3A+	     SUCCESS_MSG     DB	     "Result: ", L_BREAK
+     99	      20 0D 0A 24
+    100	0013  45 72 72 6F 72 21	20+	     ERROR_MSG	     DB	     "Error! Division by zero!", L_BREAK
+    101	      44 69 76 69 73 69	6F+
+    102	      6E 20 62 79 20 7A	65+
+    103	      72 6F 21 0D 0A 24
+    104	002E			     data    ends
+    105					     end begin
+Turbo Assembler	 Version 3.1	    04/20/22 01:43:19	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "04/20/22"
+??FILENAME			  Text	 "LAB6	  "
+??TIME				  Text	 "01:43:19"
+??VERSION			  Number 030A
+@32BIT				  Text	 0
+@CODE				  Text	 _TEXT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 DATA
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 LAB6
+@INTERFACE			  Text	 00H
+@MODEL				  Text	 2
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+A				  Word	 DATA:0000
+BEGIN				  Near	 CODE:0000
+C				  Word	 DATA:0002
+D				  Word	 DATA:0004
+DIVISION			  Near	 CODE:005D
+ERROR				  Near	 CODE:0074
+ERROR_MSG			  Byte	 DATA:0013
+EXIT				  Near	 CODE:007E
+L_BREAK				  Text	 0dh, 0ah, '$'
+OUTPUT				  Near	 CODE:0069
+OUTPUT_START			  Near	 CODE:003D
+PLUS				  Near	 CODE:0058
+SUCCESS_MSG			  Byte	 DATA:0008
+X				  Word	 DATA:0006
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+CODE				  16  0084 Para	  none
+DATA				  16  002E Para	  none
+DGROUP				  Group
+  STACK				  16  0100 Para	  Stack	  STACK
+  _DATA				  16  0000 Word	  Public  DATA
+_TEXT				  16  0000 Word	  Public  CODE
+
