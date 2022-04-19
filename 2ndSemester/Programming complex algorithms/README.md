@@ -11,11 +11,11 @@
 1. [**Сложность алгоритмов**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab1)
    - Оценка: 5/5
 2. [**Рекурсивные алгоритмы**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab2)
-   - Оценка: 
+   - Оценка: 5/5
 3. [**Методы сортировки**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab3)
-   - Оценка: 
+   - Оценка: 6/5
 4. [**Методы поиска в массивах**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab4)
-   - Оценка:
+   - Оценка: 6/5
 
 Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.<br>
 Все права на учебные материалы принадлежат преподавателю. 
