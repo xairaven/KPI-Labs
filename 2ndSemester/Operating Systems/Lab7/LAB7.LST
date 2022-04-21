@@ -1,0 +1,216 @@
+Turbo Assembler	 Version 3.1	    04/22/22 02:01:50	    Page 1
+LAB7.ASM
+
+
+
+      1				     ; Task: to	calculate
+      2				     ; (b+1)/a,	if a > b	  A = 2	     B = 1	X = 1
+      3				     ; -b,	if   a = b	  A = 5	     B = 5	X = -5
+      4				     ; (a-5)/b,	if   a < b	  A = 8	     B = 9	X = 0
+      5				     ; 16-bit
+      6
+      7				     title Lab7.asm				     ; Title of	the program
+      8	0000			     .model SMALL				     ; Model of	memory for .ехе file
+      9	0000			     .stack 100h				     ; Reserving memory	for stack
+     10
+     11	0000			     code    segment
+     12				     assume  CS:code, DS:data
+     13
+     14	0000  B8 0000s		     begin:  MOV     AX, data			     ; Initialising DS register
+     15	0003  8E D8			     MOV     DS, AX			     ; with the	adress of data segment
+     16
+     17	0005  A1 0000r			     MOV     AX, A			     ; Move the	variable A to AX
+     18	0008  3B 06 0002r		     CMP     AX, B			     ; Compare with B
+     19	000C  7F 04			     JG	     MORE			     ; If А > B then jump to (JG, Jump	if Greater) +
+     20				     on	label More
+     21	000E  74 24			     JE	     EQUAL			     ; If А = B then jump to (JE, Jump	if Equals)  +
+     22				     on	label Equal
+     23	0010  7C 36			     JL	     LESS			     ; If А < B then jump to (JL, Jump	if Less) on +
+     24				     label Less
+     25
+     26	0012			     MORE:					     ; Label to	jump if	А > B
+     27	0012  B4 09			     MOV     AH, 09h			     ; Output of the message "A	> B, then X = (b    +
+     28				     +1)/a"
+     29	0014  BA 0006r			     MOV     DX, OFFSET	GREATER_MSG
+     30	0017  CD 21			     INT     21h
+     31
+     32	0019  B8 0000			     MOV     AX, 0			     ; Move 0 to АХ
+     33	001C  3B 06 0000r		     CMP     AX, A			     ; Compare with А
+     34	0020  74 7E			     JZ	     ERROR			     ; If result = 0, then ZF =	1 - jump to ERROR   +
+     35				     (JZ, Jump Zero flag)
+     36
+     37	0022  FF 06 0002r		     INC     B				     ; (b+1) Increment
+     38	0026  A1 0002r			     MOV     AX, B			     ; (b+1) Move В to	АХ
+     39	0029  99			     CWD				     ; Word to double word conversion command
+     40	002A  F7 3E 0000r		     IDIV    A				     ; (b+1)/a Division	with a sign on A
+     41	002E  A3 0004r			     MOV     X,	AX			     ; The result is written in	a variable Х
+     42	0031  EB 36 90			     JMP     OUTPUT_START		     ; Go to the "OUTPUT_START"	label
+     43
+     44	0034			     EQUAL:					     ; Label to	jump if	А = B
+     45	0034  B4 09			     MOV     AH, 09h			     ; Output of the message "A	= B, then X = -B"
+     46	0036  BA 0020r			     MOV     DX, OFFSET	EQUALS_MSG
+     47	0039  CD 21			     INT     21h
+     48
+     49	003B  F7 1E 0002r		     NEG     B				     ; Changing	sign of	В
+     50	003F  A1 0002r			     MOV     AX, B			     ; Move B to АХ
+     51	0042  A3 0004r			     MOV     X,	AX			     ; The result is written in	a variable Х from  +
+     52				     АХ
+     53	0045  EB 22 90			     JMP     OUTPUT_START		     ; Go to the "OUTPUT_START"	label
+     54
+     55	0048			     LESS:					     ; Label to	jump if	А < B
+     56	0048  B4 09			     MOV     AH, 09h			     ; Output of the message "A	< B, then X =	    +
+     57				     (a-5)/b"
+Turbo Assembler	 Version 3.1	    04/22/22 02:01:50	    Page 2
+LAB7.ASM
+
+
+
+     58	004A  BA 0035r			     MOV     DX, OFFSET	LESS_MSG
+     59	004D  CD 21			     INT     21h
+     60
+     61	004F  B8 0000			     MOV     AX, 0			     ; Move 0 to АХ
+     62	0052  3B 06 0002r		     CMP     AX, B			     ; Compare with B
+     63	0056  74 48			     JZ	     ERROR			     ; If result = 0, then ZF =	1 - jump to ERROR   +
+     64				     (JZ, Jump Zero flag)
+     65
+     66	0058  A1 0000r			     MOV     AX, A			     ; (a-5) Move A to АХ
+     67	005B  1D 0005			     SBB     AX, 5			     ; (a-5) Subtract 5	from АХ with "Borrow"
+     68	005E  99			     CWD				     ; Word to double word conversion command
+     69	005F  F7 3E 0002r		     IDIV    B				     ; (a-5)/b Division	with a sign on B
+     70	0063  A3 0004r			     MOV     X,	AX			     ; The result is written in	a variable Х
+     71	0066  EB 01 90			     JMP     OUTPUT_START		     ; Go to the "OUTPUT_START"	label
+     72
+     73	0069			     OUTPUT_START:				     ; Label, start output
+     74	0069  B4 09			     MOV     AH, 09h			     ; Display the message "Result:"
+     75	006B  BA 004Fr			     MOV     DX, OFFSET	RESULT_MSG
+     76	006E  CD 21			     INT     21h
+     77
+     78	0070  33 C0			     XOR     AX, AX			     ; Reset the register АХ
+     79	0072  A1 0004r			     MOV     AX, X			     ; Returning result
+     80	0075  50			     PUSH    AX				     ; Store in	a stack
+     81	0076  3D 0000			     CMP     AX, 0			     ; Comparing with 0
+     82	0079  79 09			     JNS     PLUS			     ; Test, negative or positive
+     83	007B  B4 02			     MOV     AH, 02h			     ; The number is negative, we displaying a minus+
+     84				     sign
+     85	007D  B2 2D			     MOV     DL, '-'
+     86	007F  CD 21			     INT     21h
+     87	0081  58			     POP     AX				     ; Unload values ​​from	the stack
+     88	0082  F7 D8			     NEG     AX				     ; Turning negative	into positive
+     89
+     90	0084			     PLUS:
+     91	0084  33 C9			     XOR     CX, CX			     ; Remainder of division counter
+     92	0086  BB 000A			     MOV     BX, 10			     ; Moving the basis	of the 10th number system
+     93
+     94	0089			     DIVISION:
+     95	0089  33 D2			     XOR     DX, DX			     ; The remainder of	the division
+     96	008B  F7 F3			     DIV     BX				     ; Divide by 10
+     97	008D  52			     PUSH    DX				     ; Place in	a stack, LIFO
+     98	008E  41			     INC     CX				     ; Increase	the counter
+     99	008F  85 C0			     TEST    AX, AX			     ; Check if	the whole part = 0
+    100	0091  75 F6			     JNZ     DIVISION			     ; Divide until the	whole part is equal 0
+    101	0093  B4 02			     MOV     AH, 02h			     ; Removing	the remainder
+    102
+    103	0095			     OUTPUT:
+    104	0095  5A			     POP     DX				     ; Getting numbers from the	stack
+    105	0096  80 C2 30			     ADD     DL, 30h			     ; Translating them	into ASCII-коди
+    106	0099  CD 21			     INT     21h			     ; Interrupting
+    107	009B  E2 F8			     LOOP    OUTPUT			     ; Repeat until the	counter	is equal 0
+    108	009D  EB 0B 90			     JMP     EXIT			     ; Exit
+    109
+    110	00A0			     ERROR:					     ; Label, transition is made in case of error
+    111	00A0  B4 09			     MOV     AH, 09h			     ; Display the message of division by 0
+    112	00A2  BA 005Ar			     MOV     DX, OFFSET	ERROR_MSG
+    113	00A5  CD 21			     INT     21h
+    114	00A7  EB 01 90			     JMP     EXIT			     ; Go to the "End of program" label
+Turbo Assembler	 Version 3.1	    04/22/22 02:01:50	    Page 3
+LAB7.ASM
+
+
+
+    115
+    116	00AA			     EXIT:					     ; Label, transition anyway
+    117	00AA  B4 4C			     MOV     AH, 4Ch			     ; Completion of the program
+    118	00AC  B0 00			     MOV     AL, 0			     ; Code 0 -	code of	successful completion
+    119	00AE  CD 21			     INT     21h
+    120	00B0			     code    ends
+    121
+    122	0000			     data    segment
+    123	0000  0002			     A DW 2
+    124	0002  0001			     B DW 1
+    125	0004  ????			     X DW ?
+    126
+    127	      =	0dh, 0ah, '$'		     L_BREAK	     EQU     0dh, 0ah, '$'   ; L_BREAK - constant of CR_LF
+    128
+    129	0006  41 20 3E 20 42 2C	20+	     GREATER_MSG     DB	     "A	> B, then X = (b+1)/a",	L_BREAK
+    130	      74 68 65 6E 20 58	20+
+    131	      3D 20 28 62 2B 31	29+
+    132	      2F 61 0D 0A 24
+    133	0020  41 20 3D 20 42 2C	20+	     EQUALS_MSG	     DB	     "A	= B, then X = -B", L_BREAK
+    134	      74 68 65 6E 20 58	20+
+    135	      3D 20 2D 42 0D 0A	24
+    136	0035  41 20 3C 20 42 2C	20+	     LESS_MSG	     DB	     "A	< B, then X = (a-5)/b",	L_BREAK
+    137	      74 68 65 6E 20 58	20+
+    138	      3D 20 28 61 2D 35	29+
+    139	      2F 62 0D 0A 24
+    140
+    141	004F  52 65 73 75 6C 74	3A+	     RESULT_MSG	     DB	     "Result: ", L_BREAK
+    142	      20 0D 0A 24
+    143	005A  45 72 72 6F 72 21	20+	     ERROR_MSG	     DB	     "Error! Division by zero!", L_BREAK
+    144	      44 69 76 69 73 69	6F+
+    145	      6E 20 62 79 20 7A	65+
+    146	      72 6F 21 0D 0A 24
+    147	0075			     data    ends
+    148					     end begin
+Turbo Assembler	 Version 3.1	    04/22/22 02:01:50	    Page 4
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "04/22/22"
+??FILENAME			  Text	 "LAB7	  "
+??TIME				  Text	 "02:01:50"
+??VERSION			  Number 030A
+@32BIT				  Text	 0
+@CODE				  Text	 _TEXT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 DATA
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 LAB7
+@INTERFACE			  Text	 00H
+@MODEL				  Text	 2
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+A				  Word	 DATA:0000
+B				  Word	 DATA:0002
+BEGIN				  Near	 CODE:0000
+DIVISION			  Near	 CODE:0089
+EQUAL				  Near	 CODE:0034
+EQUALS_MSG			  Byte	 DATA:0020
+ERROR				  Near	 CODE:00A0
+ERROR_MSG			  Byte	 DATA:005A
+EXIT				  Near	 CODE:00AA
+GREATER_MSG			  Byte	 DATA:0006
+LESS				  Near	 CODE:0048
+LESS_MSG			  Byte	 DATA:0035
+L_BREAK				  Text	 0dh, 0ah, '$'
+MORE				  Near	 CODE:0012
+OUTPUT				  Near	 CODE:0095
+OUTPUT_START			  Near	 CODE:0069
+PLUS				  Near	 CODE:0084
+RESULT_MSG			  Byte	 DATA:004F
+X				  Word	 DATA:0004
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+CODE				  16  00B0 Para	  none
+DATA				  16  0075 Para	  none
+DGROUP				  Group
+  STACK				  16  0100 Para	  Stack	  STACK
+  _DATA				  16  0000 Word	  Public  DATA
+_TEXT				  16  0000 Word	  Public  CODE
+
