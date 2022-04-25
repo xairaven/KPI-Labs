@@ -1,0 +1,53 @@
+Turbo Assembler	 Version 3.1	    03/25/22 17:26:28	    Page 1
+LAB4EXE2.ASM
+
+
+
+      1	0000			     STK     SEGMENT STACK
+      2	0000  0100*(??)			     DB	     256 DUP (?)
+      3	0100			     STK     ENDS
+      4
+      5	0000			     DATA    SEGMENT
+      6	0000  48 65 6C 6C 6F 20	57+	     msg     db	     "Hello World!", 0Dh, 0Ah, '$'
+      7	      6F 72 6C 64 21 0D	0A+
+      8	      24
+      9	000F			     DATA    ENDS
+     10
+     11	0000			     CODE    SEGMENT
+     12				     ASSUME  CS:CODE, DS:DATA, SS:STK
+     13	0000			     START:
+     14	0000  B8 0000s			     mov     AX, DATA
+     15	0003  8E D8			     mov     DS, AX
+     16	0005  B4 09			     mov     AH, 09h
+     17	0007  BA 0000r			     mov     DX, offset	msg
+     18	000A  CD 21			     int     21h
+     19	000C  B4 4C			     mov     AH, 4Ch
+     20	000E  B0 00			     mov     Al, 0
+     21	0010  CD 21			     int     21h
+     22	0012			     CODE    ENDS
+     23				     END     START
+Turbo Assembler	 Version 3.1	    03/25/22 17:26:28	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "03/25/22"
+??FILENAME			  Text	 "LAB4EXE2"
+??TIME				  Text	 "17:26:28"
+??VERSION			  Number 030A
+@CPU				  Text	 0101H
+@CURSEG				  Text	 CODE
+@FILENAME			  Text	 LAB4EXE2
+@WORDSIZE			  Text	 2
+MSG				  Byte	 DATA:0000
+START				  Near	 CODE:0000
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+CODE				  16  0012 Para	  none
+DATA				  16  000F Para	  none
+STK				  16  0100 Para	  Stack
+
