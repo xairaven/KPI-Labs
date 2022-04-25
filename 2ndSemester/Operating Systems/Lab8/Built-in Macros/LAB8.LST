@@ -1,0 +1,323 @@
+Turbo Assembler	 Version 3.1	    04/26/22 00:29:34	    Page 1
+lab8.asm
+
+
+
+      1				     ; Built-in	macro
+      2
+      3				     INIT	     MACRO				     ; Data segment initialization macro
+      4					     MOV     AX, data				     ; Initialization of register DS
+      5					     MOV     DS, AX				     ; with data segment address
+      6					     XOR     AX, AX				     ; Clear АХ
+      7				     ENDM						     ; End of macro
+      8
+      9				     EXIT_LAB	     MACRO				     ; Program completion macro
+     10					     MOV     AH, 4Ch				     ; Completion of the program
+     11					     MOV     AL, 0				     ; Code 0 -	code of	successful completion
+     12					     INT     21h				     ; Interrupt
+     13				     ENDM						     ; End of macro
+     14
+     15				     OFFSET_CALC     MACRO   BYTES, COLUMNS, OFFSET_VALUE    ; Macro that counts the offset
+     16					     MOV     AX, COLUMNS			     ; Move the	number of columns in AX
+     17					     MOV     BX, BYTES				     ; Move the	dimension in bytes to ВХ
+     18					     MUL     BX					     ; Multiplication
+     19					     MOV     OFFSET_VALUE, AX			     ; Getting offset value
+     20					     XOR     AX, AX				     ; Clear registers
+     21					     XOR     BX, BX				     ; Clear registers
+     22				     ENDM						     ; End of macro
+     23
+     24				     PRINT_SYMBOL    MACRO   X				     ; Macro for displaying characters
+     25					     MOV     AH, 02h				     ; Move the	function code to АH
+     26					     MOV     DL, X				     ; Move the	character to DL
+     27					     INT     21h				     ; Interrupt
+     28					     XOR     AX, AX				     ; Clear registers
+     29				     ENDM						     ; End of macro
+     30
+     31				     PRINT_STR	     MACRO   STR			     ; Macro for string	output
+     32					     MOV     AH, 09h				     ; Move the	function code to АХ
+     33					     MOV     DX, OFFSET	STR			     ; Move address to DX
+     34					     INT     21h				     ; Interrupt
+     35					     XOR     AX, AX				     ; Clear registers
+     36				     ENDM						     ; End of macro
+     37
+     38				     PRINT_NUM	     MACRO   X				     ; Macro for outputting numbers
+     39				     LOCAL   OUTPUT_START, PLUS, DIVISION, OUTPUT	     ; Local labels
+     40				     OUTPUT_START:					     ; Label, start output
+     41					     XOR     AX, AX				     ; Reset the register АХ
+     42					     MOV     AX, X				     ; Returning result
+     43					     CMP     AX, 0				     ; Compare with 0
+     44					     XOR     CX, CX				     ; Remainder counter
+     45					     MOV     BX, 10				     ; Moving the basis	of the 10th number  +
+     46				     system
+     47
+     48				     DIVISION:
+     49					     XOR     DX, DX				     ; The remainder of	the division
+     50					     DIV     BX					     ; Divide by 10
+     51					     PUSH    DX					     ; Place in	a stack, LIFO
+     52					     INC     CX					     ; Increase	the counter
+     53					     TEST    AX, AX				     ; Check if	the whole part = 0
+     54					     JNZ     DIVISION				     ; Divide until the	whole part is equal 0
+     55					     MOV     AH, 02h				     ; Removing	the remainder
+     56
+     57				     OUTPUT:
+Turbo Assembler	 Version 3.1	    04/26/22 00:29:34	    Page 2
+lab8.asm
+
+
+
+     58					     POP     DX					     ; Getting numbers from the	stack
+     59					     ADD     DL, 30h				     ; Translating them	into ASCII-codes
+     60					     INT     21h				     ; Interrupt
+     61					     LOOP    OUTPUT				     ; Repeat until the	counter	is equal 0
+     62					     XOR     AX, AX				     ; Clear registers
+     63				     ENDM						     ; End of macro
+     64
+     65				     TASK    MACRO   LEN, OFFSET_V, matrix		     ; Macro for task
+     66				     LOCAL ROWS, COLS, EQUALS, DONT_EQUALS, FURTHER	     ; Local labels
+     67					     MOV     COUNTER, 1				     ; COUNTER = 1
+     68					     MOV     AX, LEN				     ; The length of the line -	into АХ
+     69					     MOV     i,	AX				     ; Initialize row length counters
+     70					     MOV     j,	AX				     ; Initialize row length counters
+     71					     MOV     CX, i				     ; The first loop -	 counter i
+     72					     MOV     BX, OFFSET	matrix			     ; Into ВХ - offset of matrix
+     73				     ROWS:						     ; First loop
+     74					     MOV     AX, LEN				     ; Length of the row - into	АХ
+     75					     MOV     SI, 0				     ; Register	SI - for offset	between	    +
+     76				     elements
+     77					     MOV     j,	AX				     ; Initialize row length counters
+     78					     MOV     CX, j				     ; The second loop -  counter j
+     79					     XOR     AX, AX				     ; Clear registers
+     80					     COLS:					     ; Second loop
+     81						     MOV     AX, i			     ; Into АХ - counter і
+     82						     CMP     AX, j			     ; Compare with counter j
+     83						     JNE     DONT_EQUALS		     ; If doesn't equals - jump	on label
+     84					     EQUALS:					     ; If equals - execute the code (Label  +
+     85				     for convenience)
+     86						     MOV     AX, 2			     ; (*2) Moving 2 to	AX
+     87						     MUL     COUNTER			     ; (*2) Multiply by	COUNTER
+     88						     JMP     FURTHER			     ; Going further
+     89					     DONT_EQUALS:				     ; Label if	the values ​​are unequal
+     90						     MOV     AX, COUNTER		     ; Just consistently move the values
+     91					     FURTHER:					     ; Code to write to	the array and display
+     92						     MOV	     matrix[bx][si], AX	     ; Write the number	in the array by	index
+     93						     PRINT_NUM	     matrix[bx][si]	     ; Output number, MACRO USE
+     94						     PRINT_SYMBOL    SPACE		     ; Character " " output, MACRO USE
+     95						     INC	     COUNTER		     ; Increment of the	number to be written
+     96						     ADD	     SI, 2		     ; 2 bytes offset
+     97						     MOV	     CX, j		     ; Second loop - counter j
+     98						     DEC	     j			     ; Decrement the counter
+     99					     LOOP COLS					     ; End of loop
+    100					     PRINT_STR	     CR_LF			     ; CR_LF, MACRO USE
+    101					     ADD	     BX, OFFSET_V		     ; Row offset
+    102					     MOV	     CX, i			     ; First loop -  counter i
+    103					     DEC	     i				     ; Decrement the counter
+    104				     LOOP ROWS						     ; End of loop
+    105					     MOV     i,	0				     ; Clear counters
+    106					     MOV     j,	0				     ; Clear counters
+    107					     MOV     SI, 0				     ; Clear registers
+    108					     XOR     AX, AX				     ; Clear registers
+    109					     XOR     BX, BX				     ; Clear registers
+    110				     ENDM						     ; End of macro
+    111
+    112				     title Lab8.asm					     ; Title of	the program
+    113	0000			     .model SMALL					     ; Model of	memory for .ехе file
+    114	0000			     .stack 100h					     ; Reserving memory	for stack
+Turbo Assembler	 Version 3.1	    04/26/22 00:29:34	    Page 3
+lab8.asm
+
+
+
+    115
+    116	0000			     code    segment					     ; Code segment :)
+    117				     assume  CS:code, DS:data				     ; Connecting segment registers with    +
+    118				     names of registers
+    119
+    120	0000			     begin:  INIT					     ; INITIALIZATION MACRO
+1   121	0000  B8 0000s			     MOV     AX, data				     ; Initialization of register DS
+1   122	0003  8E D8			     MOV     DS, AX				     ; with data segment address
+1   123	0005  33 C0			     XOR     AX, AX				     ; Clear АХ
+    124					     OFFSET_CALC     2,	LEN_ARR, offset_value	     ; OFFSET CALCULATING MACRO
+1   125	0007  B8 0005			     MOV     AX, LEN_ARR			     ; Move the	number of LEN_ARR in AX
+1   126	000A  BB 0002			     MOV     BX, 2			     ; Move the	dimension in 2 to ВХ
+1   127	000D  F7 E3			     MUL     BX					     ; Multiplication
+1   128	000F  A3 000Er			     MOV     offset_value, AX			     ; Getting offset value
+1   129	0012  33 C0			     XOR     AX, AX				     ; Clear registers
+1   130	0014  33 DB			     XOR     BX, BX				     ; Clear registers
+    131					     PRINT_STR	     RESULT_MSG			     ; STRING PRINTING MACRO
+1   132	0016  B4 09			     MOV     AH, 09h				     ; Move the	function code to АХ
+1   133	0018  BA 0004r			     MOV     DX, OFFSET	RESULT_MSG			     ; Move address to DX
+1   134	001B  CD 21			     INT     21h				     ; Interrupt
+1   135	001D  33 C0			     XOR     AX, AX				     ; Clear registers
+    136					     TASK	     LEN_ARR, offset_value, matrix   ; MACRO FOR THE TASK
+1   137	001F  C7 06 0010r 0001		     MOV     COUNTER, 1				     ; COUNTER = 1
+1   138	0025  B8 0005			     MOV     AX, LEN_ARR				     ; The length of the line -	into+
+    139				     АХ
+1   140	0028  A3 0012r			     MOV     i,	AX				     ; Initialize row length counters
+1   141	002B  A3 0014r			     MOV     j,	AX				     ; Initialize row length counters
+1   142	002E  8B 0E 0012r		     MOV     CX, i				     ; The first loop -	 counter i
+1   143	0032  BB 0016r			     MOV     BX, OFFSET	matrix			     ; Into ВХ - offset of matrix
+1   144	0035			     ??0000:						     ; First loop
+1   145	0035  B8 0005			     MOV     AX, LEN_ARR				     ; Length of the row - into	АХ
+1   146	0038  BE 0000			     MOV     SI, 0				     ; Register	SI - for offset	between	    +
+    147				     elements
+1   148	003B  A3 0014r			     MOV     j,	AX				     ; Initialize row length counters
+1   149	003E  8B 0E 0014r		     MOV     CX, j				     ; The second loop -  counter j
+1   150	0042  33 C0			     XOR     AX, AX				     ; Clear registers
+1   151	0044				     ??0001:					     ; Second loop
+1   152	0044  A1 0012r				     MOV     AX, i			     ; Into АХ - counter і
+1   153	0047  3B 06 0014r			     CMP     AX, j			     ; Compare with counter j
+1   154	004B  75 0A				     JNE     ??0003		     ; If doesn't equals - jump	on label
+1   155	004D				     ??0002:					     ; If ??0002 - execute the code (Label  +
+    156				     for convenience)
+1   157	004D  B8 0002				     MOV     AX, 2			     ; (*2) Moving 2 to	AX
+1   158	0050  F7 26 0010r			     MUL     COUNTER			     ; (*2) Multiply by	COUNTER
+1   159	0054  EB 04 90				     JMP     ??0004			     ; Going ??0004
+1   160	0057				     ??0003:				     ; Label if	the values ​​are unequal
+1   161	0057  A1 0010r				     MOV     AX, COUNTER		     ; Just consistently move the values
+1   162	005A				     ??0004:				     ; Code to write to	the array and display
+1   163	005A  89 80 0016r			     MOV	     matrix[bx][si], AX	     ; Write the number	in the array by	index
+1   164						     PRINT_NUM	     matrix[bx][si]	     ; Output number, MACRO USE
+2   165	005E			     ??0005:					     ; Label, start ??0008
+2   166	005E  33 C0			     XOR     AX, AX				     ; Reset the register АХ
+2   167	0060  8B 80 0016r		     MOV     AX, matrix[bx][si]					     ; Returning result
+2   168	0064  3D 0000			     CMP     AX, 0				     ; Compare with 0
+2   169	0067  33 C9			     XOR     CX, CX				     ; Remainder counter
+2   170	0069  BB 000A			     MOV     BX, 10				     ; Moving the basis	of the 10th number  +
+    171				     system
+Turbo Assembler	 Version 3.1	    04/26/22 00:29:34	    Page 4
+lab8.asm
+
+
+
+2   172
+2   173	006C			     ??0007:
+2   174	006C  33 D2			     XOR     DX, DX				     ; The remainder of	the ??0007
+2   175	006E  F7 F3			     DIV     BX					     ; Divide by 10
+2   176	0070  52			     PUSH    DX					     ; Place in	a stack, LIFO
+2   177	0071  41			     INC     CX					     ; Increase	the counter
+2   178	0072  85 C0			     TEST    AX, AX				     ; Check if	the whole part = 0
+2   179	0074  75 F6			     JNZ     ??0007			     ; Divide until the	whole part is equal 0
+2   180	0076  B4 02			     MOV     AH, 02h				     ; Removing	the remainder
+2   181
+2   182	0078			     ??0008:
+2   183	0078  5A			     POP     DX					     ; Getting numbers from the	stack
+2   184	0079  80 C2 30			     ADD     DL, 30h				     ; Translating them	into ASCII-codes
+2   185	007C  CD 21			     INT     21h				     ; Interrupt
+2   186	007E  E2 F8			     LOOP    ??0008				     ; Repeat until the	counter	is equal 0
+2   187	0080  33 C0			     XOR     AX, AX				     ; Clear registers
+1   188						     PRINT_SYMBOL    SPACE		     ; Character " " output, MACRO USE
+2   189	0082  B4 02			     MOV     AH, 02h				     ; Move the	function code to АH
+2   190	0084  8A 16 0000r		     MOV     DL, SPACE					     ; Move the	character to DL
+2   191	0088  CD 21			     INT     21h				     ; Interrupt
+2   192	008A  33 C0			     XOR     AX, AX				     ; Clear registers
+1   193	008C  FF 06 0010r			     INC	     COUNTER		     ; Increment of the	number to be written
+1   194	0090  83 C6 02				     ADD	     SI, 2		     ; 2 bytes offset
+1   195	0093  8B 0E 0014r			     MOV	     CX, j		     ; Second loop - counter j
+1   196	0097  FF 0E 0014r			     DEC	     j			     ; Decrement the counter
+1   197	009B  E2 A7			     LOOP ??0001				     ; End of loop
+1   198					     PRINT_STR	     CR_LF			     ; CR_LF, MACRO USE
+2   199	009D  B4 09			     MOV     AH, 09h				     ; Move the	function code to АХ
+2   200	009F  BA 0001r			     MOV     DX, OFFSET	CR_LF				     ; Move address to DX
+2   201	00A2  CD 21			     INT     21h				     ; Interrupt
+2   202	00A4  33 C0			     XOR     AX, AX				     ; Clear registers
+1   203	00A6  03 1E 000Er		     ADD	     BX, offset_value			     ; Row offset
+1   204	00AA  8B 0E 0012r		     MOV	     CX, i			     ; First loop -  counter i
+1   205	00AE  FF 0E 0012r		     DEC	     i				     ; Decrement the counter
+1   206	00B2  E2 81		     LOOP ??0000					     ; End of loop
+1   207	00B4  C7 06 0012r 0000		     MOV     i,	0				     ; Clear counters
+1   208	00BA  C7 06 0014r 0000		     MOV     j,	0				     ; Clear counters
+1   209	00C0  BE 0000			     MOV     SI, 0				     ; Clear registers
+1   210	00C3  33 C0			     XOR     AX, AX				     ; Clear registers
+1   211	00C5  33 DB			     XOR     BX, BX				     ; Clear registers
+    212					     EXIT_LAB					     ; ENDING PROGRAM MACRO
+1   213	00C7  B4 4C			     MOV     AH, 4Ch				     ; Completion of the program
+1   214	00C9  B0 00			     MOV     AL, 0				     ; Code 0 -	code of	successful completion
+1   215	00CB  CD 21			     INT     21h				     ; Interrupt
+    216	00CD			     code    ends					     ; End of code segment
+    217
+    218	0000			     data    segment					     ; Data segment
+    219	      =0005			     LEN_ARR EQU 5				     ; Symbolic	value for line length
+    220
+    221	      =	0dh, 0ah, '$'		     L_BREAK EQU 0dh, 0ah, '$'			     ; Symbolic	value for carriage transfer
+    222	0000  20			     SPACE DB '	'				     ; Symbol "	"
+    223	0001  0D 0A 24			     CR_LF DB L_BREAK				     ; Carriage	Return,	Line Feed
+    224	0004  52 65 73 75 6C 74	3A+	     RESULT_MSG	DB "Result:", L_BREAK		     ; String for result
+    225	      0D 0A 24
+    226
+    227	000E  ????			     offset_value DW ?				     ; Offset in two-dimensional array	    +
+    228				     between rows
+Turbo Assembler	 Version 3.1	    04/26/22 00:29:34	    Page 5
+lab8.asm
+
+
+
+    229	0010  0001			     COUNTER DW	1				     ; Counter to fill the array with	    +
+    230				     numbers from 1 to 25
+    231	0012  0000			     i DW 0					     ; Two-dimensional array row counter
+    232	0014  0000			     j DW 0					     ; Two-dimensional array column counter
+    233	0016  05*(05*(????))		     matrix dw LEN_ARR dup (LEN_ARR dup(?))	     ; Two-dimensional array length 5х5
+    234	0048			     data    ends					     ; End of data segment
+    235					     end begin					     ; End of program
+Turbo Assembler	 Version 3.1	    04/26/22 00:29:34	    Page 6
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??0000				  Near	 CODE:0035
+??0001				  Near	 CODE:0044
+??0002				  Near	 CODE:004D
+??0003				  Near	 CODE:0057
+??0004				  Near	 CODE:005A
+??0005				  Near	 CODE:005E
+??0007				  Near	 CODE:006C
+??0008				  Near	 CODE:0078
+??DATE				  Text	 "04/26/22"
+??FILENAME			  Text	 "lab8	  "
+??TIME				  Text	 "00:29:34"
+??VERSION			  Number 030A
+@32BIT				  Text	 0
+@CODE				  Text	 _TEXT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0101H
+@CURSEG				  Text	 DATA
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 LAB8
+@INTERFACE			  Text	 00H
+@MODEL				  Text	 2
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+BEGIN				  Near	 CODE:0000
+COUNTER				  Word	 DATA:0010
+CR_LF				  Byte	 DATA:0001
+I				  Word	 DATA:0012
+J				  Word	 DATA:0014
+LEN_ARR				  Number 0005
+L_BREAK				  Text	 0dh, 0ah, '$'
+MATRIX				  Word	 DATA:0016
+OFFSET_VALUE			  Word	 DATA:000E
+RESULT_MSG			  Byte	 DATA:0004
+SPACE				  Byte	 DATA:0000
+
+Macro Name
+
+EXIT_LAB
+INIT
+OFFSET_CALC
+PRINT_NUM
+PRINT_STR
+PRINT_SYMBOL
+TASK
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+CODE				  16  00CD Para	  none
+DATA				  16  0048 Para	  none
+DGROUP				  Group
+  STACK				  16  0100 Para	  Stack	  STACK
+  _DATA				  16  0000 Word	  Public  DATA
+_TEXT				  16  0000 Word	  Public  CODE
+

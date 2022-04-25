@@ -1,0 +1,107 @@
+; Macro library for Lab 8
+
+INIT		MACRO					; Data segment initialization macro
+	MOV	AX, data				; Initialization of register DS
+	MOV	DS, AX					; with data segment address	
+	XOR	AX, AX					; Clear АХ
+ENDM							; End of macro
+
+EXIT_LAB	MACRO					; Program completion macro	
+	MOV	AH, 4Ch					; Completion of the program		
+	MOV     AL, 0					; Code 0 - code of successful completion
+	INT	21h					; Interrupt
+ENDM							; End of macro
+
+OFFSET_CALC	MACRO	BYTES, COLUMNS, OFFSET_VALUE 	; Macro that counts the offset
+	MOV	AX, COLUMNS				; Move the number of columns in AX
+	MOV	BX, BYTES				; Move the dimension in bytes to ВХ
+	MUL	BX					; Multiplication
+	MOV	OFFSET_VALUE, AX			; Getting offset value
+	XOR	AX, AX					; Clear registers
+	XOR	BX, BX					; Clear registers
+ENDM							; End of macro
+
+PRINT_SYMBOL 	MACRO	X				; Macro for displaying characters
+	MOV	AH, 02h					; Move the function code to АH
+	MOV	DL, X					; Move the character to DL
+	INT	21h					; Interrupt
+	XOR	AX, AX					; Clear registers
+ENDM							; End of macro
+
+PRINT_STR	MACRO	STR				; Macro for string output
+	MOV	AH, 09h					; Move the function code to АХ
+	MOV	DX, OFFSET STR				; Move address to DX
+	INT	21h					; Interrupt
+	XOR	AX, AX					; Clear registers
+ENDM							; End of macro
+
+PRINT_NUM  	MACRO	X				; Macro for outputting numbers
+LOCAL	OUTPUT_START, PLUS, DIVISION, OUTPUT		; Local labels
+OUTPUT_START:						; Label, start output
+	XOR	AX, AX					; Reset the register АХ
+	MOV	AX, X					; Returning result
+	CMP	AX, 0					; Compare with 0
+	XOR 	CX, CX					; Remainder counter
+	MOV	BX, 10					; Moving the basis of the 10th number system
+
+DIVISION:
+	XOR	DX, DX					; The remainder of the division
+	DIV	BX					; Divide by 10
+	PUSH	DX					; Place in a stack, LIFO
+	INC	CX					; Increase the counter
+	TEST	AX, AX					; Check if the whole part = 0
+	JNZ	DIVISION				; Divide until the whole part is equal 0
+	MOV	AH, 02h					; Removing the remainder
+
+OUTPUT:
+	POP	DX					; Getting numbers from the stack
+	ADD	DL, 30h					; Translating them into ASCII-codes 
+	INT	21h					; Interrupt
+	LOOP	OUTPUT					; Repeat until the counter is equal 0
+	XOR	AX, AX					; Clear registers
+ENDM							; End of macro
+
+TASK	MACRO	LEN, OFFSET_V, matrix			; Macro for task
+LOCAL ROWS, COLS, EQUALS, DONT_EQUALS, FURTHER		; Local labels
+	MOV	COUNTER, 1				; COUNTER = 1
+	MOV	AX, LEN					; The length of the line - into АХ
+	MOV	i, AX					; Initialize row length counters
+	MOV	j, AX					; Initialize row length counters
+	MOV	CX, i					; The first loop -  counter i
+	MOV	BX, OFFSET matrix			; Into ВХ - offset of matrix
+ROWS:							; First loop
+	MOV	AX, LEN					; Length of the row - into АХ
+	MOV	SI, 0					; Register SI - for offset between elements
+	MOV	j, AX					; Initialize row length counters
+	MOV	CX, j					; The second loop -  counter j
+	XOR	AX, AX					; Clear registers	
+	COLS:						; Second loop
+		MOV	AX, i				; Into АХ - counter і
+		CMP 	AX, j				; Compare with counter j
+		JNE 	DONT_EQUALS			; If doesn't equals - jump on label
+	EQUALS:						; If equals - execute the code (Label for convenience)
+		MOV	AX, 2				; (*2) Moving 2 to AX
+		MUL 	COUNTER				; (*2) Multiply by COUNTER
+		JMP 	FURTHER				; Going further
+	DONT_EQUALS:					; Label if the values ​​are unequal
+		MOV	AX, COUNTER			; Just consistently move the values
+	FURTHER:					; Code to write to the array and display
+		MOV		matrix[bx][si], AX	; Write the number in the array by index
+		PRINT_NUM	matrix[bx][si]		; Output number, MACRO USE
+		PRINT_SYMBOL	SPACE			; Character " " output, MACRO USE
+		INC		COUNTER			; Increment of the number to be written
+		ADD		SI, 2			; 2 bytes offset
+		MOV		CX, j			; Second loop - counter j	
+		DEC		j			; Decrement the counter	
+	LOOP COLS					; End of loop
+	PRINT_STR	CR_LF				; CR_LF, MACRO USE
+	ADD		BX, OFFSET_V			; Row offset
+	MOV		CX, i				; First loop -  counter i
+	DEC		i				; Decrement the counter
+LOOP ROWS						; End of loop
+	MOV	i, 0					; Clear counters
+	MOV	j, 0					; Clear counters
+	MOV	SI, 0					; Clear registers
+	XOR	AX, AX					; Clear registers
+	XOR	BX, BX					; Clear registers
+ENDM							; End of macro
