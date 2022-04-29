@@ -3,7 +3,7 @@
 ![](https://img.shields.io/badge/Programming%20lang-Java-informational?style=flat-square&logo=java&logoColor=white&color=5194f0)
 
 - Задания: в папках работ
-- Преподаватель: Онысько Андрей Ильич
+- Преподаватель: Онисько Андрей Ильич
 - Вариант: 21
 - Оценка: -<br>
 
