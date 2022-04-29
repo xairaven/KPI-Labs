@@ -16,6 +16,8 @@
    - Оценка: 6/5
 4. [**Методы поиска в массивах**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab4)
    - Оценка: 6/5
+5. [**Линейные односвязные и двусвязные списки**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab5)
+   - Оценка: ?
 
 Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.<br>
 Все права на учебные материалы принадлежат преподавателю. 
