@@ -18,6 +18,8 @@
    - Оценка: 6/5
 5. [**Линейные односвязные и двусвязные списки**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab5)
    - Оценка: ?
-
+6. [**Разрежённые матрицы**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab6)
+   - Оценка: ?
+   
 Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.<br>
 Все права на учебные материалы принадлежат преподавателю. 
