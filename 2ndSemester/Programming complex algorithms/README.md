@@ -20,6 +20,8 @@
    - Оценка: ?
 6. [**Разрежённые матрицы**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab6)
    - Оценка: ?
+6. [**Разрежённые матрицы, деревья**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab7)
+   - Оценка: ?
    
 Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.<br>
 Все права на учебные материалы принадлежат преподавателю. 
