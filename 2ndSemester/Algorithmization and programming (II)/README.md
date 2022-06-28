@@ -5,7 +5,7 @@
 - Задания: в папках работ
 - Преподаватель: Москаленко Ю. В.
 - Вариант: 21
-- Оценка: ?
+- Оценка: 96
 
 ## Лабораторные работы
 1. [Динамический массив, сортировка](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Algorithmization%20and%20programming%20(II)/Lab1)
