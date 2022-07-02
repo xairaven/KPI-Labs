@@ -17,11 +17,11 @@
 4. [**Методы поиска в массивах**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab4)
    - Оценка: 6/5
 5. [**Линейные односвязные и двусвязные списки**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab5)
-   - Оценка: ?
+   - Оценка: 6/5
 6. [**Разрежённые матрицы**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab6)
-   - Оценка: ?
+   - Оценка: 6/5
 7. [**Разрежённые матрицы, деревья**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab7)
-   - Оценка: ?
+   - Оценка: 6/5
    
 Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.<br>
 Все права на учебные материалы принадлежат преподавателю. 
