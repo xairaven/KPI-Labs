@@ -5,7 +5,7 @@
 - Задания: в папках работ
 - Преподаватель: Онисько Андрей Ильич
 - Вариант: 21
-- Оценка: -<br>
+- Оценка: 100 <br>
 
 ### Лабораторные работы
 1. [**Сложность алгоритмов**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab1)
