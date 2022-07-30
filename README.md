@@ -22,6 +22,6 @@ II | Assembler TASM | [Операционные системы](https://github.c
 II | Java | [Программирование сложных алгоритмов](https://github.com/xairaven/kpi_labs/tree/main/2ndSemester/Programming%20complex%20algorithms)
 III | HTML, CSS, JS | [Веб-дизайн и веб-технологии](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Web%20Design)
 III | ? | [ООП](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OOP)
-III | ? | [ОС UNIX](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OS%20UNIX)
+III | C | [ОС UNIX](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OS%20UNIX)
 III | ? | [Проектирование и анализ вычислительных алгоритмов](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/DACA)
 III | ? | [Численные методы](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Numerical%20Analysis)
