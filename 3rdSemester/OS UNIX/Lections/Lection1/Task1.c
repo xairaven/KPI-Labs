@@ -5,7 +5,7 @@
 #include <string.h>
 
 // Task: to write simple implementation of ls function
-// example of usage: (input: command prompt)
+// example of usage: (input - command prompt)
 // /home/xairaven/Programming
 int main(int argc, char *argv[]) {
     DIR *dp;
