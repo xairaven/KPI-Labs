@@ -6,7 +6,7 @@
 
 // Task: to write simple implementation of ls function
 // example of usage: (input - command prompt)
-// /home/xairaven/Programming
+// /home/xairaven/KPI/KPI-Labs
 int main(int argc, char *argv[]) {
     DIR *dp;
     struct dirent *dirp;
