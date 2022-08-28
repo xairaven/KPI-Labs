@@ -3,7 +3,7 @@
 ![](https://img.shields.io/badge/Programming%20lang-C-informational?style=flat-square&logo=C&logoColor=white&color=5194f0)
 
 - Задания: в папках работ
-- Преподаватель: Крячок О. С.
+- Преподаватель: Крячок А. С.
 - Вариант: 23
 - Оценка: 100/100<br>
 

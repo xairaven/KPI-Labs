@@ -3,7 +3,7 @@
 [![C++](https://img.shields.io/badge/C++-005494?style=for-the-badge&logo=cplusplus&logoColor=white)](#)
 
 - Задания: в папках работ
-- Преподаватель: -
+- Преподаватель: Крячок А. С.
 - Вариант: - 
 - Оценка: -
 

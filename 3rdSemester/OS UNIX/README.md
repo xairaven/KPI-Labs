@@ -2,8 +2,8 @@
 
 [![C](https://img.shields.io/badge/C-7B8794?style=for-the-badge&logo=c&logoColor=white)](#)
 
-- Задания: <a href = "https://drive.google.com/drive/folders/106zvbC-ZRDUKFEU5uoPrg_19uW6hG-gJ">*ссылка*</a>
-- Преподаватель: ?
+- Задания: -
+- Преподаватель: Левченко Л. А.
 - Вариант: - 
 - Оценка: -
 

@@ -4,8 +4,8 @@
 [![CSS](https://img.shields.io/badge/CSS-254ADD?style=for-the-badge&logo=css3&logoColor=white)](#)
 [![JS](https://img.shields.io/badge/JS-EFD81D?style=for-the-badge&logo=Javascript&logoColor=white)](#)
 
-- Задания: в папках работ
-- Преподаватель: -
+- Задания: -
+- Преподаватель: Полягушко Л. Г.
 - Вариант: - 
 - Оценка: -
 

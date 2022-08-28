@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
 
 - Задания: в папках работ
-- Преподаватель: -
+- Преподаватель: Залевская О. В.
 - Вариант: - 
 - Оценка: -
 
