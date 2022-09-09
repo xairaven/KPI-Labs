@@ -5,7 +5,7 @@
 [![JS](https://img.shields.io/badge/JS-EFD81D?style=for-the-badge&logo=Javascript&logoColor=white)](#)
 
 - Задания: -
-- Преподаватель: Полягушко Л. Г.
+- Преподаватель: Полягушко Л. Г., Бордиян А. И.
 - Вариант: - 
 - Оценка: -
 

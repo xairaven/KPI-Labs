@@ -1,9 +1,9 @@
 ## Объектно-ориентированное программирование (ООП)
 
-[![C++](https://img.shields.io/badge/C++-005494?style=for-the-badge&logo=cplusplus&logoColor=white)](#)
+[![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=csharp&logoColor=white)](#) [![C++](https://img.shields.io/badge/C++-005494?style=for-the-badge&logo=cplusplus&logoColor=white)](#)
 
 - Задания: в папках работ
-- Преподаватель: Шалденко А. В.
+- Преподаватель: Здор К. А., Мельниченко А. В.
 - Вариант: - 
 - Оценка: -
 
