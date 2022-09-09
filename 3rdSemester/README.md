@@ -19,7 +19,7 @@
 Мова програмування   | Дисципліна
 ----------------------- | -----------------------
 HTML, CSS, JS | [Веб-дизайн та веб-технології](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Web%20Design)
-? | [ООП](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OOP)
+С# | [ООП](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OOP)
 ? | [ОС UNIX](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OS%20UNIX)
 ? | [Проектування та аналіз обчислювальних алгоритмів](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/DACA)
 ? | [Чисельні методи](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Numerical%20Analysis)
