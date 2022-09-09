@@ -1,27 +1,27 @@
-## Программирование сложных алгоритмов (ПСА)
+## Програмування складних алгоритмів (ПСА)
 
 ![](https://img.shields.io/badge/Programming%20lang-Java-informational?style=flat-square&logo=java&logoColor=white&color=5194f0)
 
-- Задания: в папках работ
-- Преподаватель: Онисько Андрей Ильич
-- Вариант: 21
-- Оценка: 100 <br>
+- Завдання: в папках робіт
+- Викладач: Онисько А. І.
+- Варіант: 21
+- Оцінка: 100 <br>
 
-### Лабораторные работы
-1. [**Сложность алгоритмов**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab1)
-   - Оценка: 5/5
-2. [**Рекурсивные алгоритмы**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab2)
-   - Оценка: 5/5
-3. [**Методы сортировки**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab3)
-   - Оценка: 6/5
-4. [**Методы поиска в массивах**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab4)
-   - Оценка: 6/5
-5. [**Линейные односвязные и двусвязные списки**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab5)
-   - Оценка: 6/5
-6. [**Разрежённые матрицы**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab6)
-   - Оценка: 6/5
-7. [**Разрежённые матрицы, деревья**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab7)
-   - Оценка: 6/5
+### Лабораторні роботи
+1. [**Складність алгоритмів**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab1)
+   - Оцінка: 5/5
+2. [**Рекурсивні алгоритми**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab2)
+   - Оцінка: 5/5
+3. [**Методи сортування**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab3)
+   - Оцінка: 6/5
+4. [**Методи пошуку в масивах**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab4)
+   - Оцінка: 6/5
+5. [**Лінійні однозв'язні та двозв'язні списки**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab5)
+   - Оцінка: 6/5
+6. [**Розріджені матриці**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab6)
+   - Оцінка: 6/5
+7. [**Розріджені матриці, дерева**](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Programming%20complex%20algorithms/Lab7)
+   - Оцінка: 6/5
    
-Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.<br>
-Все права на учебные материалы принадлежат преподавателю. 
+Використовуйте розміщені матеріали **виключно** для самоперевірки.<br>
+Усі права на навчальні матеріали належать викладачу.

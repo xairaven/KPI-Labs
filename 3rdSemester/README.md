@@ -5,20 +5,21 @@
 [![JS](https://img.shields.io/badge/JS-EFD81D?style=for-the-badge&logo=Javascript&logoColor=white)](#)
 [![C](https://img.shields.io/badge/C-7B8794?style=for-the-badge&logo=c&logoColor=white)](#)
 [![C++](https://img.shields.io/badge/C++-005494?style=for-the-badge&logo=cplusplus&logoColor=white)](#)
+[![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=csharp&logoColor=white)](#)
 
-1. Веб-дизайн и веб-технологии (HTML, CSS, JS)
-2. Объектно-ориентированное программирование (?)
-3. Операционная система UNIX (?)
-4. Проектирование и анализ вычислительных алгоритмов (?)
-5. Численные методы (?)
+1. Веб-дизайн та веб-технології (HTML, CSS, JS)
+2. Об'єктно-орієнтовне програмування (С#)
+3. Операційна система UNIX (?)
+4. Проектування та аналіз обчислювальних алгоритмів (?)
+5. Чисельні методи (?)
 
-Используйте размещенные здесь материалы **исключительно** для проверки написанных вами решений.
+Використовуйте розміщені матеріали **виключно** для самоперевірки.
 
 
-Язык программирования   | Дисциплина
+Мова програмування   | Дисципліна
 ----------------------- | -----------------------
-HTML, CSS, JS | [Веб-дизайн и веб-технологии](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Web%20Design)
+HTML, CSS, JS | [Веб-дизайн та веб-технології](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Web%20Design)
 ? | [ООП](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OOP)
 ? | [ОС UNIX](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OS%20UNIX)
-? | [Проектирование и анализ вычислительных алгоритмов](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/DACA)
-? | [Численные методы](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Numerical%20Analysis)
+? | [Проектування та аналіз обчислювальних алгоритмів](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/DACA)
+? | [Чисельні методи](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Numerical%20Analysis)
