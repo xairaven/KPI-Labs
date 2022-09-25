@@ -5,7 +5,7 @@
 [![JS](https://img.shields.io/badge/JS-EFD81D?style=for-the-badge&logo=Javascript&logoColor=white)](#)
 
 - Завдання: -
-- Викладачі: Полягушко Л. Г., Бордиян А. И.
+- Викладачі: Полягушко Л. Г., Бордіян А. І.
 - Варіант: - 
 - Оцінка: -
 

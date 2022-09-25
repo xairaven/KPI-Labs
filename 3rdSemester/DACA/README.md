@@ -1,6 +1,6 @@
 ## Проектування та аналіз обчислювальних алгоритмів (ПАОА)
 
-[![C++](https://img.shields.io/badge/C++-005494?style=for-the-badge&logo=cplusplus&logoColor=white)](#)
+[![Java](https://img.shields.io/badge/Java-E87000?style=for-the-badge&logo=coffeescript&logoColor=white)](#)
 
 - Завдання: в папках робіт
 - Викладач: Крячок О. С.
