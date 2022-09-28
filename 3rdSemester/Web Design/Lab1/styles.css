@@ -1,0 +1,107 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: #f1f1f1;
+
+    margin: 0 auto;
+    width: 75%;
+}
+
+h2 {
+    text-align: center;
+}
+
+hr {
+    height: 2px;
+    background-color: black;
+    border-radius: 50%;
+}
+
+section, footer {
+    margin: 10px auto;
+
+    text-align: justify;
+}
+
+nav {
+    margin: 10px auto;
+
+    text-align: center;
+}
+
+
+nav a {
+    margin: 0 60px;
+
+    color:black;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
+    text-decoration: none;
+
+    transition: color .2s linear;
+}
+
+nav a:hover {
+    color: rgb(103, 0, 147);
+}
+
+ol {
+    list-style-type: science;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.img-custom {
+    border: 2px black solid;
+    border-radius: 25%;
+    margin: auto 20px;
+    height: 400px;
+    width: 300px;
+}
+
+.list-container {
+    text-align: center;
+}
+
+.list-container ol {
+    margin-top: 0;
+    margin-bottom: 15px;
+    display: inline-block;
+    text-align: left;
+}
+
+.main-title {
+    font-size: 40px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+    padding: 0;
+    margin:  25px 0 0 0;
+
+    text-align: center;
+}
+
+#img-div {
+    text-align: center;
+}
+
+#table-section table {
+    table-layout: fixed;
+    width: 50%;
+    border-collapse: collapse;
+    border: 3px solid black;
+}
+
+#table-section table, th, td {
+    margin: 0 auto;
+    border: 1px solid black;
+}
+
+@counter-style science {
+    system: fixed;
+    symbols: 🔭 🚀 🧪 🔬  ⚗️ ;
+    suffix: " ";
+  }
