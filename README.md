@@ -14,7 +14,7 @@
 [![JS](https://img.shields.io/badge/JS-EFD81D?style=for-the-badge&logo=Javascript&logoColor=white)](#)
 [![C](https://img.shields.io/badge/C-7B8794?style=for-the-badge&logo=c&logoColor=white)](#)
 [![C++](https://img.shields.io/badge/C++-005494?style=for-the-badge&logo=cplusplus&logoColor=white)](#)
-[![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
+[![C#](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.
 
@@ -31,4 +31,4 @@ III | HTML, CSS, JS | [Веб-технології та веб-дизайн](htt
 III | С# | [ООП](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OOP)
 III | Bash, C | [ОС UNIX](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OS%20UNIX)
 III | Java | [Проектування та аналіз обчислювальних алгоритмів](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/DACA)
-III | Python | [Чисельні методи](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Numerical%20Analysis)
+III | C# | [Чисельні методи](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Numerical%20Analysis)

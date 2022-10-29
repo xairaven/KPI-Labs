@@ -6,7 +6,6 @@
 [![C](https://img.shields.io/badge/C-7B8794?style=for-the-badge&logo=c&logoColor=white)](#)
 [![C++](https://img.shields.io/badge/C++-005494?style=for-the-badge&logo=cplusplus&logoColor=white)](#)
 [![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=csharp&logoColor=white)](#)
-[![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
 
 1. Веб-дизайн та веб-технології (HTML, CSS, JS)
 2. Об'єктно-орієнтовне програмування (С#)
@@ -23,4 +22,4 @@ HTML, CSS, JS | [Веб-дизайн та веб-технології](https://g
 С# | [ООП](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OOP)
 Bash, C | [ОС UNIX](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OS%20UNIX)
 Java | [Проектування та аналіз обчислювальних алгоритмів](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/DACA)
-Python | [Чисельні методи](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Numerical%20Analysis)
+C# | [Чисельні методи](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Numerical%20Analysis)
