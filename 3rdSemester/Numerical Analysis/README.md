@@ -1,14 +1,14 @@
 ## Чисельні методи
 
-[![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
+[![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=csharp&logoColor=white)](#)
 
-- Завдання: -
+- Завдання: в папках робіт
 - Викладач: Залевська О. В.
-- Варіант: - 
+- Варіант: 22 
 - Оцінка: -
 
 ### Лабораторні роботи
- 1. [Work in Progress](google.com)<br>
+ 1. [Розв'язання систем лінійних алгебраїчних рівнянь (СЛАР) прямими методами](./Lab1/)<br>
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.<br>
 Усі права на навчальні матеріали належать викладачу.
