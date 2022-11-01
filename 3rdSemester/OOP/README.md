@@ -1,6 +1,6 @@
 ## Об'єктно-орієнтовне програмування (ООП)
 
-[![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=csharp&logoColor=white)](#) [![C++](https://img.shields.io/badge/C++-005494?style=for-the-badge&logo=cplusplus&logoColor=white)](#)
+[![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=csharp&logoColor=white)](#)
 
 - Завдання: в папках работ
 - Викладачі: Здор К. А., Мельниченко А. В.
