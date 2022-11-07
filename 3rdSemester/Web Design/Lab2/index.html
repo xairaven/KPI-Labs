@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/styles.css" rel="stylesheet">
+    <title>Lab 2</title>
+</head>
+<body>
+    <header>
+        <h1>$uicideboy$</h1>
+    </header>
+    <main>
+        <section class="general-info">
+            <div class="general-info-text">
+                <p>
+                    <img class="general-pic" id="pic1" src="res/img/img1.jpg">
+                    New Orleans rap duo $uicideboy$ rose from the dark corners of the underground, 
+                    merging hip-hop with a punk and occult aesthetic fit for graveyards and clubs alike. 
+                    With dozens of projects to their name (including at least 20 installments of their KY EP series), 
+                    they released their official full-length studio debut, I Want to Die in New Orleans, in 2018. 
+                    Without much mainstream attention, they racked up multiple gold-certified singles and stormed charts 
+                    around the world. Both their 2021 sophomore studio LP, Long-Term Effects of Suffering, and 2022's 
+                    Sing Me a Lullaby, My Sweet Temptation also debuted in the U.S. Top Ten.
+                </p>
+                
+                <p style="text-align: right;">
+                    <img class="general-pic" id="pic2" src="res/img/img2.jpg">
+                    Even though they combined their talents in 2014, the pair were already well-acquainted as cousins. 
+                    Ruby da Cherry and Scrim grew up together, white kids in Black neighborhoods on the east and west banks 
+                    of the Crescent City. However, they initially veered down different paths. Ruby (aka Snow Leopard) dabbled 
+                    in punk rock, influenced by the Misfits, Minor Threat, and Leftover Crack. Meanwhile, Scrim 
+                    was a DJ and songwriter. Once they joined forces, the result was a dark blend of horrorcore glitch-trap 
+                    bubbling with booming bass, ominous atmospherics, and occultist, drugged-out rhymes.
+                </p>
+                <img class="general-pic" id="pic3" src="res/img/img3.jpg">
+                <img class="general-pic" id="pic4" src="res/img/img4.jpg">
+                <img class="general-pic" id="pic5" src="res/img/img5.jpg">
+            </div>
+            <aside class="general-info-img">
+                <img class="album-img" id="album1" src="res/img/album1.png">
+                <img class="album-img" id="album2" src="res/img/album2.jpg">
+                <img class="album-img" id="album3" src="res/img/album3.jpg">
+            </aside>
+        </section>
+        <nav class="form-nav">
+            <a href="#registration-form">Registration</a>
+            <a href="#sign-in-form">Sign in</a>
+            <a href="#feedback-form">Feedback</a>
+        </nav>
+        <section class="form-section">
+            <form name="registration" id="registration-form">
+                <div class="registration-part">
+                    <h1 style="font-size: 40px;">Registration form</h1>
+                    <img src="res/img/user.png">
+
+                    <div class="form-block">
+                        <label for="name">Name</label>
+                        <input class="input-block" type="text" name="name" placeholder="Name" autocomplete="on" required>
+                    </div>
+
+                    <div class="form-block">
+                        <label for="surname">Surname</label>
+                        <input class="input-block" type="text" name="surname" placeholder="Surname" autocomplete="on" required>
+                    </div>
+
+                    <div class="form-block">
+                        <label for="sex">Sex</label>
+                        
+                        <div style="display: inline-block;">
+                            <label for="radio1">Man</label>
+                            <input type="radio" name="sex" id="radio1">
+                        </div>
+                        
+                        <div style="display: inline-block; margin-left: 150px;">
+                            <label for="radio2">Woman</label>
+						    <input type="radio" name="sex" id="radio2">
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <label for="age">Age</label>
+                        <input class="input-block" type="number" name="age" placeholder="What's your age?" autocomplete="on" required min="0" max="100">
+                    </div>
+
+                    <button type="submit" name="submit-reg">Submit</button>
+                    <button type="reset" name="reset">Reset</button>
+                </div>
+                <div class="registration-part">
+                    <div class="form-block">
+                        <label for="birth">Date of birth</label>
+                        <input class="input-block" type="date" name="birth" id="birth" min="1900-01-01" max="2023-01-01" value="2000-01-01" required>
+                    </div>
+
+                    <div class="form-block">
+                        <label for="country">Country</label>
+                        <input class="input-block" list="countries" name="country" placeholder="Country" required>
+                        <datalist id="countries">
+                            <option value="Ukraine">
+                            <option value="USA">
+                            <option value="England">
+                        </datalist>
+                    </div>
+
+                    <div class="form-block">
+                        <label for="tel">Phone number</label>
+                        <input class="input-block" type="tel" name="tel" pattern="+380-[0-9]{3}-[0-9]{4}" maxlength="7" placeholder="(+380)-XXX-XXXX" autocomplete="on" required>
+                    </div>
+
+                    <div class="form-block">
+                        <label for="social">Social media</label>
+                        <input class="input-block" type="url" name="social" placeholder="t.me/..." required>
+                    </div>
+
+                    <div class="form-block">
+                        <label for="email">Email adress</label>
+                        <input class="input-block" type="email" name="email" placeholder="Your e-mail" pattern="[a-z0-9._-]+@[a-z.-]+\.[a-z]{2,}$" autocomplete="on" required>
+                    </div>
+
+                    <div class="form-block">
+                        <label for="password-reg">Password</label>
+                        <input class="input-block" type="password" name="password-reg" minlength="4" placeholder="Your password" required>
+                    </div>
+
+                    <div class="form-block">
+                        <p>Accept terms of use</p>
+                        <input type="checkbox" name="check" required>
+                    </div>
+                </div>
+            </form>
+
+            <form id="sign-in-form">
+                <h1 style="font-size: 40px;">Sign in</h1>
+
+                <div class="form-block">
+                    <label for="login">Login</label>
+                    <input class="input-block" type="text" name="login" placeholder="Login" autocomplete="on" required>
+                </div>
+
+                <div class="form-block">
+                    <label for="password">Password</label>
+                    <input class="input-block" type="password" name="password" minlength="4" placeholder="Your password" required>
+                </div>
+
+                <button type="submit" name="submit">Submit</button>
+            </form>
+            
+            <form id="feedback-form">
+                <div class="registration-part">
+                    <h1 style="font-size: 40px;">Feedback form</h1>
+
+                    <input class="input-block" type="text" name="name-feedback" placeholder="Name" autocomplete="on" required>
+                    
+                    <input class="input-block" type="email" name="email-feedback" placeholder="Your e-mail" pattern="[a-z0-9._-]+@[a-z.-]+\.[a-z]{2,}$" autocomplete="on" required>
+                    
+                    <input class="input-block" list="themes-feedback" name="theme-feedback" placeholder="Themes" required>
+                        <datalist id="themes-feedback">
+                            <option value="Something doesn't work">
+                            <option value="Sample text">
+                            <option value="Other">
+                        </datalist>
+                    
+                    <button type="submit" name="submit-feedback">Submit</button>
+                </div>
+                <div class="registration-part">
+                    <textarea rows="15" cols="60" name="feedback-text" placeholder="Your text.." required></textarea> 
+                </div>
+            </form>
+
+            <div class="hidden">-</div>
+        </section>
+    </main>
+    <footer>
+        <h1>Contact me:</h1>
+        <div id="footer-links">
+            <a href="https://github.com/xairaven" target="_blank"> 
+                <img src="res/img/github.png" class="footer-logo">
+            </a>
+            <a href="mailto:kovalov.alex@lll.kpi.ua"  target="_blank">
+                <img src="res/img/gmail.png" class="footer-logo">
+            </a>
+            <a href="https://t.me/xairaven"  target="_blank">                        
+                <img src="res/img/telegram.png" class="footer-logo">
+            </a>
+        </div>
+        <div id="footer-copyright">
+           <h1>Designed by Alex Kovalyov</h1>
+        </div>
+    </footer>
+</body>
+</html>

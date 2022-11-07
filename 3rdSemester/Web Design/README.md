@@ -11,6 +11,7 @@
 
 ### Лабораторні роботи
  1. [Основи роботи з HTML](https://github.com/xairaven/KPI-Labs/tree/main/3rdSemester/Web%20Design/Lab1)<br>
+ 2. [Форми, блочна модель, позиціонування](https://github.com/xairaven/KPI-Labs/tree/main/3rdSemester/Web%20Design/Lab2)<br>
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.<br>
 Усі права на навчальні матеріали належать викладачу.

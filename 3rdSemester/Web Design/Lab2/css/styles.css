@@ -1,0 +1,286 @@
+@import url(fonts.css);
+
+* {
+    margin: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+header, .form-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    background-color: black;
+    box-shadow: 0px 0px 1em black;
+    height: 100px;
+
+    color: white;
+}
+
+header h1 {
+    font-size: 64px;
+}
+
+h1, .form-nav a {
+    font-family: 'OldLondon', sans-serif;
+}
+
+.form-nav {
+    position: sticky;
+    top: 0%;
+}
+
+.form-nav a {
+    color: white;
+    font-size: 40px;
+    text-decoration: none;
+}
+
+.form-nav a:hover {
+    color: rgb(150, 150, 150);
+    transition: all 0.4s ease;
+}
+
+.general-info {
+    display: flex;
+    margin: 15px 0px;
+}
+
+.general-info-text {
+    /*background-color: aqua;*/
+
+    font-weight: bold;
+    font-size: 20px;
+    
+    padding: 20px;
+    width: 55%;
+}
+
+.general-info::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.general-info-img {
+    /*background-color: yellow;*/
+    flex-grow: 1;
+    position: relative;
+}
+
+.album-img {
+    width: 60%;
+    position: absolute;
+    border-radius: 20%;
+
+    box-shadow: 0px 0px 1em black;
+}
+
+#album1 {
+    z-index: 1;
+    top: 3%;
+    left: 13%;
+}
+
+#album2 {
+    z-index: 2;
+    top: 13%;
+    left: 23%;
+}
+
+#album3 {
+    z-index: 3;
+    top: 23%;
+    left: 33%;
+}
+
+.general-pic {
+    width: 220px;
+    margin: 10px 0px;
+
+    border-radius: 25%;
+}
+
+#pic1 {
+    float: left;
+    box-shadow: 0px 0px 1em black;
+
+    margin-right: 15px;
+}
+
+#pic2 {
+    margin-left: 15px;
+
+    float: right;
+    box-shadow: 4px 3px 1em black;
+}
+
+#pic3 {
+    margin: 0;
+    transform: rotate(-15deg);
+    box-shadow: -12px 12px 1em black;
+}
+
+#pic4 {
+    height: 250px;
+    margin-left: 180px;
+    
+}
+
+#pic5 {
+    float: right;
+    box-shadow: 0px 0px 1em black;
+    width: 300px;
+    margin-top: 2em;
+}
+
+.form-section {
+    background-image: url("../res/img/form-section-background.jpg");
+    background-size: cover;
+
+    min-height: 2000px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.form-block {
+    margin: 20px;
+}
+
+.form-section form {
+    background-color: white;
+    width: 60%;
+
+    box-shadow: 0px 0px 1em black;
+    border-radius: 20px;
+}
+
+#registration-form, #feedback-form {
+    display: flex;
+    justify-content: space-around;
+    
+    font-size: 24px;
+}
+
+#feedback-form input {
+    margin: 25px;
+}
+
+.registration-part {
+    margin: 50px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.registration-part img {
+    width: 100px;
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+
+button {
+    margin: auto 30px;
+    border-radius: 5px;
+    background-color: black;
+    color: white;
+    width: 100px;
+    height: 50px;
+}
+
+label, input {
+    display: block;
+    text-align: center;
+}
+
+.input-block {
+    border-radius: 5px;
+    height: 30px;
+    margin: 5px;
+    width: 300px;
+
+    font-weight: bold;
+    font-size: 0.75em;
+}
+
+input[type="radio"] {
+    margin: 5px auto;
+}
+
+input[type="checkbox"] {
+    display: inline-block;
+}
+
+#sign-in-form {
+    display: flex;
+    flex-direction: column;
+    
+    align-items: center;
+    font-size: 24px;
+
+    min-height: 300px;
+    padding: 25px;
+
+    box-sizing: border-box;
+    text-align: center;
+    font-weight: bold;
+}
+
+textarea {
+    border-radius: 5px;
+
+    font-weight: bold;
+    font-size: 0.75em;
+}
+
+footer {
+    display: flex;
+    vertical-align: middle;
+
+    background-color: black;
+    box-shadow: 0px 0px 1em black;
+    height: 100px;
+
+    color: white;
+    font-family: 'OldLondon', sans-serif;
+
+    width: 100%;
+
+    position: fixed;
+    bottom: 0%;
+}
+
+.hidden {
+    visibility: hidden;
+    height: 10%;
+}
+
+footer a {
+    text-decoration: none;
+}
+
+footer > h1 {
+    align-self: center;
+    margin-left: 10px;
+}
+
+#footer-links {
+   width: 50%;  
+}
+
+.footer-logo {
+    width: 75px;
+    margin: 10px;
+}
+
+#footer-copyright {
+    position: absolute;
+    align-self: center;
+    margin-left: 80%;
+}
