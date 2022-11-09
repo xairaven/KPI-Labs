@@ -1,0 +1,4 @@
+Label: Label1, Address: Address1, Number of workers: 10, Work time: 1-3
+Label: Label2, Address: Address2, Number of workers: 20, Work time: 2-6
+Label: Label3, Address: Address3, Number of workers: 30, Work time: 3-9
+Label: Label4, Address: Address4, Number of workers: 40, Work time: 4-12
