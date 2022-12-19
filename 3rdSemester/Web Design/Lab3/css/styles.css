@@ -1,0 +1,285 @@
+@import url(fonts.css);
+@import url(adaptive.css);
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: 'Ubuntu', sans-serif;
+
+    box-sizing: border-box;
+    background-color: #fff;
+    color: black;
+}
+
+a {
+    text-decoration: none;
+    color: rgb(150, 150, 150);
+}
+
+.container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+header {
+    margin: 40px 0;
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: black;
+    font-size: 50px;
+}
+
+header nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+}
+
+header a {
+    color: black;
+}
+
+.nav-links:hover {
+    color: #db7858;
+}
+
+
+/*first block*/
+.first-block {
+    margin: 10% 0;
+}
+
+.first-block .container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.first-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.subtitle {
+    font-size: 30px;
+}
+
+.title {
+    font-size: 90px;
+    margin-top: 20px;
+}
+
+.text-block {
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    row-gap: 40px;
+}
+
+.text-block .text {
+    font-size: 90%;
+}
+
+.read-more-btn {
+    display: inline;
+    width: 35%;
+    text-align: center;
+    padding: 15px 10px;
+    border: 1px solid #db7858;
+    color: #db7858;
+    font-size: 16px;
+    transition: all .3s linear;
+    background: #fff;
+}
+
+.read-more-btn:hover {
+    color: #fff;
+    background-color: #db7858;
+    cursor: pointer;
+}
+
+.first-photo img {
+    width: 100%;
+    height: auto;
+}
+
+/* second block */
+.second-block-text .title {
+    font-size: 50px;
+    font-weight: 400;
+}
+
+.second-block-text .text {
+    text-align: justify;
+}
+
+/*grid*/
+.picture-and-descriptions {
+    margin: 8% 0 8%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 20px;
+}
+
+.picture-wrap {
+    display: flex;
+    flex-direction: column;
+}
+.picture img {
+    width: 100%;
+    height: auto;
+    display: block;
+    width: 100%;
+}
+
+.description-title {
+    font-size: 1.4rem;
+    margin: 4% 0;
+}
+
+.description {
+    color: rgb(150, 150, 150);
+    margin: 2% 0 ;
+}
+
+.read-more-link {
+    color: #db7858;
+    text-decoration: underline;
+}
+
+/*galery grid*/
+.second-block-gallery {
+    display: grid;
+    grid-template-areas: 
+    'pic1 pic2 pic3'
+    'pic1 pic4 pic3'
+    ;
+    gap: 10px;
+}
+
+.gallery-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    position: relative;
+}
+
+.img-hover-content {
+    color: white;
+    position: absolute;
+    top:50%;
+    transform: translateY(-50%);
+    text-align: center;
+    width: 100%;
+    opacity: 0;
+    transition: all .3s linear;
+}
+
+.gallery-img:hover .img-hover-content {
+    opacity: 1;
+}
+
+.img-hover-content .title {
+    font-size: 35px;
+    font-weight: 500;
+}
+
+.buttonts-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 25px 50px;
+}
+
+:is(.learn-more, .purchase) {
+    border: 1px solid white;
+    padding: 10px 20px;
+    transition: all .2s linear;
+}
+
+:is(.learn-more, .purchase):hover {
+    background: white;
+    color: #333;
+    cursor: pointer;
+}
+
+.pic1 {
+    grid-area: pic1;
+}
+
+.pic2 {
+    grid-area: pic2;
+}
+
+.pic3 {
+    grid-area: pic3;
+}
+
+.pic4 {
+    grid-area: pic4;
+}
+
+:is(.pic1, .pic3) img {
+    width: 100%;
+    height: 100%;
+    transition: all .2s linear;
+}
+
+:is(.pic2, .pic4) img {
+    width: 100%;
+    height: 100%;
+    transition: all .2s linear;
+}
+
+:is(.pic1, .pic2, .pic3, .pic4):hover img {
+    opacity: .4;
+}
+
+/*fourth block*/
+.fourth-block {
+    padding: 5% 0;
+}
+
+.items-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.item-title {
+    font-size: 20px;
+    margin: 20px 0;
+}
+
+.item-elem {
+    color: rgb(150, 150, 150);
+    margin: 15px 0;
+}
+
+/*footer*/
+.footer .container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0;
+}
+
+.footer-text {
+    color: rgb(150, 150, 150);
+
+}
+
+.footer-icons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.footer-icon {
+    margin: 0 10px;
+}
