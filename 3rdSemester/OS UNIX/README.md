@@ -1,5 +1,6 @@
 ## Операційна система UNIX
 
+[![Bash](https://img.shields.io/badge/Bash-374B42?style=for-the-badge&logo=gnubash&logoColor=white)](#)
 [![C](https://img.shields.io/badge/C-7B8794?style=for-the-badge&logo=c&logoColor=white)](#)
 
 - Завдання: в папках робіт
@@ -14,6 +15,7 @@
  4. [Робота з файловою системою ОС Linux](./Lab4/)<br>
  5. [Створення сценаріїв в оболонці Bash](./Lab5/)<br>
  6. [Робота з процесами ОС Linux](./Lab6/)<br>
+ 7. [Потоки, перенаправлення потоків](./Lab7/)<br>
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.<br>
 Усі права на навчальні матеріали належать викладачу.
