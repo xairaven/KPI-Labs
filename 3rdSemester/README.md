@@ -4,7 +4,7 @@
 [![CSS](https://img.shields.io/badge/CSS-254ADD?style=for-the-badge&logo=css3&logoColor=white)](#)
 [![JS](https://img.shields.io/badge/JS-EFD81D?style=for-the-badge&logo=Javascript&logoColor=white)](#)
 [![C](https://img.shields.io/badge/C-7B8794?style=for-the-badge&logo=c&logoColor=white)](#)
-[![C++](https://img.shields.io/badge/C++-005494?style=for-the-badge&logo=cplusplus&logoColor=white)](#)
+[![Bash](https://img.shields.io/badge/Bash-374B42?style=for-the-badge&logo=gnubash&logoColor=white)](#)
 [![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=csharp&logoColor=white)](#)
 
 1. Веб-дизайн та веб-технології (HTML, CSS, JS)
