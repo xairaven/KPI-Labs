@@ -6,12 +6,13 @@
 [![C](https://img.shields.io/badge/C-7B8794?style=for-the-badge&logo=c&logoColor=white)](#)
 [![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=csharp&logoColor=white)](#)
 [![Bash](https://img.shields.io/badge/Bash-374B42?style=for-the-badge&logo=gnubash&logoColor=white)](#)
+[![Docker](https://img.shields.io/badge/Docker-082135?style=for-the-badge&logo=docker&logoColor=2496EE)](#)
 
 1. Веб-дизайн та веб-технології (HTML, CSS, JS)
 2. Об'єктно-орієнтовне програмування (С#)
 3. Операційна система UNIX (Bash, C, Docker)
 4. Проектування та аналіз обчислювальних алгоритмів (Java)
-5. Чисельні методи (Python)
+5. Чисельні методи (C#)
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.
 
@@ -20,6 +21,6 @@
 ----------------------- | -----------------------
 HTML, CSS, JS | [Веб-дизайн та веб-технології](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Web%20Design)
 С# | [ООП](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OOP)
-Bash, C | [ОС UNIX](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OS%20UNIX)
+Bash, C, Docker | [ОС UNIX](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OS%20UNIX)
 Java | [Проектування та аналіз обчислювальних алгоритмів](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/DACA)
 C# | [Чисельні методи](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Numerical%20Analysis)
