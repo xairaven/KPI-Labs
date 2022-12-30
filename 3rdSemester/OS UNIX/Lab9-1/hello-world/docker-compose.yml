@@ -1,0 +1,3 @@
+services:
+  my-test:
+    image: hello-world
