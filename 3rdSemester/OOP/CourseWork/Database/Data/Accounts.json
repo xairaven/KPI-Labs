@@ -1,0 +1,16 @@
+[
+  {
+    "$type": "Basic",
+    "ID": "2de04c9d-db49-45ff-81a4-8bdfef5f55ee",
+    "Type": 0,
+    "Login": "xairaven",
+    "Password": "D8578EDF8458CE06FBC5BB76A58C5CA4"
+  },
+  {
+    "$type": "Cashback",
+    "ID": "df45d0f6-6239-49ef-a47c-83e65abc805d",
+    "Type": 2,
+    "Login": "alex",
+    "Password": "6EEA9B7EF19179A06954EDD0F6C05CEB"
+  }
+]

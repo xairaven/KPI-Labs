@@ -1,0 +1,38 @@
+[
+  {
+    "ID": "35a65265-4b14-4905-82fa-041db77d1d04",
+    "Name": "Red delicious Apples",
+    "Type": 0,
+    "Price": 2.5
+  },
+  {
+    "ID": "c1561246-80bc-4e9d-8358-0d672b2f9df3",
+    "Name": "Granny Smith Apples",
+    "Type": 0,
+    "Price": 2.5
+  },
+  {
+    "ID": "5256b779-bac2-4554-b102-5e91051b16a3",
+    "Name": "Conference pears",
+    "Type": 0,
+    "Price": 2.5
+  },
+  {
+    "ID": "814b2e3f-68f5-49bd-b1a8-72f86bec8c52",
+    "Name": "Mangoes (Ready to eat)",
+    "Type": 0,
+    "Price": 1.5
+  },
+  {
+    "ID": "dc7bbd53-8d39-4757-b3da-73029f3537ab",
+    "Name": "Asparagus",
+    "Type": 1,
+    "Price": 2.8
+  },
+  {
+    "ID": "f6f2d8b7-7238-495c-84f0-df17d285c1fd",
+    "Name": "Shropshire wilja potatoes",
+    "Type": 1,
+    "Price": 6
+  }
+]

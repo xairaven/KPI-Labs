@@ -1,0 +1,112 @@
+[
+  {
+    "$type": "Deposit",
+    "Commission": 0.1,
+    "Id": "8133a56f-fed4-4546-8992-09f8514b98df",
+    "AccountId": "2de04c9d-db49-45ff-81a4-8bdfef5f55ee",
+    "Amount": 9.0,
+    "Time": "2023-01-13T04:43:30.6673725+02:00",
+    "Type": 0
+  },
+  {
+    "$type": "Deposit",
+    "Commission": 0.1,
+    "Id": "55e12924-c866-4dbd-8033-26c0dad3469b",
+    "AccountId": "2de04c9d-db49-45ff-81a4-8bdfef5f55ee",
+    "Amount": 9.0,
+    "Time": "2023-01-13T05:01:00.7541427+02:00",
+    "Type": 0
+  },
+  {
+    "$type": "Purchase",
+    "Products": [
+      {
+        "ID": "35a65265-4b14-4905-82fa-041db77d1d04",
+        "Name": "Red delicious Apples",
+        "Type": 0,
+        "Price": 2.5
+      },
+      {
+        "ID": "5256b779-bac2-4554-b102-5e91051b16a3",
+        "Name": "Conference pears",
+        "Type": 0,
+        "Price": 2.5
+      },
+      {
+        "ID": "dc7bbd53-8d39-4757-b3da-73029f3537ab",
+        "Name": "Asparagus",
+        "Type": 1,
+        "Price": 2.8
+      },
+      {
+        "ID": "f6f2d8b7-7238-495c-84f0-df17d285c1fd",
+        "Name": "Shropshire wilja potatoes",
+        "Type": 1,
+        "Price": 6
+      },
+      {
+        "ID": "c1561246-80bc-4e9d-8358-0d672b2f9df3",
+        "Name": "Granny Smith Apples",
+        "Type": 0,
+        "Price": 2.5
+      }
+    ],
+    "Id": "f33ba875-62eb-43ec-845c-6ba37d7619eb",
+    "AccountId": "2de04c9d-db49-45ff-81a4-8bdfef5f55ee",
+    "Amount": -16.3,
+    "Time": "2023-01-13T05:01:05.3911645+02:00",
+    "Type": 1
+  },
+  {
+    "$type": "Deposit",
+    "Commission": 0.1,
+    "Id": "87bdca86-c2aa-49a9-a18f-e6be56e317ac",
+    "AccountId": "df45d0f6-6239-49ef-a47c-83e65abc805d",
+    "Amount": 9.0,
+    "Time": "2023-01-13T05:03:44.7065468+02:00",
+    "Type": 0
+  },
+  {
+    "$type": "Purchase",
+    "Products": [
+      {
+        "ID": "35a65265-4b14-4905-82fa-041db77d1d04",
+        "Name": "Red delicious Apples",
+        "Type": 0,
+        "Price": 2.5
+      },
+      {
+        "ID": "c1561246-80bc-4e9d-8358-0d672b2f9df3",
+        "Name": "Granny Smith Apples",
+        "Type": 0,
+        "Price": 2.5
+      },
+      {
+        "ID": "5256b779-bac2-4554-b102-5e91051b16a3",
+        "Name": "Conference pears",
+        "Type": 0,
+        "Price": 2.5
+      },
+      {
+        "ID": "814b2e3f-68f5-49bd-b1a8-72f86bec8c52",
+        "Name": "Mangoes (Ready to eat)",
+        "Type": 0,
+        "Price": 1.5
+      }
+    ],
+    "Id": "2d16023c-1bf9-4149-a767-f889dc100abc",
+    "AccountId": "df45d0f6-6239-49ef-a47c-83e65abc805d",
+    "Amount": -9.0,
+    "Time": "2023-01-13T05:03:58.9178737+02:00",
+    "Type": 1
+  },
+  {
+    "$type": "Cashback",
+    "Percent": 0.1,
+    "Id": "f1d309f5-9b25-482e-b073-1d868448da7c",
+    "AccountId": "df45d0f6-6239-49ef-a47c-83e65abc805d",
+    "Amount": 8.10,
+    "Time": "2023-01-13T05:03:58.9190251+02:00",
+    "Type": 2
+  }
+]
