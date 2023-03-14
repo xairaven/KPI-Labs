@@ -13,6 +13,7 @@
 [![CSS](https://img.shields.io/badge/CSS-254ADD?style=for-the-badge&logo=css3&logoColor=white)](#)
 [![JS](https://img.shields.io/badge/JS-EFD81D?style=for-the-badge&logo=Javascript&logoColor=white)](#)
 [![C](https://img.shields.io/badge/C-7B8794?style=for-the-badge&logo=c&logoColor=white)](#)
+[![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
 [![Bash](https://img.shields.io/badge/Bash-374B42?style=for-the-badge&logo=gnubash&logoColor=white)](#)
 [![Docker](https://img.shields.io/badge/Docker-082135?style=for-the-badge&logo=docker&logoColor=2496EE)](#)
 [![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=FFF)](#)
@@ -35,4 +36,4 @@ III | Java | [Проектування та аналіз обчислюваль�
 III | C# | [Чисельні методи](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Numerical%20Analysis)
 IV | SQL | [Системи баз даних](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Database%20Systems)
 IV | C# | [Безпека інформаційних систем](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Information%20Security)
-IV | ArcGIS | [Геоінформаційні системи](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Geoinformation%20Systems)
+IV | Python (ArcGIS) | [Геоінформаційні системи](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Geoinformation%20Systems)
