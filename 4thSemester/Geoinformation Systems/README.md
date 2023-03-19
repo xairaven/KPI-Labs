@@ -10,6 +10,7 @@
 
 ### Лабораторні роботи
  1. [Робота з вікнами та шарами карти](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Geoinformation%20Systems/Lab1)<br>
+ 2. [Створення і редагування векторних карт, побудова топологічного опису полігонів та поверхонь](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Geoinformation%20Systems/Lab2)<br>
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.<br>
 Усі права на навчальні матеріали належать викладачу.
