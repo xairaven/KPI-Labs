@@ -1,9 +1,16 @@
 # Programming Labs
+
+[![Repo size](https://img.shields.io/github/repo-size/xairaven/KPI-Labs?style=flat-square)](#)
+[![Languages count](https://img.shields.io/github/languages/count/xairaven/KPI-Labs?style=flat-square)](#)
+[![Lines of code](https://img.shields.io/tokei/lines/github/xairaven/KPI-Labs?style=flat-square)](#)
+[![Issues](https://img.shields.io/github/issues/xairaven/KPI-Labs?style=flat-square)](#)
+
 **Лабораторні роботи з дисциплін, присвячених програмуванню.**<br>
 **Спеціальність**: 122 (Комп'ютерні науки).<br>
 **Освітня програма**: Цифрові технології в енергетиці.<br>
 **Університет**: НТУУ "КПІ ім. Ігоря Сікорського".<br>
 **Інститут**: ІАТЕ<br>
+
 Наявні роботи за 1 курс (2021-2022) та в процесі за 2 курс (2022-2023).<br>
 
 [![Java](https://img.shields.io/badge/Java-E87000?style=for-the-badge&logo=coffeescript&logoColor=white)](#)
