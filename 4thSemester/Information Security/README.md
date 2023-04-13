@@ -11,6 +11,7 @@
  1. [Шифр Цезаря](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Information%20Security/Lab1)<br>
  2. [Шифр Тритеміуса](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Information%20Security/Lab2)<br>
  3. [Шифр гамування](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Information%20Security/Lab3)<br>
+ 4. [Книжковий шифр](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Information%20Security/Lab4)<br>
 
 Всі лабораторні роботи реалізовані у вигляді **одного програмного додатку.**<br>
 В даній директорії проект є **submodule**.<br>
