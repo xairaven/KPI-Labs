@@ -8,8 +8,9 @@
 - Оцінка: -
 
 ### Лабораторні роботи
- 1. [Робота в середовищі MySQL](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Database%20Systems/Lab1)<br>
+ 1. [Робота в середовищі MySQL.](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Database%20Systems/Lab1)<br>
  2. [Створення БД. Аналіз функцій та побудова діаграми прецедентів у середовищі Visual Paradigm.](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Database%20Systems/Lab2)<br>
+ 3. [Вибірка даних зі створених відношень.](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Database%20Systems/Lab3)<br> 
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.<br>
 Усі права на навчальні матеріали належать викладачу.
