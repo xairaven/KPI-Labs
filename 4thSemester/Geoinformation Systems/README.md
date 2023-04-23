@@ -13,6 +13,7 @@
  2. [Створення і редагування векторних карт, побудова топологічного опису полігонів та поверхонь](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Geoinformation%20Systems/Lab2)<br>
  3. [Побудова та використання тематичних карт](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Geoinformation%20Systems/Lab3)<br>
  4. [Географічний аналіз за допомогою ArcGis ArcToolBox. Побудова моделей в ModelBuilder](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Geoinformation%20Systems/Lab4)<br>
+ 5. [Компонування та друк карт](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Geoinformation%20Systems/Lab5)<br>
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.<br>
 Усі права на навчальні матеріали належать викладачу.
