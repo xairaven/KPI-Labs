@@ -14,6 +14,7 @@
  4. [Книжковий шифр](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Information%20Security/Lab4)<br>
  5. [Шифр DES](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Information%20Security/Lab5)<br>
  6. [Шифрування з відкритим ключем на основі задачі рюкзака](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Information%20Security/Lab6)<br>
+ 7. [Шифрування з відкритим ключем на основі алгоритму RSA](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Information%20Security/Lab7)<br>
 
 Всі лабораторні роботи реалізовані у вигляді **одного програмного додатку.**<br>
 В даній директорії проект є **submodule**.<br>
