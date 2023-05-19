@@ -12,7 +12,8 @@
  2. [Створення БД. Аналіз функцій та побудова діаграми прецедентів у середовищі Visual Paradigm.](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Database%20Systems/Lab2)<br>
  3. [Вибірка даних зі створених відношень.](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Database%20Systems/Lab3)<br>
  4. [Вибірка даних з використанням операторів GROUP BY та HAVING.](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Database%20Systems/Lab4)<br>
- 5. [Використання виразу CASE у вибірках даних. Оператор UNION.](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Database%20Systems/Lab5)<br>  
+ 5. [Використання виразу CASE у вибірках даних. Оператор UNION.](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Database%20Systems/Lab5)<br>
+ 6. [Основи реляційної алгебри. Нормалізація даних.](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Database%20Systems/Lab6)<br>   
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.<br>
 Усі права на навчальні матеріали належать викладачу.
