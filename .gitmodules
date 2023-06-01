@@ -1,6 +1,9 @@
-[submodule "4thSemester/Information Security/Crypto-system"]
-	path = 4thSemester/Information Security/Crypto-system
-	url = https://github.com/xairaven/Crypto-system
 [submodule "3rdSemester/Numerical Analysis/KPI-Awarding"]
 	path = 3rdSemester/Numerical Analysis/KPI-Awarding
 	url = https://github.com/xairaven/KPI-Awarding
+[submodule "4thSemester/Information Security/Crypto-system"]
+	path = 4thSemester/Information Security/Crypto-system
+	url = https://github.com/xairaven/Crypto-system
+[submodule "4thSemester/Statistics/StatisticsCW"]
+	path = 4thSemester/Statistics/StatisticsCW
+	url = https://github.com/xairaven/StatisticsCW

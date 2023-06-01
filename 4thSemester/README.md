@@ -17,3 +17,4 @@
 SQL | [Системи баз даних](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Database%20Systems)
 C# | [Безпека інформаційних систем](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Information%20Security)
 Python (ArcGIS) | [Геоінформаційні системи](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Geoinformation%20Systems)
+C# | [Теорія ймовірностей, ймовірносні процеси та математична статистика](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Statistics)

@@ -45,3 +45,4 @@ III | C# | [Чисельні методи](https://github.com/xairaven/kpi_labs/
 IV | SQL | [Системи баз даних](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Database%20Systems)
 IV | C# | [Безпека інформаційних систем](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Information%20Security)
 IV | Python (ArcGIS) | [Геоінформаційні системи](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Geoinformation%20Systems)
+IV | C# | [Теорія ймовірностей, ймовірносні процеси та математична статистика](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Statistics)
