@@ -5,13 +5,13 @@
 [![Lines of code](https://img.shields.io/tokei/lines/github/xairaven/KPI-Labs?style=flat-square)](#)
 [![Issues](https://img.shields.io/github/issues/xairaven/KPI-Labs?style=flat-square)](#)
 
-**Лабораторні роботи з дисциплін, присвячених програмуванню.**<br>
-**Спеціальність**: 122 (Комп'ютерні науки).<br>
-**Освітня програма**: Цифрові технології в енергетиці.<br>
-**Університет**: НТУУ "КПІ ім. Ігоря Сікорського".<br>
-**Інститут**: ІАТЕ<br>
+**Лабораторні роботи з дисциплін, присвячених програмуванню.** <br>
+**Спеціальність**: 122 (Комп'ютерні науки). <br>
+**Освітня програма**: Цифрові технології в енергетиці. <br>
+**Університет**: НТУУ "КПІ ім. Ігоря Сікорського". <br>
+**Інститут**: ІАТЕ <br>
 
-Наявні роботи за 1 курс (2021-2022) та в процесі за 2 курс (2022-2023).<br>
+Наявні роботи за 1 та 2 курс (2021-2023).<br>
 
 [![Java](https://img.shields.io/badge/Java-E87000?style=for-the-badge&logo=coffeescript&logoColor=white)](#)
 [![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=csharp&logoColor=white)](#)
@@ -19,12 +19,10 @@
 [![HTML](https://img.shields.io/badge/HTML-DD4A25?style=for-the-badge&logo=html5&logoColor=white)](#)
 [![CSS](https://img.shields.io/badge/CSS-254ADD?style=for-the-badge&logo=css3&logoColor=white)](#)
 [![JS](https://img.shields.io/badge/JS-EFD81D?style=for-the-badge&logo=Javascript&logoColor=white)](#)
-[![C](https://img.shields.io/badge/C-7B8794?style=for-the-badge&logo=c&logoColor=white)](#)
+[![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
 [![Bash](https://img.shields.io/badge/Bash-374B42?style=for-the-badge&logo=gnubash&logoColor=white)](#)
 [![Docker](https://img.shields.io/badge/Docker-082135?style=for-the-badge&logo=docker&logoColor=2496EE)](#)
 [![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=FFF)](#)
-
-[//]: [![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.
 
