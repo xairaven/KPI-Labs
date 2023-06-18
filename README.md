@@ -2,7 +2,6 @@
 
 [![Repo size](https://img.shields.io/github/repo-size/xairaven/KPI-Labs?style=flat-square)](#)
 [![Languages count](https://img.shields.io/github/languages/count/xairaven/KPI-Labs?style=flat-square)](#)
-[![Lines of code](https://img.shields.io/tokei/lines/github/xairaven/KPI-Labs?style=flat-square)](#)
 [![Issues](https://img.shields.io/github/issues/xairaven/KPI-Labs?style=flat-square)](#)
 
 **Лабораторні роботи з дисциплін, присвячених програмуванню.** <br>
