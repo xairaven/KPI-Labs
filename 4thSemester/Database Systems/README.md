@@ -5,7 +5,7 @@
 - Завдання: в папках робіт
 - Викладачі: Сегеда І. В., Беспала О. М.
 - Варіант: 22 
-- Оцінка: -
+- Оцінка: 100
 
 ### Лабораторні роботи
  1. [Робота в середовищі MySQL.](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Database%20Systems/Lab1)<br>
