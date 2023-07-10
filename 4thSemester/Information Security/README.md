@@ -5,7 +5,7 @@
 - Завдання: в папках робіт
 - Викладачі: Тарнавський Ю. А.
 - Варіант: 22 
-- Оцінка: -
+- Оцінка: 100
 
 ### Лабораторні роботи
  1. [Шифр Цезаря](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Information%20Security/Lab1)<br>
