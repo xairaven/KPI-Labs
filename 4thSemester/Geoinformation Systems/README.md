@@ -6,7 +6,7 @@
 - Завдання: в папках робіт
 - Викладачі: Гурін А. Л.
 - Варіант: 22 
-- Оцінка: -
+- Оцінка: 100
 
 ### Лабораторні роботи
  1. [Робота з вікнами та шарами карти](https://github.com/xairaven/KPI-Labs/tree/main/4thSemester/Geoinformation%20Systems/Lab1)<br>
