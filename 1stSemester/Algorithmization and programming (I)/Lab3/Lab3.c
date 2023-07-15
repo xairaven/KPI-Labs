@@ -63,4 +63,3 @@ int factorial_M (int n) {
   }
   return result;
 }
- 
