@@ -66,4 +66,3 @@ void textPrint(int* arr1, int SIZE1, int* arr2, int SIZE2) {
     printf("%d\t", arr2[i]);
   }
 }
- 
