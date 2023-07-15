@@ -159,4 +159,3 @@ void printFloatMatrix(float** matrix, int SIZE) {
         printf("\n");
     }
 }
-
