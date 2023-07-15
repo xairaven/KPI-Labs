@@ -3,7 +3,7 @@
 #include <time.h>
 
 void printMatrix(int* arr, int SIZE);
-void algorythm_M(int* arr, int SIZE);
+void algorithm_M(int* arr, int SIZE);
 
 int main(void) {
   const int SIZE_ARR = 9;
@@ -16,7 +16,7 @@ int main(void) {
   }
   printf("Start array:\n\n");
   printMatrix(*arr, SIZE_ARR);
-  algorythm_M(*arr, SIZE_ARR);
+  algorithm_M(*arr, SIZE_ARR);
   printf("\n\nModified array:\n\n");
   printMatrix(*arr, SIZE_ARR);
 
@@ -32,7 +32,7 @@ void printMatrix(int* arr, int SIZE) {
   }
 }
 
-void algorythm_M(int* arr, int SIZE) {
+void algorithm_M(int* arr, int SIZE) {
   int temp = 0;
   for (int i = 0; i < SIZE/2 + 1; i++) {
     for (int j = 0; j < SIZE; j++) {
@@ -45,7 +45,7 @@ void algorythm_M(int* arr, int SIZE) {
   }
 }
 
-/* Algorythm without pointers
+/* Algorithm without pointers
 int temp = 0;
   for (int i = 0; i < SIZE_ARR/2 + 1; i++) {
     for (int j = 0; j < SIZE_ARR; j++) {
