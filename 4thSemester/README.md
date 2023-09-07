@@ -13,9 +13,9 @@
 Використовуйте розміщені матеріали **виключно** для самоперевірки.
 
 
-Мова програмування або інструмент   | Дисципліна
------------------------ | -----------------------
-SQL | [Системи баз даних](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Database%20Systems)
-C# | [Безпека інформаційних систем](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Information%20Security)
-Python (ArcGIS) | [Геоінформаційні системи](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Geoinformation%20Systems)
-C# | [Теорія ймовірностей, ймовірносні процеси та математична статистика](https://github.com/xairaven/kpi_labs/tree/main/4thSemester/Statistics)
+Технічний стек | Дисципліна
+-------------- | -----------------------
+SQL | [Системи баз даних](./Database%20Systems/)
+C#, WPF | [Безпека інформаційних систем](./Information%20Security/)
+ArcGIS, Python | [Геоінформаційні системи](./Geoinformation%20Systems/)
+C#, WPF | [Теорія ймовірностей, ймовірносні процеси та математична статистика](./Statistics/)
