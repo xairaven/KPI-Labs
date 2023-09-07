@@ -27,8 +27,8 @@
 
 ## Дисципліни, які увійшли в цей репозиторій:
 
-Семестр | Мова програмування | Дисципліна               
-------- | ----------------------- | -----------------------
+Семестр | Технічний стек | Дисципліна               
+------- | -------------- | -----------------------
 I | C | [Алгоритмізація та програмування I](./1stSemester/Algorithmization%20and%20programming%20(I)/)
 I | Java | [Програмування алгоритмічних структур](./1stSemester/Programming%20algorithmic%20structures/)
 II | Java | [Алгоритмізація та програмування II](./2ndSemester/Algorithmization%20and%20programming%20(II)/)
@@ -40,9 +40,9 @@ III | Bash, C, Docker | [ОС UNIX](./3rdSemester/OS%20UNIX/)
 III | Java | [Проектування та аналіз обчислювальних алгоритмів](./3rdSemester/DACA/)
 III | C# | [Чисельні методи](./3rdSemester/Numerical%20Analysis/)
 IV | SQL | [Системи баз даних](./4thSemester/Database%20Systems/)
-IV | C# | [Безпека інформаційних систем](./4thSemester/Information%20Security/)
-IV | Python (ArcGIS) | [Геоінформаційні системи](./4thSemester/Geoinformation%20Systems/)
-IV | C# | [Теорія ймовірностей, ймовірносні процеси та математична статистика](./4thSemester/Statistics/)
+IV | C#, WPF | [Безпека інформаційних систем](./4thSemester/Information%20Security/)
+IV | ArcGIS, Python | [Геоінформаційні системи](./4thSemester/Geoinformation%20Systems/)
+IV | C#, WPF | [Теорія ймовірностей, ймовірносні процеси та математична статистика](./4thSemester/Statistics/)
 V | SQL | [Проектування та використання баз даних](./5thSemester/Databases-Design/)
 V | ? | [Комп'ютерні мережі](./5thSemester/Computer-Networks/)
 V | Java | [Програмування на мові Java](./5thSemester/Java-Programming/)
