@@ -9,8 +9,8 @@
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.
 
-Дисципліна | Мова програмування
----------- | ----------------------
-Java | [Алгоритмізація та програмування II](https://github.com/xairaven/KPI-Labs/tree/main/2ndSemester/Algorithmization%20and%20programming%20(II))
-Assembler TASM | [Операційні системи](https://github.com/xairaven/kpi_labs/tree/main/2ndSemester/Operating%20Systems)
-Java | [Програмування складних алгоритмів](https://github.com/xairaven/kpi_labs/tree/main/2ndSemester/Programming%20complex%20algorithms)
+Технічний стек | Дисципліна
+-------------- | ----------
+Java | [Алгоритмізація та програмування II](./Algorithmization%20and%20programming%20(II)/)
+Assembler TASM | [Операційні системи](./Operating%20Systems/)
+Java | [Програмування складних алгоритмів](./Programming%20complex%20algorithms/)
