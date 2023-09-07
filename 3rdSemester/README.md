@@ -17,10 +17,10 @@
 Використовуйте розміщені матеріали **виключно** для самоперевірки.
 
 
-Мова програмування   | Дисципліна
------------------------ | -----------------------
-HTML, CSS, JS | [Веб-дизайн та веб-технології](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Web%20Design)
-С# | [ООП](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OOP)
-Bash, C, Docker | [ОС UNIX](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/OS%20UNIX)
-Java | [Проектування та аналіз обчислювальних алгоритмів](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/DACA)
-C# | [Чисельні методи](https://github.com/xairaven/kpi_labs/tree/main/3rdSemester/Numerical%20Analysis)
+Технічний стек | Дисципліна
+-------------- | ----------
+HTML, CSS, JS | [Веб-дизайн та веб-технології](./Web%20Design/)
+С# | [ООП](./OOP/)
+Bash, C, Docker | [ОС UNIX](./OS%20UNIX/)
+Java | [Проектування та аналіз обчислювальних алгоритмів](./DACA/)
+C# | [Чисельні методи](./Numerical%20Analysis/)
