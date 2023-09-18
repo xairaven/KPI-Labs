@@ -1,6 +1,7 @@
 # V семестр
 
 [![Java](https://img.shields.io/badge/Java-E87000?style=for-the-badge&logo=coffeescript&logoColor=white)](#)
+[![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
 
 1. Проектування та використання баз даних
 2. Комп'ютерні мережі
@@ -20,5 +21,5 @@ SQL | [Проектування та використання баз даних]
 Java | [Програмування на мові Java](./Java-Programming/)
 ? | [Комп'ютерне моделювання](./Computer-Modeling/)
 ? | [Технології розробки програмного забезпечення](./SW-Development-Technologies/)
-? | [DevOps](./DevOps/)
+Python | [DevOps](./DevOps/)
 ? | [Чисельні методи для розв’язання енергетичних задач](./Numerical-Analysis-2/)
