@@ -1,0 +1,20 @@
+{
+  "account": {
+    "api_id": "Some-API-ID",
+    "api_hash": "Some-API-Hash"
+  },
+  "chat": {
+    "id": "Some-Chat-ID"
+  },
+  "table-settings": {
+    "start-reading-from-row": 1
+  },
+  "rows": {
+    "phone": "E",
+    "tag": "F",
+
+    "surname": "B",
+    "name": "C",
+    "patronymic": "D"
+  }
+}

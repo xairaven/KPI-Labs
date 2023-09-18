@@ -1,14 +1,14 @@
 ## DevOps
 
-<!-- [![Alt Sample Text](shields.io badge)](#) -->
+[![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
 
 - **Завдання**: у відповідних каталогах
 - **Викладач**: Лабжинський В. А.
 - **Варіант**: 22 
 - **Оцінка**: -
 
-### Лабораторні роботи
-  1. [Sample Link](#)
+### Практичні роботи
+  1. [Імпорт контактів з Excel в Telegram чат](./TelegramImportTask/)
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки. <br>
 Усі права на навчальні матеріали належать викладачу.
