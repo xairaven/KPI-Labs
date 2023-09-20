@@ -1,6 +1,6 @@
 ## Комп'ютерні мережі
 
-<!-- [![Alt Sample Text](shields.io badge)](#) -->
+[![Cisco](https://img.shields.io/badge/Cisco-162F53?style=for-the-badge&logo=cisco&logoColor=white)](#)
 
 - **Завдання**: у відповідних каталогах
 - **Викладач**: Отрох С. І.

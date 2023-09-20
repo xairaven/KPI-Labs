@@ -44,7 +44,7 @@ IV | C#, WPF | [Безпека інформаційних систем](./4thSem
 IV | ArcGIS, Python | [Геоінформаційні системи](./4thSemester/Geoinformation%20Systems/)
 IV | C#, WPF | [Теорія ймовірностей, ймовірносні процеси та математична статистика](./4thSemester/Statistics/)
 V | SQL | [Проектування та використання баз даних](./5thSemester/Databases-Design/)
-V | ? | [Комп'ютерні мережі](./5thSemester/Computer-Networks/)
+V | Cisco Packet Tracer | [Комп'ютерні мережі](./5thSemester/Computer-Networks/)
 V | Java | [Програмування на мові Java](./5thSemester/Java-Programming/)
 V | ? | [Комп'ютерне моделювання](./5thSemester/Computer-Modeling/)
 V | ? | [Технології розробки програмного забезпечення](./5thSemester/SW-Development-Technologies/)
