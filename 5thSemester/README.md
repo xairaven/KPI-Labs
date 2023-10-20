@@ -5,6 +5,7 @@
 [![Cisco](https://img.shields.io/badge/Cisco-162F53?style=for-the-badge&logo=cisco&logoColor=white)](#)
 [![draw.io](https://img.shields.io/badge/draw.io-333333?style=for-the-badge&logo=diagramsdotnet&logoColor=%f05033)](#)
 [![Bash](https://img.shields.io/badge/Bash-374B42?style=for-the-badge&logo=gnubash&logoColor=white)](#)
+[![Excel](https://img.shields.io/badge/Excel-217346?style=for-the-badge&logo=microsoftexcel&logoColor=white)](#)
 
 1. Проектування та використання баз даних
 2. Комп'ютерні мережі
@@ -22,7 +23,7 @@
 T-SQL | [Проектування та використання баз даних](./Databases-Design/)
 Cisco Packet Tracer | [Комп'ютерні мережі](./Computer-Networks/)
 Java | [Програмування на мові Java](./Java-Programming/)
-? | [Комп'ютерне моделювання](./Computer-Modeling/)
+Python, Excel | [Комп'ютерне моделювання](./Computer-Modeling/)
 UML | [Технології розробки програмного забезпечення](./SW-Development-Technologies/)
 Bash, Python | [DevOps](./DevOps/)
 ? | [Чисельні методи для розв’язання енергетичних задач](./Numerical-Analysis-2/)

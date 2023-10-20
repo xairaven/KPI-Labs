@@ -46,7 +46,7 @@ IV | C#, WPF | [Теорія ймовірностей, ймовірносні п
 V | T-SQL | [Проектування та використання баз даних](./5thSemester/Databases-Design/)
 V | Cisco Packet Tracer | [Комп'ютерні мережі](./5thSemester/Computer-Networks/)
 V | Java | [Програмування на мові Java](./5thSemester/Java-Programming/)
-V | ? | [Комп'ютерне моделювання](./5thSemester/Computer-Modeling/)
+V | Python, Excel | [Комп'ютерне моделювання](./5thSemester/Computer-Modeling/)
 V | UML | [Технології розробки програмного забезпечення](./5thSemester/SW-Development-Technologies/)
 V | Bash, Python | [DevOps](./5thSemester/DevOps/)
 V | ? | [Чисельні методи для розв’язання енергетичних задач](./5thSemester/Numerical-Analysis-2/)
