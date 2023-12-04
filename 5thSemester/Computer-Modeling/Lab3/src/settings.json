@@ -1,0 +1,16 @@
+{
+  "ODE Variables": {
+    "G": 3,
+    "K": 6
+  },
+  "System": {
+    "Start Values": [0, 0],
+    "T Range": [0, 1]
+  },
+  "Solving Parameters": {
+    "Accuracy": 0.1
+  },
+  "Printing Parameters": {
+    "Shortened": true
+  }
+}
