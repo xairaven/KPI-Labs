@@ -1,6 +1,7 @@
 ## Технології розробки програмного забезпечення
 
 [![draw.io](https://img.shields.io/badge/draw.io-333333?style=for-the-badge&logo=diagramsdotnet&logoColor=%f05033)](#)
+[![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=csharp&logoColor=white)](#)
 
 - **Завдання**: у відповідних каталогах
 - **Викладач**: Тихоход В. О.
