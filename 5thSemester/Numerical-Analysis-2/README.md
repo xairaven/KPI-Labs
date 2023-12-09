@@ -1,9 +1,9 @@
 ## Чисельні методи для розв’язання енергетичних задач
 
-<!-- [![Alt Sample Text](shields.io badge)](#) -->
+[![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
 
 - **Завдання**: у відповідних каталогах
-- **Викладач**: Залевська О. В.
+- **Викладач**: Жихарєва Ю. І.
 - **Варіант**: 22 
 - **Оцінка**: -
 

@@ -49,4 +49,4 @@ V | Java | [Програмування на мові Java](./5thSemester/Java-Pr
 V | Python, Excel | [Комп'ютерне моделювання](./5thSemester/Computer-Modeling/)
 V | UML, C# | [Технології розробки програмного забезпечення](./5thSemester/SW-Development-Technologies/)
 V | Bash, Python | [DevOps](./5thSemester/DevOps/)
-V | ? | [Чисельні методи для розв’язання енергетичних задач](./5thSemester/Numerical-Analysis-2/)
+V | Python, Mathcad | [Чисельні методи для розв’язання енергетичних задач](./5thSemester/Numerical-Analysis-2/)
