@@ -1,0 +1,12 @@
+{
+  "ODE Variables": {
+    "G": 3,
+    "K": 6
+  },
+  "System": {
+    "T Range": [0, 1]
+  },
+  "Experiments": {
+    "T": 1
+  }
+}

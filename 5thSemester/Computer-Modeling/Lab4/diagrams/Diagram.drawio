@@ -1,0 +1,73 @@
+<mxfile host="Electron" modified="2023-12-18T07:00:28.480Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.4 Safari/537.36" etag="Hkr-eSHXE1QwhxakeTFx" version="22.1.2" type="device">
+  <diagram name="Page-1" id="RcMD9tWbqHwkunbfTU5k">
+    <mxGraphModel dx="1036" dy="614" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" target="DddRMCFqFWDWjyN7hjWm-4" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="195" y="60" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-2" value="" style="ellipse;fillColor=strokeColor;html=1;strokeColor=default;" parent="1" vertex="1">
+          <mxGeometry x="180" y="30" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="DddRMCFqFWDWjyN7hjWm-4" target="DddRMCFqFWDWjyN7hjWm-6" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="195" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-4" value="Генерація початкових параметрів на основі СЛАР" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="66.25" y="80" width="257.5" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" target="DddRMCFqFWDWjyN7hjWm-8" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="195" y="250" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-6" value="Обрахунок значень моделі з параметрами за допомогою градієнтного методу" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="15" y="220" width="360" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" source="DddRMCFqFWDWjyN7hjWm-8" target="DddRMCFqFWDWjyN7hjWm-9" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" source="DddRMCFqFWDWjyN7hjWm-8" target="DddRMCFqFWDWjyN7hjWm-14" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-8" value="Критерій похибки задовільняє умови?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="340" width="290" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="DddRMCFqFWDWjyN7hjWm-9" target="DddRMCFqFWDWjyN7hjWm-12" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-9" value="Виведення оптимізованих значень параметрів моделі" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="75" y="470" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-12" value="" style="ellipse;html=1;shape=endState;fillColor=strokeColor;" parent="1" vertex="1">
+          <mxGeometry x="180" y="565" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="DddRMCFqFWDWjyN7hjWm-14" target="DddRMCFqFWDWjyN7hjWm-16" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-14" value="Обраховуємо нове значення градієнту, рухаючись за напрямом градієнту до мінімуму, зменшуючи крок" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="470" y="260" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" source="DddRMCFqFWDWjyN7hjWm-16" target="DddRMCFqFWDWjyN7hjWm-18" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" source="DddRMCFqFWDWjyN7hjWm-16" target="DddRMCFqFWDWjyN7hjWm-6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-16" value="Критерій похибки менше &lt;br&gt;попереднього значення?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="467.5" y="150" width="285" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="DddRMCFqFWDWjyN7hjWm-18" target="DddRMCFqFWDWjyN7hjWm-16" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DddRMCFqFWDWjyN7hjWm-18" value="Повертаємось до попереднього значення, зменшуючи крок" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="715" y="80" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
