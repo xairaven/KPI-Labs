@@ -1,0 +1,8 @@
+{
+  "Equation": {
+    "X Range": [0, 1]
+  },
+  "Solving Parameters": {
+    "Accuracy": 0.0001
+  }
+}
