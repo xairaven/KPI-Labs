@@ -15,5 +15,13 @@
   5. [Рівні ізоляції транзакції](./Lab5/)
   6. [Управління правами користувачів](./Lab6/)
 
+### Курсова робота
+  - [README](./CourseProject/README.md)
+  - [Створення, заповнення БД](./CourseProject/src/Init/)
+  - [Скрипти, робота з БД](./CourseProject/src/Queries.sql)
+  - [Нормалізація БД, приклади](./CourseProject/src/ExamplesNormalization.sql)
+  - [Діаграми](./CourseProject/src/Diagrams/)
+  - [Захист роботи](./CourseProject/src/WorkDefence.sql)
+
 Використовуйте розміщені матеріали **виключно** для самоперевірки. <br>
 Усі права на навчальні матеріали належать викладачу.
