@@ -1,5 +1,6 @@
 # V семестр
 
+[![TSQL](https://img.shields.io/badge/MSSQL-67707a?style=for-the-badge&logo=microsoftsqlserver&logoColor=AF3035)](#)
 [![Java](https://img.shields.io/badge/Java-E87000?style=for-the-badge&logo=coffeescript&logoColor=white)](#)
 [![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
 [![Cisco](https://img.shields.io/badge/Cisco-162F53?style=for-the-badge&logo=cisco&logoColor=white)](#)
