@@ -50,3 +50,4 @@ V | Python, Excel | [Комп'ютерне моделювання](./5thSemester
 V | UML, C# | [Технології розробки програмного забезпечення](./5thSemester/SW-Development-Technologies/)
 V | Bash, Python | [DevOps](./5thSemester/DevOps/)
 V | Python, Mathcad | [Чисельні методи для розв’язання енергетичних задач](./5thSemester/Numerical-Analysis-2/)
+VI | Prolog | [Методи та системи штучного інтелекту](./6thSemester/Artificial-Intelligence/)
