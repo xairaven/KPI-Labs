@@ -51,3 +51,4 @@ V | UML, C# | [Технології розробки програмного за
 V | Bash, Python | [DevOps](./5thSemester/DevOps/)
 V | Python, Mathcad | [Чисельні методи для розв’язання енергетичних задач](./5thSemester/Numerical-Analysis-2/)
 VI | Prolog | [Методи та системи штучного інтелекту](./6thSemester/Artificial-Intelligence/)
+VI | Python, Jupyter Notebook | [Вступ до інтелектуального аналізу даних](./6thSemester/Data-Mining/)
