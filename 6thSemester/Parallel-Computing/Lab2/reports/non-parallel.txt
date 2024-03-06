@@ -1,0 +1,19 @@
+Approximate integral value: 0.007892
+
+ Performance counter stats for './out/non-parallel':
+
+            993.70 msec task-clock                #    0.999 CPUs utilized          
+                37      context-switches          #   37.235 /sec                   
+                 0      cpu-migrations            #    0.000 /sec                   
+                60      page-faults               #   60.381 /sec                   
+   <not supported>      cycles                                                      
+   <not supported>      instructions                                                
+   <not supported>      branches                                                    
+   <not supported>      branch-misses                                               
+
+       0.994869046 seconds time elapsed
+
+       0.993944000 seconds user
+       0.000000000 seconds sys
+
+
