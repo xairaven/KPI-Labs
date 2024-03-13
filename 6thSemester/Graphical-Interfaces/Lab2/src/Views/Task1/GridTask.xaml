@@ -1,0 +1,26 @@
+﻿<Window x:Class="Lab2.Views.Task1.GridTask"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Lab2.Views.Task1"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="Task 1 | Grid" Height="450" Width="600">
+    <Grid ShowGridLines="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        
+        <Label Grid.Row="0" Grid.Column="1">Label</Label>
+        <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">TextBox</TextBox>
+        <Button Grid.Row="2" Grid.Column="1">Button</Button>
+    </Grid>
+</Window>

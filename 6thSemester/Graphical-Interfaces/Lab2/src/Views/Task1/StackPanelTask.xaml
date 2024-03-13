@@ -1,0 +1,20 @@
+﻿<Window x:Class="Lab2.Views.Task1.StackPanelTask"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Lab2.Views.Task1"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="Task 1 | StackPanel" Height="450" Width="600">
+    <StackPanel Margin="100">
+        <Label HorizontalAlignment="Center">Label</Label>
+        
+        <TextBox>TextBox</TextBox>
+        <TextBox>TextBox</TextBox>
+        <TextBox>TextBox</TextBox>
+        <TextBox>TextBox</TextBox>
+        
+        <Button Margin="80 80">Button</Button>
+    </StackPanel>
+</Window>
