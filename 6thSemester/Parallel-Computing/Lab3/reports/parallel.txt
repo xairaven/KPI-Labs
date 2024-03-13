@@ -1,0 +1,20 @@
+# started on Wed Mar 13 14:25:55 2024
+
+
+ Performance counter stats for 'mpirun --allow-run-as-root -np 2 ./out/parallel 10000':
+
+         39,559.74 msec task-clock                #    1.959 CPUs utilized          
+             1,658      context-switches          #   41.911 /sec                   
+                 7      cpu-migrations            #    0.177 /sec                   
+             7,751      page-faults               #  195.932 /sec                   
+   <not supported>      cycles                                                      
+   <not supported>      instructions                                                
+   <not supported>      branches                                                    
+   <not supported>      branch-misses                                               
+
+      20.194196771 seconds time elapsed
+
+      39.431259000 seconds user
+       0.120233000 seconds sys
+
+

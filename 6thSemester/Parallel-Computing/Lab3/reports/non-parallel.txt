@@ -1,0 +1,20 @@
+# started on Wed Mar 13 14:26:15 2024
+
+
+ Performance counter stats for './out/non-parallel 10000':
+
+         24,756.14 msec task-clock                #    0.999 CPUs utilized          
+               387      context-switches          #   15.632 /sec                   
+                 0      cpu-migrations            #    0.000 /sec                   
+               131      page-faults               #    5.292 /sec                   
+   <not supported>      cycles                                                      
+   <not supported>      instructions                                                
+   <not supported>      branches                                                    
+   <not supported>      branch-misses                                               
+
+      24.770257162 seconds time elapsed
+
+      24.717869000 seconds user
+       0.032028000 seconds sys
+
+
