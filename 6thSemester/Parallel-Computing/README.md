@@ -1,6 +1,7 @@
 ## Технології паралельних обчислень в енергетичних комплексах
 
 [![C](https://img.shields.io/badge/C-7B8794?style=for-the-badge&logo=c&logoColor=white)](#)
+[![Bash](https://img.shields.io/badge/Bash-374B42?style=for-the-badge&logo=gnubash&logoColor=white)](#)
 
 - **Викладач**: Лабжинський В. А., Софієнко А. Ю.
 - **Варіант**: 19
