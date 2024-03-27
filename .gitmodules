@@ -7,3 +7,6 @@
 [submodule "4thSemester/Statistics/StatisticsCW"]
 	path = 4thSemester/Statistics/StatisticsCW
 	url = https://github.com/xairaven/StatisticsCW
+[submodule "6thSemester/Graphical-Interfaces/Lab3/src"]
+	path = 6thSemester/Graphical-Interfaces/Lab3/src
+	url = https://github.com/xairaven/AlarmClock
