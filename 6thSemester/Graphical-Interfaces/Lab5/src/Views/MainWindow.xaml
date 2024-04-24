@@ -1,0 +1,132 @@
+﻿<Window x:Class="Lab5.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lab5.Views"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="Lab 5" MinHeight="450" Height="450" MinWidth="800" Width="800">
+    <Grid>
+        <TabControl>
+            <TabItem Header="Books Table">
+                <DataGrid x:Name="BooksGrid"
+                          AutoGenerateColumns="False"
+                          ItemsSource="{Binding}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ISBN" Binding="{Binding Isbn}" />
+                        <DataGridTextColumn Header="Title" Binding="{Binding Title}" />
+                        <DataGridTextColumn Header="Authors" Binding="{Binding Authors}" />
+                        <DataGridTextColumn Header="Publisher Code" Binding="{Binding PublisherCode}" />
+                        <DataGridTextColumn Header="Publication Year" Binding="{Binding PublicationYear}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <TabItem Header="Publishers Table">
+                <DataGrid x:Name="PublishersGrid"
+                          AutoGenerateColumns="False"
+                          ItemsSource="{Binding}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" />
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <TabItem Header="Joined Table">
+                <DataGrid x:Name="JoinedGrid"
+                          AutoGenerateColumns="True"
+                          ItemsSource="{Binding}">
+                </DataGrid>
+            </TabItem>
+
+            <TabItem Header="Search | Books">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0"  Margin="5">ISBN:</TextBlock>
+                    <TextBox x:Name="IsbnBox" 
+                             TextChanged="SearchBooksTextChanged"
+                        Grid.Row="0" Grid.Column="1"
+                             Focusable="True" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="5">Title:</TextBlock>
+                    <TextBox x:Name="TitleBox" 
+                             TextChanged="SearchBooksTextChanged"
+                             Grid.Row="1" Grid.Column="1"
+                             Focusable="True" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Margin="5">Authors:</TextBlock>
+                    <TextBox x:Name="AuthorsBox"
+                             TextChanged="SearchBooksTextChanged"
+                             Grid.Row="2" Grid.Column="1"
+                             Focusable="True" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Margin="5">Publisher:</TextBlock>
+                    <TextBox x:Name="PublisherCodeBox" 
+                             TextChanged="SearchBooksTextChanged"
+                             PreviewTextInput="NumberValidationTextBox"
+                             Grid.Row="3" Grid.Column="1"
+                             Focusable="True" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Margin="5">Publication Year:</TextBlock>
+                    <TextBox x:Name="PublicationYearBox" 
+                             TextChanged="SearchBooksTextChanged"
+                             PreviewTextInput="NumberValidationTextBox"
+                             Grid.Row="4" Grid.Column="1"
+                             Focusable="True" />
+                    
+                    <DataGrid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                              x:Name="SearchBooksGrid"
+                              AutoGenerateColumns="False"
+                              ItemsSource="{Binding}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ISBN" Binding="{Binding Isbn}" />
+                            <DataGridTextColumn Header="Title" Binding="{Binding Title}" />
+                            <DataGridTextColumn Header="Authors" Binding="{Binding Authors}" />
+                            <DataGridTextColumn Header="Publisher Code" Binding="{Binding PublisherCode}" />
+                            <DataGridTextColumn Header="Publication Year" Binding="{Binding PublicationYear}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            
+            <TabItem Header="Search | By Publisher">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="5">Publisher:</TextBlock>
+                    <TextBox x:Name="PublisherSearchBox" 
+                             TextChanged="SearchByPublisher"
+                             Grid.Row="0" Grid.Column="1"
+                             Focusable="True" />
+                    
+                    <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                              x:Name="SearchByPublisherGrid"
+                              AutoGenerateColumns="True"
+                              ItemsSource="{Binding}">
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
