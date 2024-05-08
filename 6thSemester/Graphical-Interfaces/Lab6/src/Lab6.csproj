@@ -1,0 +1,126 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UseWPF>true</UseWPF>
+        <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Page Update="Views\MainWindow.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <XamlRuntime>Wpf</XamlRuntime>
+            <SubType>Designer</SubType>
+        </Page>
+        <Page Update="Views\EditAlarmWindow.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <XamlRuntime>Wpf</XamlRuntime>
+            <SubType>Designer</SubType>
+        </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="Assets\Fonts\stormfaze.ttf" />
+        <Resource Include="Assets\Fonts\stormfaze.ttf">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Resource>
+        <None Remove="Assets\Fonts\digital-7.ttf" />
+        <Content Include="Assets\Fonts\digital-7.ttf">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\Icons\ClockAlarm.png" />
+        <None Remove="Assets\Icons\Exit.png" />
+        <Content Include="Assets\Icons\Exit.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\Icons\AlarmClock.png" />
+        <Content Include="Assets\Icons\AlarmClock.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\Icons\Settings.png" />
+        <Content Include="Assets\Icons\Settings.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\WindowsIcons\Close.png" />
+        <Content Include="Assets\WindowsIcons\Close.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\WindowsIcons\Minimize.png" />
+        <Content Include="Assets\WindowsIcons\Minimize.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\WindowsIcons\Restore.png" />
+        <Content Include="Assets\WindowsIcons\Restore.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\Fonts\ProductSans-Regular.ttf" />
+        <Resource Include="Assets\Fonts\ProductSans-Regular.ttf">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Resource>
+        <None Remove="Assets\Icons\SwitchOff.png" />
+        <Content Include="Assets\Icons\SwitchOff.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\Icons\SwitchOn.png" />
+        <Content Include="Assets\Icons\SwitchOn.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\Icons\Delete.png" />
+        <Content Include="Assets\Icons\Delete.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\Icons\AlarmSettings.png" />
+        <Content Include="Assets\Icons\AlarmSettings.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\Credits\GithubProfilePhoto.png" />
+        <Content Include="Assets\Credits\GithubProfilePhoto.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\Icons\Stop.png" />
+        <Content Include="Assets\Icons\Stop.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Database\Alarms.db" />
+        <Content Include="Database\Alarms.db">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="Assets\Music\Analogue.mp3" />
+        <Content Include="Assets\Music\Analogue.mp3">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\Music\BedSide.mp3" />
+        <Content Include="Assets\Music\BedSide.mp3">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\Music\Electronic.mp3" />
+        <Content Include="Assets\Music\Electronic.mp3">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Assets\Music\Ringtone.mp3" />
+        <Content Include="Assets\Music\Ringtone.mp3">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Syncfusion.Licensing" Version="25.1.35" />
+        <PackageReference Include="Syncfusion.SfInput.WPF" Version="25.1.35" />
+        <PackageReference Include="Syncfusion.Shared.WPF" Version="25.1.35" />
+    </ItemGroup>
+</Project>

@@ -1,0 +1,103 @@
+﻿<Window x:Class="Lab6.Views.EditAlarmWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Lab6.Views"
+        xmlns:uc="clr-namespace:Lab6.Views.Controls"
+        xmlns:syncfusion="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Width="200" Height="250"
+        MinWidth="200" MinHeight="250"
+        MaxHeight="400" MaxWidth="400"
+        Style="{StaticResource AuxiliaryWindow}">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="200" />
+    </WindowChrome.WindowChrome>
+
+    <Border Style="{StaticResource WindowBorder}">
+        <Grid WindowChrome.IsHitTestVisibleInChrome="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32px" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            
+            <uc:CustomTitleBar Grid.Row="0" WindowTitle="Edit Alarm"
+                               WindowIcon="../../Assets/Icons/AlarmClock.png" />
+            
+            <Border Grid.Row="1" Margin="5" BorderBrush="#424244" BorderThickness="1" CornerRadius="10" 
+                    Padding="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Label Grid.Row="0" Grid.Column="0" Content="Title:" 
+                           Style="{StaticResource LabelAddAlarm}"/>
+                    <Border Grid.Row="0" Grid.Column="1"
+                            Background="#565659" CornerRadius="10" VerticalAlignment="Center" >
+                        <TextBox x:Name="TitlePicker"
+                                 Style="{StaticResource PickerAddAlarm}"
+                                 TextWrapping="NoWrap"
+                                 MaxLength="15"/>
+                    </Border>
+                    
+                    <Label Grid.Row="1" Grid.Column="0" Content="Time:" 
+                           Style="{StaticResource LabelAddAlarm}"/>
+                    <Border Grid.Row="1" Grid.Column="1"
+                            Background="#565659" CornerRadius="10" VerticalAlignment="Center" >
+                        <syncfusion:SfTimePicker x:Name="TimePicker"
+                                                 FormatString="HH:mm" 
+                                                 Style="{StaticResource PickerAddAlarm}"
+                                                 ShowDropDownButton="False"
+                                                 AllowInlineEditing="True"/>
+                    </Border>
+                    
+                    <Label Grid.Row="2" Grid.Column="0" Content="Date:" 
+                           Style="{StaticResource LabelAddAlarm}"/>
+                    <Border Grid.Row="2" Grid.Column="1"
+                            Background="#565659" CornerRadius="10" VerticalAlignment="Center" >
+                        <syncfusion:SfDatePicker x:Name="DatePicker"
+                                                 FormatString="dd.MM.yyyy"
+                                                 Style="{StaticResource PickerAddAlarm}"
+                                                 ShowDropDownButton="False"
+                                                 AllowInlineEditing="True"/>
+                    </Border>
+                    
+                    
+                    <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Border Grid.Column="1"  Width="55" CornerRadius="10" Background="#6c6c6e">
+                            <Button Content="Cancel"
+                                    Click="CancelEditingAlarm"
+                                    Style="{StaticResource ButtonsAddAlarm}"/>
+                        </Border>
+                        
+                        <Border Grid.Column="3"  Width="55" CornerRadius="10" Background="#6c6c6e">
+                            <Button Content="Save"
+                                    Click="SaveAlarm"
+                                    Style="{StaticResource ButtonsAddAlarm}"
+                            />
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

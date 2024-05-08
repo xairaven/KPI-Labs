@@ -1,0 +1,78 @@
+﻿<Window x:Class="Lab6.Views.AlarmNotification"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Lab6.Views"
+        xmlns:uc="clr-namespace:Lab6.Views.Controls"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Width="250" Height="210" MinHeight="210" MinWidth="250" ResizeMode="NoResize"
+        Style="{StaticResource AuxiliaryWindow}">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="500" />
+    </WindowChrome.WindowChrome>
+
+    <Border Style="{StaticResource WindowBorder}">
+        <Grid WindowChrome.IsHitTestVisibleInChrome="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32px" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <uc:CustomTitleBar Grid.Row="0"
+                               WindowTitle="Alarm Notification"
+                               WindowIcon="../../Assets/Icons/AlarmClock.png" />
+            
+            <Border Grid.Row="1" Margin="5" BorderBrush="#424244" BorderThickness="1" CornerRadius="10" 
+                    Padding="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="1.5*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Label Grid.Row="0" Grid.Column="0" Content="Title:" 
+                           Style="{StaticResource TitlesLabelAlarmNotification}"/>
+                    <Border Grid.Row="0" Grid.Column="1"
+                            Background="#565659" CornerRadius="10" VerticalAlignment="Center" >
+                        <Label x:Name="TitleLabel"
+                               Content="" Style="{StaticResource LabelAlarmNotification}"/>
+                    </Border>
+                    
+                    <Label Grid.Row="1" Grid.Column="0" Content="Time:" 
+                           Style="{StaticResource TitlesLabelAlarmNotification}"/>
+                    <Border Grid.Row="1" Grid.Column="1"
+                            Background="#565659" CornerRadius="10" VerticalAlignment="Center" >
+                        <Label x:Name="TimeLabel"
+                               Content="" Style="{StaticResource LabelAlarmNotification}"/>
+                    </Border>
+                    
+                    <Label Grid.Row="2" Grid.Column="0" Content="Date:" 
+                           Style="{StaticResource TitlesLabelAlarmNotification}"/>
+                    <Border Grid.Row="2" Grid.Column="1"
+                            Background="#565659" CornerRadius="10" VerticalAlignment="Center" >
+                        <Label x:Name="DateLabel"
+                               Content="" Style="{StaticResource LabelAlarmNotification}"/>
+                    </Border>
+                    
+                    <Border x:Name="StopMusicBorder" 
+                        Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center"
+                            CornerRadius="10" Background="#565659" Margin="3">
+                        <Button Margin="2" x:Name="StopMusicButton"
+                                Click="StopMusic_OnClick"
+                                Style="{StaticResource TransparentButtonNotification}">
+                            <Image Source="../Assets/Icons/Stop.png"/>
+                        </Button>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

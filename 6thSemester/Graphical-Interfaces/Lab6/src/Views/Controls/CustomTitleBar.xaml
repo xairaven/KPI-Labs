@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="Lab6.Views.Controls.CustomTitleBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Lab6.Views.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="32px">
+    <Grid Style="{StaticResource TitleBarPanel}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="60px"/>
+        </Grid.ColumnDefinitions>
+        
+        <Image x:Name="WindowIconImage" Grid.Column="0" Width="20" Height="20"/>
+        
+        <Label x:Name="WindowTitleLabel" Grid.Column="1"
+               HorizontalContentAlignment="Center"
+               VerticalContentAlignment="Center"
+               Foreground="#D5D5D5"
+               FontWeight="Medium"/>
+        
+        <StackPanel Grid.Column="3" Orientation="Horizontal">
+            <Button Style="{StaticResource TitleBarIcons}"
+                    Click="Minimize_Window"
+                    DockPanel.Dock="Right">
+                <Image Source="../../Assets/WindowsIcons/Minimize.png" />
+            </Button>
+            <Button Style="{StaticResource TitleBarIcons}"
+                    Click="Resize_Window"
+                    DockPanel.Dock="Right">
+                <Image Source="../../Assets/WindowsIcons/Restore.png" />
+            </Button>
+            <Button Style="{StaticResource TitleBarExit}"
+                    DockPanel.Dock="Right"
+                    Click="Exit_Window">
+                <Image Source="../../Assets/WindowsIcons/Close.png" />
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>
