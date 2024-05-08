@@ -2,6 +2,6 @@
 
 - Завдання: [*Presentation*](./Task.pdf)
 - Звіт: [*Report.pdf*](./Report.pdf)
-- Програма: [*Jupyter Notebook*](./Notebook.ipynb)
+- Програма: [*Jupyter Notebook*](./Notebook.py)
 - БД: [*SQLite DB File*](./data/cereals-1.db)
 - Оцінка: 7/7
