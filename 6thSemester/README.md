@@ -18,7 +18,7 @@
 
 Технічний стек | Дисципліна
 -------------- | ----------
-Prolog | [Методи та системи штучного інтелекту](./Artificial-Intelligence/)
+Prolog, Jupyter Notebook | [Методи та системи штучного інтелекту](./Artificial-Intelligence/)
 Python, Jupyter Notebook | [Вступ до інтелектуального аналізу даних](./Data-Mining/)
 C#, WPF | [Декларативне програмування графічних інтерфейсів](./Graphical-Interfaces/)
 C, Bash | [Технології паралельних обчислень в енергетичних комплексах](./Parallel-Computing/)
