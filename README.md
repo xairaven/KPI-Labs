@@ -10,7 +10,7 @@
 **Університет**: Київський політехнічний інститут імені Ігоря Сікорського. <br>
 **Інститут**: ІАТЕ <br>
 
-Наявні роботи за 1-2 курс (2021-2023) та в процесі за 3 курс (2023-2024) <br>
+Наявні роботи за 1-3 курс (2021-2024) та в процесі за 4 курс (2024-2025) <br>
 
 [![Java](https://img.shields.io/badge/Java-E87000?style=for-the-badge&logo=coffeescript&logoColor=white)](#)
 [![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=csharp&logoColor=white)](#)
