@@ -1,6 +1,6 @@
 ## Теорія ймовірностей, ймовірносні процеси та математична статистика
 
-[![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=csharp&logoColor=white)](#)
+[![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=dotnet&logoColor=white)](#)
 
 - Завдання: в репозиторії.
 - Викладачі: Сидоренко Ю. В.

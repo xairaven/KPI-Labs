@@ -1,6 +1,6 @@
 ## Декларативне програмування графічних інтерфейсів
 
-[![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=csharp&logoColor=white)](#)
+[![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=dotnet&logoColor=white)](#)
 
 - **Викладач**: Тарнавський Ю. А.
 - **Варіант**: 19
