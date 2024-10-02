@@ -21,7 +21,7 @@
 [![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
 [![Bash](https://img.shields.io/badge/Bash-374B42?style=for-the-badge&logo=gnubash&logoColor=white)](#)
 [![Docker](https://img.shields.io/badge/Docker-082135?style=for-the-badge&logo=docker&logoColor=2496EE)](#)
-[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=FFF)](#)
+[![MySQL](https://img.shields.io/badge/SQL-4479A1?style=for-the-badge&logo=mysql&logoColor=FFF)](#)
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.
 
