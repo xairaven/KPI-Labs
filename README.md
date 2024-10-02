@@ -54,3 +54,5 @@ VI | Prolog, Jupyter Notebook | [Методи та системи штучног
 VI | Python, Jupyter Notebook | [Вступ до інтелектуального аналізу даних](./6thSemester/Data-Mining/)
 VI | C#, WPF | [Декларативне програмування графічних інтерфейсів](./6thSemester/Graphical-Interfaces/)
 VI | C, Bash | [Технології паралельних обчислень в енергетичних комплексах](./6thSemester/Parallel-Computing/)
+VII | Rust, egui | [Геометричне моделювання та комп'ютерна графіка 1](./7thSemester/Computer-Graphics-1/)
+VII | Cisco Packet Tracer | [Інформаційне забезпечення безпеки комп’ютерних систем](./7thSemester/Information-Security-Support/)
