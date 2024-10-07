@@ -1,0 +1,61 @@
+Table monuments { 
+  id int [pk, increment] 
+  name varchar 
+  description text 
+  photo_url varchar 
+  year_built year 
+  historical_value text 
+  style_id int [ref: > monument_style.id] 
+  status_id int [ref: > monument_status.id] 
+} 
+ 
+Table monument_style { 
+  id int [pk, increment] 
+  style varchar 
+} 
+ 
+Table monument_status { 
+  id int [pk, increment] 
+  status varchar
+} 
+ 
+Table organizations { 
+  id int [pk, increment] 
+  name varchar 
+  contact_info text 
+} 
+ 
+Table payments { 
+  id int [pk, increment] 
+  amount decimal 
+  date date 
+  contract_id int [ref: > contracts.id] 
+  status_id int [ref: > payment_type.id] 
+} 
+ 
+Table payment_type { 
+  id int [pk, increment] 
+  type varchar 
+} 
+ 
+Table contracts { 
+  id int [pk, increment] 
+  type_id int [ref: > contract_type.id] 
+  price decimal 
+  start_date date 
+  end_date date 
+  purpose varchar 
+  organization_id int [ref: > organizations.id] 
+  monument_id int [ref: > monuments.id] 
+  status_id int [ref: > contract_status.id] 
+} 
+ 
+Table contract_type { 
+  id int [pk, increment] 
+  type varchar 
+} 
+
+Table contract_status { 
+  id int [pk, increment] 
+  status varchar 
+}
