@@ -57,3 +57,4 @@ VI | C, Bash | [Технології паралельних обчислень �
 VII | Rust, egui | [Геометричне моделювання та комп'ютерна графіка 1](./7thSemester/Computer-Graphics-1/)
 VII | Cisco Packet Tracer | [Інформаційне забезпечення безпеки комп’ютерних систем](./7thSemester/Information-Security-Support/)
 VII | UML, DBML | [Проектування інформаційних систем](./7thSemester/Design-of-Information-Systems/)
+VII | Rust, Python | [Моделювання систем в енергетиці](./7thSemester/Modeling-Energy-Systems/)
