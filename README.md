@@ -60,5 +60,6 @@ VII | UML, DBML | [Проектування інформаційних сист�
 VII | Rust, Python | [Моделювання систем в енергетиці](./7thSemester/Modeling-Energy-Systems/)
 VIII | Jupyter Notebook | [Вступ до машинного навчання](./8thSemester/Machine-Learning/)
 VIII | Houdini | [Геометричне моделювання динамічних об'єктів і систем в середовищі Houdini](./8thSemester/Houdini/)
+VIII | Rust, egui | [Геометричне моделювання та комп'ютерна графіка 2](./8thSemester/Computer-Graphics-2/)
 VIII | Cisco Packet Tracer, JavaScript, C | [Розробка застосунків Інтернету речей та сенсорних мереж](./8thSemester/Internet-of-Things/)
 VIII | ProjectLibre | [Управління ІТ проектами](./8thSemester/Project-Management/)

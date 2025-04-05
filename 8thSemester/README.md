@@ -1,5 +1,7 @@
 # VIII семестр
 
+[![Rust](https://img.shields.io/badge/Rust-fde7d5?style=for-the-badge&logo=rust&logoColor=black)](#)
+[![egui](https://img.shields.io/badge/egui-222222?style=for-the-badge&logo=embarcadero&logoColor=white)](#)
 [![C](https://img.shields.io/badge/C-7B8794?style=for-the-badge&logo=c&logoColor=white)](#)
 [![Cisco](https://img.shields.io/badge/Cisco-162F53?style=for-the-badge&logo=cisco&logoColor=white)](#)
 [![JS](https://img.shields.io/badge/JS-EFD81D?style=for-the-badge&logo=Javascript&logoColor=white)](#)
@@ -9,8 +11,9 @@
 
 1. Вступ до машинного навчання
 2. Геометричне моделювання динамічних об'єктів і систем в середовищі Houdini
-3. Розробка застосунків Інтернету речей та сенсорних мереж
-4. Управління ІТ проектами
+3. Геометричне моделювання та комп'ютерна графіка 2
+4. Розробка застосунків Інтернету речей та сенсорних мереж
+5. Управління ІТ проектами
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.
 
@@ -19,5 +22,6 @@
 -------------- | ----------
 Jupyter Notebook | [Вступ до машинного навчання](./Machine-Learning/)
 Houdini | [Геометричне моделювання динамічних об'єктів і систем в середовищі Houdini](./Houdini/)
+Rust, egui | [Геометричне моделювання та комп'ютерна графіка 2](./Computer-Graphics-2/)
 Cisco Packet Tracer, JavaScript, C | [Розробка застосунків Інтернету речей та сенсорних мереж](./Internet-of-Things/)
 ProjectLibre | [Управління ІТ проектами](./Project-Management/)
