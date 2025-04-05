@@ -10,7 +10,9 @@
 **Університет**: Київський політехнічний інститут імені Ігоря Сікорського. <br>
 **Інститут**: ІАТЕ <br>
 
-Наявні роботи за 1-3 курс (2021-2024) та в процесі за 4 курс (2024-2025) <br>
+У наявності роботи, виконані протягом 1–4 курсів (2021–2025).
+
+**Дипломний проект (Бакалаврат)**: Work in Progress
 
 [![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=dotnet&logoColor=white)](#)
 [![Rust](https://img.shields.io/badge/Rust-fde7d5?style=for-the-badge&logo=rust&logoColor=black)](#)
