@@ -1,0 +1,8 @@
+# Wokwi Library List
+# See https://docs.wokwi.com/guides/libraries
+
+DHT sensor library
+DHT22
+PubSubClient
+ESP32_easy_wifi_data
+ArduinoJson
