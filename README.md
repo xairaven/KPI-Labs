@@ -59,5 +59,6 @@ VII | Cisco Packet Tracer | [Інформаційне забезпечення �
 VII | UML, DBML | [Проектування інформаційних систем](./7thSemester/Design-of-Information-Systems/)
 VII | Rust, Python | [Моделювання систем в енергетиці](./7thSemester/Modeling-Energy-Systems/)
 VIII | Jupyter Notebook | [Вступ до машинного навчання](./8thSemester/Machine-Learning/)
+VIII | Houdini | [Геометричне моделювання динамічних об'єктів і систем в середовищі Houdini](./8thSemester/Houdini/)
 VIII | Cisco Packet Tracer, JavaScript, C | [Розробка застосунків Інтернету речей та сенсорних мереж](./8thSemester/Internet-of-Things/)
 VIII | ProjectLibre | [Управління ІТ проектами](./8thSemester/Project-Management/)
