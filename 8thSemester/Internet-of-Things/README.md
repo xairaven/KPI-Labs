@@ -3,6 +3,7 @@
 [![C](https://img.shields.io/badge/C-7B8794?style=for-the-badge&logo=c&logoColor=white)](#)
 [![Cisco](https://img.shields.io/badge/Cisco-162F53?style=for-the-badge&logo=cisco&logoColor=white)](#)
 [![JS](https://img.shields.io/badge/JS-EFD81D?style=for-the-badge&logo=Javascript&logoColor=white)](#)
+[![NodeRed](https://img.shields.io/badge/Node--Red-8F0000?style=for-the-badge&logo=Node-RED&logoColor=white)](#)
 
 - **Викладач**: Отрох С. І.
 - **Варіант**: 17
@@ -15,7 +16,7 @@
   4. [Дослідження аналого-цифрового перетворення і розробка взаємодії мікроконтролера з датчиками на платформі Arduino](./Lab4/)
   5. [Розробка та налаштування IoT-пристрою на базі ESP32 з використанням протоколу MQTT](./Lab5/)
   6. [Моніторинг аналогових сенсорів і лічильника за допомогою мікроконтролера STM32f103c8t](./Lab6/)
-  7. [...](./Lab7/)
+  7. [Вивчення використання протоколів IoT, зокрема MQTT](./Lab7/)
   8. [...](./Lab8/)
   9. [...](./Lab9/)
 

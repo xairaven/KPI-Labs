@@ -1,0 +1,437 @@
+[
+    {
+        "id": "a0a51514738f2dec",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "d200aca59fce0943",
+        "type": "mqtt in",
+        "z": "a0a51514738f2dec",
+        "name": "",
+        "topic": "NUFT TI4/Variant17/#",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "68d24db333a9088d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 60,
+        "wires": [
+            [
+                "fb872ffa4fa22c04"
+            ]
+        ]
+    },
+    {
+        "id": "fb872ffa4fa22c04",
+        "type": "debug",
+        "z": "a0a51514738f2dec",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 440,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "b710b62e61abf930",
+        "type": "mqtt in",
+        "z": "a0a51514738f2dec",
+        "name": "",
+        "topic": "NUFT TI4/Variant17/Klapan",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "68d24db333a9088d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 160,
+        "y": 120,
+        "wires": [
+            [
+                "9df2b1c6ace15498"
+            ]
+        ]
+    },
+    {
+        "id": "d7ef0ae872dc2403",
+        "type": "mqtt in",
+        "z": "a0a51514738f2dec",
+        "name": "",
+        "topic": "NUFT TI4/Variant17/TT101",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "68d24db333a9088d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 180,
+        "wires": [
+            [
+                "bfc324a520e48747"
+            ]
+        ]
+    },
+    {
+        "id": "bfc324a520e48747",
+        "type": "ui_gauge",
+        "z": "a0a51514738f2dec",
+        "name": "TT101",
+        "group": "dc453510746ead8c",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "TT101",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 450,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "9df2b1c6ace15498",
+        "type": "ui_gauge",
+        "z": "a0a51514738f2dec",
+        "name": "Klapan",
+        "group": "dc453510746ead8c",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Klapan",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 440,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "565f12422c668d77",
+        "type": "ui_slider",
+        "z": "a0a51514738f2dec",
+        "name": "",
+        "label": "TT101",
+        "tooltip": "",
+        "group": "dc453510746ead8c",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": "100",
+        "step": 1,
+        "className": "",
+        "x": 490,
+        "y": 440,
+        "wires": [
+            [
+                "192650257163b05a",
+                "05bd86aeee17fadc"
+            ]
+        ]
+    },
+    {
+        "id": "192650257163b05a",
+        "type": "debug",
+        "z": "a0a51514738f2dec",
+        "name": "Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 670,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "05bd86aeee17fadc",
+        "type": "mqtt out",
+        "z": "a0a51514738f2dec",
+        "name": "",
+        "topic": "NUFT TI4/Variant17/TT101",
+        "qos": "1",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "68d24db333a9088d",
+        "x": 720,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "c04193fec15f6778",
+        "type": "ui_button",
+        "z": "a0a51514738f2dec",
+        "name": "",
+        "group": "dc453510746ead8c",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Sine Wave",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Sine Wave",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 90,
+        "y": 300,
+        "wires": [
+            [
+                "2d5805905de0e69f",
+                "24f69104b74ebc74"
+            ]
+        ]
+    },
+    {
+        "id": "b8ebd0b10678403b",
+        "type": "ui_button",
+        "z": "a0a51514738f2dec",
+        "name": "",
+        "group": "dc453510746ead8c",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Cosine Wave",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Cosine Wave",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 90,
+        "y": 360,
+        "wires": [
+            [
+                "506d182bf04d0d71",
+                "24f69104b74ebc74"
+            ]
+        ]
+    },
+    {
+        "id": "24f69104b74ebc74",
+        "type": "ui_text",
+        "z": "a0a51514738f2dec",
+        "group": "dc453510746ead8c",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Now:",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 270,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "57b7fb1620a787db",
+        "type": "function",
+        "z": "a0a51514738f2dec",
+        "name": "Sin or Cos",
+        "func": "if (global.wavetype !== 0 || global.wavetype !== 1) {\n    global.wavetype = 0;\n}\n\nlet timeInMilliseconds = msg.payload;\nlet timeInRadians = (timeInMilliseconds / 1000) * Math.PI * 2;\n\nif (global.wavetype === 0) {\n    msg.payload = (Math.sin(timeInRadians) + 1) * 50;\n} else {\n    msg.payload = (Math.cos(timeInRadians) + 1) * 50;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 440,
+        "wires": [
+            [
+                "565f12422c668d77"
+            ]
+        ]
+    },
+    {
+        "id": "3767b7deb10951db",
+        "type": "inject",
+        "z": "a0a51514738f2dec",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 440,
+        "wires": [
+            [
+                "57b7fb1620a787db"
+            ]
+        ]
+    },
+    {
+        "id": "2d5805905de0e69f",
+        "type": "change",
+        "z": "a0a51514738f2dec",
+        "name": "Flow Type Sin",
+        "rules": [
+            {
+                "t": "set",
+                "p": "wavetype",
+                "pt": "global",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 460,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "506d182bf04d0d71",
+        "type": "change",
+        "z": "a0a51514738f2dec",
+        "name": "Flow Type Cos",
+        "rules": [
+            {
+                "t": "set",
+                "p": "wavetype",
+                "pt": "global",
+                "to": "1",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 460,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "68d24db333a9088d",
+        "type": "mqtt-broker",
+        "name": "mosquitto",
+        "broker": "test.mosquitto.org/",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "dc453510746ead8c",
+        "type": "ui_group",
+        "name": "Variant 17",
+        "tab": "0aea49612dadc01a",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "0aea49612dadc01a",
+        "type": "ui_tab",
+        "name": "Variant17",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
