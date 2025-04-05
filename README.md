@@ -58,4 +58,5 @@ VII | Rust, egui | [Геометричне моделювання та комп'
 VII | Cisco Packet Tracer | [Інформаційне забезпечення безпеки комп’ютерних систем](./7thSemester/Information-Security-Support/)
 VII | UML, DBML | [Проектування інформаційних систем](./7thSemester/Design-of-Information-Systems/)
 VII | Rust, Python | [Моделювання систем в енергетиці](./7thSemester/Modeling-Energy-Systems/)
+VIII | Cisco Packet Tracer, JavaScript, C | [Розробка застосунків Інтернету речей та сенсорних мереж](./8thSemester/Internet-of-Things/)
 VIII | ProjectLibre | [Управління ІТ проектами](./8thSemester/Project-Management/)
