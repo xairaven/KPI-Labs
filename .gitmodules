@@ -13,3 +13,6 @@
 [submodule "7thSemester/Computer-Graphics-1/Workspace"]
 	path = 7thSemester/Computer-Graphics-1/Workspace
 	url = https://github.com/xairaven/KPI-CompGraphics
+[submodule "BachelorDiploma/Project"]
+    path = BachelorDiploma/Project
+    url = https://github.com/xairaven/xailyser

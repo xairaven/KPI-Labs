@@ -65,3 +65,8 @@ VIII | Houdini | [Геометричне моделювання динамічн
 VIII | Rust, egui | [Геометричне моделювання та комп'ютерна графіка 2](./8thSemester/Computer-Graphics-2/)
 VIII | Cisco Packet Tracer, JavaScript, C | [Розробка застосунків Інтернету речей та сенсорних мереж](./8thSemester/Internet-of-Things/)
 VIII | ProjectLibre | [Управління ІТ проектами](./8thSemester/Project-Management/)
+
+## Дипломні роботи:
+Ступінь  | Робота         
+-------- | --------
+Бакалавр | [Проект](./BachelorDiploma/Project/)
