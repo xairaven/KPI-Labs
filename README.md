@@ -12,7 +12,7 @@
 
 У наявності роботи, виконані протягом 1–4 курсів (2021–2025).
 
-**Дипломний проект (Бакалаврат)**: Work in Progress
+**Дипломна робота, бакалаврат:** [*посилання*](./BachelorDiploma/)
 
 [![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=dotnet&logoColor=white)](#)
 [![Rust](https://img.shields.io/badge/Rust-fde7d5?style=for-the-badge&logo=rust&logoColor=black)](#)
@@ -65,8 +65,3 @@ VIII | Houdini | [Геометричне моделювання динамічн
 VIII | Rust, egui | [Геометричне моделювання та комп'ютерна графіка 2](./8thSemester/Computer-Graphics-2/)
 VIII | Cisco Packet Tracer, JavaScript, C | [Розробка застосунків Інтернету речей та сенсорних мереж](./8thSemester/Internet-of-Things/)
 VIII | ProjectLibre | [Управління ІТ проектами](./8thSemester/Project-Management/)
-
-## Дипломні роботи:
-Ступінь  | Робота         
--------- | --------
-Бакалавр | [Проект](./BachelorDiploma/Project/)
