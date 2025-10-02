@@ -1,35 +1,43 @@
-# Programming Labs
+## Лабораторні роботи з дисциплін, присвячених програмуванню.
 
 [![Repo size](https://img.shields.io/github/repo-size/xairaven/KPI-Labs?style=flat-square)](#)
 [![Languages count](https://img.shields.io/github/languages/count/xairaven/KPI-Labs?style=flat-square)](#)
 [![Issues](https://img.shields.io/github/issues/xairaven/KPI-Labs?style=flat-square)](#)
 
-**Лабораторні роботи з дисциплін, присвячених програмуванню.** <br>
-**Спеціальність**: 122 (Комп'ютерні науки). <br>
-**Освітня програма**: Цифрові технології в енергетиці. <br>
 **Університет**: Київський політехнічний інститут імені Ігоря Сікорського. <br>
-**Інститут**: ІАТЕ <br>
-
-У наявності роботи, виконані протягом 1–4 курсів (2021–2025).
 
 ### Бакалаврат
+**Інститут**: ІАТЕ <br>
+**Спеціальність**: 122 (Комп'ютерні науки). <br>
+**Освітня програма**: Цифрові технології в енергетиці. <br>
+**Роки навчання**: 09.2021 - 06.2025. <br>
 **Дипломна робота:** [*посилання*](./BachelorDiploma/) <br>
 **Середній бал**: 93/100
 
-[![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=dotnet&logoColor=white)](#)
+### Магістратура
+
+**Факультет**: ФІОТ <br>
+**Спеціальність**: F2 (Інженерія програмного забезпечення). <br>
+**Освітня програма**: Інженерія програмного забезпечення комп'ютерних систем. <br>
+**Тип програми**: Освітньо-наукова. <br>
+**Роки навчання**: 09.2025 <i>- 06.2027</i>. <br>
+
+> [!NOTE]
+> В процесі: 1 *(9)* семестр.
+
 [![Rust](https://img.shields.io/badge/Rust-fde7d5?style=for-the-badge&logo=rust&logoColor=black)](#)
+[![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=dotnet&logoColor=white)](#)
+[![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
 [![Java](https://img.shields.io/badge/Java-E87000?style=for-the-badge&logo=coffeescript&logoColor=white)](#)
 [![Assembler](https://img.shields.io/badge/TASM-005494?style=for-the-badge&logo=assemblyscript&logoColor=white)](#)
-[![HTML](https://img.shields.io/badge/HTML-DD4A25?style=for-the-badge&logo=html5&logoColor=white)](#)
-[![CSS](https://img.shields.io/badge/CSS-254ADD?style=for-the-badge&logo=css3&logoColor=white)](#)
-[![Python](https://img.shields.io/badge/Python-005494?style=for-the-badge&logo=python&logoColor=yellow)](#)
 [![Bash](https://img.shields.io/badge/Bash-374B42?style=for-the-badge&logo=gnubash&logoColor=white)](#)
 [![Docker](https://img.shields.io/badge/Docker-082135?style=for-the-badge&logo=docker&logoColor=2496EE)](#)
 [![MySQL](https://img.shields.io/badge/SQL-4479A1?style=for-the-badge&logo=mysql&logoColor=FFF)](#)
+[![LaTeX](https://img.shields.io/badge/LaTeX-008080?style=for-the-badge&logo=latex&logoColor=black)](#)
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.
 
-## Дисципліни, які увійшли в цей репозиторій:
+## (Бакалаврат) Дисципліни:
 
 Семестр | Технічний стек | Дисципліна               
 ------- | -------------- | -----------------------
@@ -67,3 +75,9 @@ VIII | Houdini | [Геометричне моделювання динамічн
 VIII | Rust, egui | [Геометричне моделювання та комп'ютерна графіка 2](./8thSemester/Computer-Graphics-2/)
 VIII | Cisco Packet Tracer, JavaScript, C | [Розробка застосунків Інтернету речей та сенсорних мереж](./8thSemester/Internet-of-Things/)
 VIII | ProjectLibre | [Управління ІТ проектами](./8thSemester/Project-Management/)
+
+## (Магістратура) Дисципліни:
+
+Семестр | Технічний стек | Дисципліна               
+------- | -------------- | -----------------------
+IX | Mininet | [Програмування комп'ютерних та віртуальних мереж](./9thSemester/Computer-Virtual-Networks/)
