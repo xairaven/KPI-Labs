@@ -81,5 +81,5 @@ VIII | ProjectLibre | [Управління ІТ проектами](./8thSemest
 Семестр | Технічний стек | Дисципліна               
 ------- | -------------- | -----------------------
 IX | Rust, LaTeX | [Програмне забезпечення комп'ютерних систем](./9thSemester/Software-of-Computer-Systems/)
-IX | Mininet, LaTeX | [Програмування комп'ютерних та віртуальних мереж](./9thSemester/Computer-Virtual-Networks/)
+IX | Mininet, LaTeX, Python | [Програмування комп'ютерних та віртуальних мереж](./9thSemester/Computer-Virtual-Networks/)
 IX | Python, Jupyter Notebook | [Програмування систем штучного інтелекту](./9thSemester/Programming-Artificial-Intelligence/)

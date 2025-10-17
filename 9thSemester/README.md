@@ -14,5 +14,5 @@
 Технічний стек | Дисципліна | Англійською
 -------------- | ---------- | -----------------
 Rust, LaTeX | [Програмне забезпечення комп'ютерних систем](./Software-of-Computer-Systems/) | Software of Computer Systems
-Mininet, LaTeX | [Програмування комп'ютерних та віртуальних мереж](./Computer-Virtual-Networks/) | Programming of computer and virtual networks
+Mininet, LaTeX, Python | [Програмування комп'ютерних та віртуальних мереж](./Computer-Virtual-Networks/) | Programming of computer and virtual networks
 Python | [Програмування систем штучного інтелекту](./Programming-Artificial-Intelligence/) | Programming of artificial intelligence systems
