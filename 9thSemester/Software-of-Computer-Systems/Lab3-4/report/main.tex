@@ -1,0 +1,697 @@
+\documentclass[14pt, a4paper]{extreport}
+
+\include{commands.tex}
+\include{packages.tex}
+\include{settings.tex}
+
+\begin{document}
+	\tolerance=350 % Or just increase the number
+	\emergencystretch=3em
+	
+	\begin{titlepage}
+		\begin{center}
+			{Національний технічний університет України\\
+				«Київський політехнічний інститут імені Ігоря Сікорського» \\[1.0em] }
+			{Факультет інформатики та обчислювальної техніки\\}
+			{Кафедра обчислювальної техніки \\[5.0em]}
+			
+			{\textbf{ЗВІТ}\\[1em]}
+			{\textbf{з лабораторних робіт №\LabNumber} \\}
+			{\textbf{з дисципліни "\CourseTitle"} \\[2.0em]}
+			
+			{\textbf{Тема: \Topic} \\[2.0em]}
+			
+			{\textbf{Варіант №\Variant} \\[5.0em]}
+			
+			\begin{flushright}
+				Виконав: \\
+				Студент \CourseNumber{} курсу, групи \StudentGroup \\
+				\StudentName \\[2.0em]
+			\end{flushright}
+			
+			\begin{flushright}
+				Перевірила: \\
+				\Teacher \\[2.0em]
+			\end{flushright}
+			
+			\begin{flushright}
+				Дата здачі: \SubmissionDate \\[5.0em]
+			\end{flushright}
+		
+			\vfill
+			КИЇВ -- \Year
+		\end{center}
+	\end{titlepage}
+	
+	\setlength{\parindent}{1.25cm}
+	
+	\textbf{Мета роботи.} Визначення множини еквівалентних форм АВ з використанням заданих алгебраїчних законів.
+	
+	\textbf{Вхідні дані:} Коректний арифметичний вираз в аналітичному вигляді після успішного виконання лексичного та синтаксичного аналізу (результат виконання лабораторної роботи №1) або дерево паралельної форми арифметичного виразу (результат виконання лабораторної роботи №2). Крім того, кожний студент отримує два типи перетворень, які необхідно реалізувати відповідно у лабораторних роботах №3 та №4.
+	
+	\textbf{Завдання:} Улабораторних роботах №3 та №4 на основі перерахованих вхідних даних розробити алгоритми та програмно реалізувати отримання множини еквівалентних форм АВ або відповідних дерев паралельних форм з урахуванням алгебраїчних законів комутативності, дистрибутивності, асоціативності, а також з розкриття дужок.
+	
+	\begin{center}
+		\textbf{Хід роботи.}
+	\end{center}	
+	В рамках виконання лабораторної роботи №3-4 було реалізовано механізм пошуку еквівалентних форм арифметичного виразу. Завдання полягало у застосуванні дистрибутивного (розкриття дужок) та асоціативного (винесення спільного множника) законів для генерації множини всіх унікальних форм, що походять від вхідного виразу.
+	
+	За основу стратегії пошуку було взято двоетапний алгоритм, що відповідає графу, наведеному у методичних матеріалах. Цей підхід чітко розділяє процес на дві фази: розширення та факторинг. Для керування пошуком та уникнення дублікатів і циклів використовується структура даних \texttt{HashSet}, яка зберігає канонічні рядкові представлення кожної вже відвіданої форми. Основний алгоритм пошуку реалізований як пошук у ширину (\texttt{BFS}) з використанням черги \texttt{VecDeque} для кожного етапу, що гарантує покрове знаходження форм.
+	
+	Перший етап, розширення, починається з оригінального виразу. На кожній ітерації \texttt{BFS} викликається функція \texttt{get\_all\_single\_step\_expansions}. Ця функція рекурсивно сканує поточне дерево \texttt{AST} у пошуках вузлів \texttt{BinaryOperationKind::Multiply}, у яких один з операндів є бінарною операцією \texttt{Plus} або \texttt{Minus}. Це відповідає патернам \texttt{A * (B +/- C)} або \texttt{(A +/- B) * C}. Для кожного знайденого вузла створюється нова копія дерева, де цей вузол замінюється на його розкритий еквівалент, наприклад, \texttt{(A * B) + (A * C)}. Нові згенеровані форми додаються до черги, якщо вони не були відвідані раніше. Цей процес триває, доки черга розширення не вичерпається. Кінцевою точкою цього етапу є форма, в якій більше неможливо застосувати дистрибутивний закон (розкриття дужок множенням), що відповідає Вузлу 7 на графі з пам'ятки.
+	
+	Важливим проміжним кроком, доданим між двома фазами, є "вирівнювання" (flattening) отриманої повністю розкритої форми. Форма, що є кінцевою для Етапу 1, може все ще містити дужки, наприклад, ... - \texttt{(a * x - t * x)}. Щоб отримати істинно "пласку" форму без дужок, до цього вузла застосовуються функції \texttt{transform\_recursive} та \texttt{fold\_recursive}. Функція \texttt{transform\_recursive} рекурсивно застосовує правила перетворення унарного мінуса, наприклад, \texttt{-(A - B)} на \texttt{(-A) + B}. Одразу після цього \texttt{fold\_recursive} спрощує структуру, наприклад, \texttt{A + (-B)} на \texttt{A - B}. Результатом є нова, канонічна форма (у виводі це Форма 9), яка не містить зайвих дужок і слугує стартовою точкою для наступного етапу. Ця нова форма також додається до загального списку знайдених форм.
+	
+	Другий етап, факторинг, починає свій пошук BFS саме з цієї нової "пласкої" форми. Логіка асоціативного закону є значно складнішою. Ключовий алгоритм \texttt{get\_all\_possible\_factorings} спершу "вирівнює" дерево додавання/віднімання за допомогою функції \texttt{local\_collect\_operands}. Ця функція коректно обробляє операції \texttt{Minus}, перетворюючи вираз \texttt{A - B} на список доданків, де другий операнд представлений як \texttt{UnaryMinus ((-B))}. Таким чином, вираз \texttt{ak - ck - ax} перетворюється на плаский список \texttt{[ (ak), (-ck), (-ax) ]}. Далі алгоритм ітерує по кожному доданку, знаходячи його множники за допомогою \texttt{get\_factors} (яка коректно працює з унарним мінусом, наприклад, знаходячи \texttt{a} у \texttt{-(a*x)}). Для кожного знайденого фактора (наприклад, \texttt{a}), він шукає цей фактор в інших доданках списку. Залишки збираються за допомогою \texttt{get\_remainder} (яка також обробляє знаки, наприклад, \texttt{get\_remainder(-(a*x), a)} повертає \texttt{(-x)}). Якщо знайдено групу з кількох доданків зі спільним фактором, з їхніх залишків (наприклад, \texttt{[k, (-x)]}) будується нове збалансоване дерево додавання \texttt{k + (-x)}, яке потім множиться на спільний фактор \texttt{a * (k + (-x))}. Цей новий вузол разом з рештою доданків, що не увійшли до групи, формує нову еквівалентну форму, яка додається до черги BFS для подальшого аналізу.
+	
+	Нарешті, для забезпечення читабельного виводу результатів, було реалізовано окрему функцію \texttt{to\_pretty\_string}. На відміну від \texttt{to\_canonical\_string}, яка використовується для \texttt{HashSet} і містить надлишкові дужки, "красивий" друк рекурсивно обходить дерево, враховуючи пріоритет операцій. Дужки додаються лише тоді, коли пріоритет дочірньої операції нижчий за батьківський (наприклад, \texttt{(a + b) * c}). Крім того, до цієї функції було додано спеціальну логіку для коректного форматування унарних мінусів: конструкції \texttt{AST} виду \texttt{A + (-B)} автоматично перетворюються на рядок \texttt{"A - B"}, а \texttt{(-A) + B} -- на \texttt{"B - A"}. Це дозволило отримати фінальний список з 25 форм, включаючи повністю розкриту форму (Форма 9), у чистому та зрозумілому алгебраїчному вигляді.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[height=9cm]{01} 
+	\end{figure}
+	
+	
+	\textbf{Висновок.}
+	Під час виконання лабораторної роботи №3-4 було успішно розроблено та програмно реалізовано алгоритм для знаходження множини еквівалентних форм арифметичного виразу. Було імплементовано двоетапний підхід, що базується на графовій моделі з методичних матеріалів: спочатку застосовується дистрибутивний закон для повного розкриття дужок (розширення), а потім -- асоціативний закон для винесення спільних множників (факторинг). В результаті роботи програма коректно генерує повний список унікальних, алгебраїчно правильних форм, включаючи повністю "плаский" вираз без дужок, що повністю відповідає меті лабораторної роботи.
+		
+	\pagebreak
+	
+	\begin{center}
+		\textbf{Лістинг.}
+	\end{center}
+	
+	\textbf{associative.rs}
+	
+	\begin{lstlisting}[language=Rust]
+		use crate::compiler::ast::tree::{
+			AbstractSyntaxTree, AstError, AstNode, BinaryOperationKind,
+		};
+		use std::collections::{HashSet, VecDeque};
+		
+		impl AbstractSyntaxTree {
+			/// Returns a VECTOR of trees, where each tree is ONE step of the factoring.
+			pub fn get_all_single_step_factorings(&self) -> Vec<AbstractSyntaxTree> {
+				let mut all_new_forms = Vec::new();
+				// We start factoring from the root node.
+				Self::get_all_possible_factorings(self.peek.clone(), &mut all_new_forms);
+				all_new_forms
+			}
+			
+			/// Finds *all* possible *single* factoring steps from the current node.
+			fn get_all_possible_factorings(
+			node: AstNode, all_forms: &mut Vec<AbstractSyntaxTree>,
+			) {
+				// We can only factor terms from an addition or subtraction chain.
+				match &node {
+					AstNode::BinaryOperation { operation, .. }
+					if *operation == BinaryOperationKind::Plus
+					|| *operation == BinaryOperationKind::Minus =>
+					{
+						// This is a node we can start collecting from.
+					},
+					_ => return, // Not an additive/subtractive node, nothing to factor.
+				};
+				
+				// --- STEP 1: Flatten the expression ---
+				// This is the CRITICAL FIX. We flatten the tree into a list of terms.
+				// `ak - ck - ax` will become `[ (ak), (-ck), (-ax) ]`
+				let mut summands = Vec::new();
+				Self::local_collect_operands(node, &mut summands);
+				
+				if summands.len() < 2 {
+					return; // Not enough terms to factor.
+				}
+				
+				// --- STEP 2: Find all possible factor groupings ---
+				let mut unique_factors: HashSet<String> = HashSet::new();
+				
+				// Iterate over every term to use as the "base" for a group
+				for i in 0..summands.len() {
+					let factors_i = Self::get_factors(&summands[i]);
+					if factors_i.is_empty() {
+						continue; // This term (e.g., 'a') has no factors.
+					}
+					
+					// Iterate over each factor of the base term (e.g., 'a' and 'k' for 'ak')
+					for factor in factors_i {
+						let tree = AbstractSyntaxTree::from_node(factor);
+						let factor_key = tree.to_canonical_string();
+						let factor = tree.peek;
+						
+						// We use a HashSet to avoid generating duplicates.
+						if !unique_factors.insert(factor_key) {
+							continue;
+						}
+						
+						// Get the remainder for the base term (e.g., 'k' from 'ak' with factor 'a')
+						if let Some(remainder_i) = Self::get_remainder(&summands[i], &factor) {
+							let mut current_group_terms = vec![remainder_i];
+							let mut current_group_indices = vec![i];
+							
+							// --- STEP 3: Find other terms with the same factor ---
+							for (j, summand) in summands.iter().enumerate().skip(i + 1) {
+								// e.g., check '-ax' for factor 'a'
+								if let Some(remainder_j) = Self::get_remainder(summand, &factor) {
+									// Remainder will be '(-x)'. This is correct.
+									current_group_terms.push(remainder_j);
+									current_group_indices.push(j);
+								}
+							}
+							
+							// --- STEP 4: Build the new factored form ---
+							if current_group_terms.len() > 1 {
+								// We found a group! (e.g., factor 'a' with remainders [k, (-x)])
+								let mut new_summands = Vec::new();
+								
+								// 1. Create the new factored node: a * (k + (-x))
+								// We *always* sum the remainders with `Plus`.
+								let sum_of_terms = Self::local_build_balanced_tree(
+								current_group_terms,
+								BinaryOperationKind::Plus,
+								)
+								.unwrap_or(AstNode::Number(0.0)); // Should not happen
+								
+								let new_node = AstNode::BinaryOperation {
+									operation: BinaryOperationKind::Multiply,
+									left: Box::new(factor.clone()),
+									right: Box::new(sum_of_terms),
+								};
+								new_summands.push(new_node);
+								
+								// 2. Add all the terms that were *not* part of this group
+								for (idx, term) in summands.iter().enumerate() {
+									if !current_group_indices.contains(&idx) {
+										new_summands.push(term.clone());
+									}
+								}
+								
+								// 3. Re-assemble the final tree from all terms
+								// We *always* build the final tree with `Plus` as well.
+								if let Ok(final_node) = Self::local_build_balanced_tree(
+								new_summands,
+								BinaryOperationKind::Plus,
+								) {
+									all_forms.push(AbstractSyntaxTree::from_node(final_node));
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			/// Flattens a chain of `Plus`/`Minus` nodes into a flat Vec of operands.
+			/// `A - B` is treated as `A` and `(-B)`.
+			/// `ak - ck - ax` -> `[ (ak), (-ck), (-ax) ]`
+			fn local_collect_operands(node: AstNode, operands: &mut Vec<AstNode>) {
+				match node {
+					// Case: A + B
+					AstNode::BinaryOperation {
+						operation: BinaryOperationKind::Plus,
+						left,
+						right,
+					} => {
+						// Collect operands from both sides
+						Self::local_collect_operands(*left, operands);
+						Self::local_collect_operands(*right, operands);
+					},
+					// Case: A - B
+					AstNode::BinaryOperation {
+						operation: BinaryOperationKind::Minus,
+						left,
+						right,
+					} => {
+						// Collect operands from the left side
+						Self::local_collect_operands(*left, operands);
+						// Collect operands from the right side, but wrap them in UnaryMinus
+						Self::local_collect_operands_with_minus(*right, operands);
+					},
+					// Base case: A standalone term (like 'ak' or '-ck')
+					_ => {
+						operands.push(node);
+					},
+				}
+			}
+			
+			/// Helper for `local_collect_operands` to correctly apply UnaryMinus.
+			/// This handles `-(A+B) -> -A + -B` and `-(-A) -> A`.
+			fn local_collect_operands_with_minus(node: AstNode, operands: &mut Vec<AstNode>) {
+				match node {
+					// Case: -(-A) => A
+					AstNode::UnaryOperation {
+						operation: crate::compiler::ast::tree::UnaryOperationKind::Minus,
+						expression,
+					} => {
+						Self::local_collect_operands(*expression, operands);
+					},
+					// Case: -(A + B) => -A, -B
+					AstNode::BinaryOperation {
+						operation: BinaryOperationKind::Plus,
+						left,
+						right,
+					} => {
+						Self::local_collect_operands_with_minus(*left, operands);
+						Self::local_collect_operands_with_minus(*right, operands);
+					},
+					// Case: -(A - B) => -A, B
+					AstNode::BinaryOperation {
+						operation: BinaryOperationKind::Minus,
+						left,
+						right,
+					} => {
+						Self::local_collect_operands_with_minus(*left, operands);
+						Self::local_collect_operands(*right, operands); // Note: right side becomes positive
+					},
+					// Base case: -(term) => push(-term)
+					_ => {
+						operands.push(AstNode::UnaryOperation {
+							operation: crate::compiler::ast::tree::UnaryOperationKind::Minus,
+							expression: Box::new(node),
+						});
+					},
+				}
+			}
+			
+			/// Builds a balanced tree from a list of operands.
+			/// (This is a standard helper function, same as in balancer.rs)
+			fn local_build_balanced_tree(
+			operands: Vec<AstNode>, op_kind: BinaryOperationKind,
+			) -> Result<AstNode, AstError> {
+				if operands.is_empty() {
+					return Err(AstError::CannotBuildEmptyTree);
+				}
+				let mut queue: VecDeque<AstNode> = operands.into();
+				while queue.len() > 1 {
+					let level_size = queue.len();
+					for _ in 0..(level_size / 2) {
+						let left = queue.pop_front().ok_or(AstError::FailedPopFromQueue)?;
+						let right = queue.pop_front().ok_or(AstError::FailedPopFromQueue)?;
+						let new_node = AstNode::BinaryOperation {
+							operation: op_kind.clone(),
+							left: Box::new(left),
+							right: Box::new(right),
+						};
+						queue.push_back(new_node);
+					}
+					if !level_size.is_multiple_of(2) {
+						let odd_one_out =
+						queue.pop_front().ok_or(AstError::FailedPopFromQueue)?;
+						queue.push_back(odd_one_out);
+					}
+				}
+				queue.pop_front().ok_or(AstError::FailedPopFromQueue)
+			}
+			
+			/// Helper function: finds the factors for a term.
+			/// `A * B` -> `[A, B]`
+			/// `-(A * B)` -> `[A, B]` (sign is handled by get_remainder)
+			fn get_factors(node: &AstNode) -> Vec<AstNode> {
+				match node {
+					// Case: A * B
+					AstNode::BinaryOperation {
+						operation: BinaryOperationKind::Multiply,
+						left,
+						right,
+					} => {
+						vec![*left.clone(), *right.clone()]
+					},
+					// Case: -(A * B)
+					AstNode::UnaryOperation {
+						operation: crate::compiler::ast::tree::UnaryOperationKind::Minus,
+						expression,
+					} => {
+						if let AstNode::BinaryOperation {
+							operation: BinaryOperationKind::Multiply,
+							left,
+							right,
+						} = expression.as_ref()
+						{
+							// Factors are A and B. The minus sign is part of the "remainder".
+							vec![*left.clone(), *right.clone()]
+						} else {
+							vec![]
+						}
+					},
+					_ => vec![], // Not a multiplication, no factors
+				}
+			}
+			
+			/// Helper function: for `node` (term) and `factor`, returns the remainder.
+			/// `(A * B, A)` -> `B`
+			/// `(-(A * B), A)` -> `(-B)`
+			fn get_remainder(node: &AstNode, factor: &AstNode) -> Option<AstNode> {
+				match node {
+					// Case: A * B
+					AstNode::BinaryOperation {
+						operation: BinaryOperationKind::Multiply,
+						left,
+						right,
+					} => {
+						if left.as_ref() == factor {
+							return Some(*right.clone()); // (A * B) / A = B
+						}
+						if right.as_ref() == factor {
+							return Some(*left.clone()); // (A * B) / B = A
+						}
+						None
+					},
+					// Case: -(A * B)
+					AstNode::UnaryOperation {
+						operation: op @ crate::compiler::ast::tree::UnaryOperationKind::Minus,
+						expression,
+					} => {
+						if let AstNode::BinaryOperation {
+							operation: BinaryOperationKind::Multiply,
+							left,
+							right,
+						} = expression.as_ref()
+						{
+							if left.as_ref() == factor {
+								// -(A * B) / A = -B
+								return Some(AstNode::UnaryOperation {
+									operation: op.clone(),
+									expression: right.clone(),
+								});
+							}
+							if right.as_ref() == factor {
+								// -(A * B) / B = -A
+								return Some(AstNode::UnaryOperation {
+									operation: op.clone(),
+									expression: left.clone(),
+								});
+							}
+						}
+						None
+					},
+					_ => None,
+				}
+			}
+		}
+		
+	\end{lstlisting}
+	
+	\textbf{distributive.rs}
+	
+	\begin{lstlisting}[language=Rust]
+		use crate::compiler::ast::tree::{AbstractSyntaxTree, AstNode, BinaryOperationKind};
+		
+		// A "path" is a sequence of 0s and 1s (and 2s for Unary)
+		// 0 = left child, 1 = right child, 2 = unary expression
+		type NodePath = Vec<u8>;
+		
+		impl AbstractSyntaxTree {
+			/// Returns a vector of AbstractSyntaxTree, each representing a single-step expansion.
+			pub fn get_all_single_step_expansions(&self) -> Vec<AbstractSyntaxTree> {
+				let mut expandable_nodes_paths: Vec<NodePath> = Vec::new();
+				
+				// 1. Find all paths to nodes that can be expanded
+				Self::find_expandable_nodes_recursive(
+				&self.peek,
+				&mut vec![],
+				&mut expandable_nodes_paths,
+				);
+				
+				let mut all_forms = Vec::new();
+				
+				// 2. For each found path...
+				for path in expandable_nodes_paths {
+					// Create a fresh copy of the tree for this single expansion
+					let mut new_tree = self.clone();
+					
+					// 3. Get a mutable reference to the node at that path
+					if let Some(target_node) =
+					Self::get_node_mut_by_path(&mut new_tree.peek, &path)
+					{
+						// 4. Replace that node with its expanded version
+						// `perform_expansion` is guaranteed to expand *this* node
+						*target_node = Self::perform_expansion(target_node.clone());
+					}
+					all_forms.push(new_tree);
+				}
+				
+				all_forms
+			}
+			
+			/// Recursively finds nodes matching the pattern `A * (B +/- C)` or `(A +/- B) * C`
+			fn find_expandable_nodes_recursive(
+			node: &AstNode, path: &mut NodePath, paths: &mut Vec<NodePath>,
+			) {
+				if let AstNode::BinaryOperation {
+					operation: BinaryOperationKind::Multiply,
+					left,
+					right,
+				} = node
+				{
+					// Pattern 1: (A +/- B) * C
+					if let AstNode::BinaryOperation { operation: op, .. } = left.as_ref()
+					&& (*op == BinaryOperationKind::Plus || *op == BinaryOperationKind::Minus)
+					{
+						// This `Multiply` node can be expanded. Save its path.
+						paths.push(path.clone());
+					}
+					// Pattern 2: A * (B +/- C)
+					if let AstNode::BinaryOperation { operation: op, .. } = right.as_ref()
+					&& (*op == BinaryOperationKind::Plus || *op == BinaryOperationKind::Minus)
+					{
+						// This `Multiply` node can also be expanded. Save its path.
+						paths.push(path.clone());
+					}
+				}
+				
+				// Recursive traversal to check children
+				match node {
+					AstNode::BinaryOperation { left, right, .. } => {
+						path.push(0); // 0 = left
+						Self::find_expandable_nodes_recursive(left, path, paths);
+						path.pop();
+						
+						path.push(1); // 1 = right
+						Self::find_expandable_nodes_recursive(right, path, paths);
+						path.pop();
+					},
+					AstNode::UnaryOperation { expression, .. } => {
+						path.push(2); // 2 = expression
+						Self::find_expandable_nodes_recursive(expression, path, paths);
+						path.pop();
+					},
+					// Base cases (Number, Identifier): nowhere else to go
+					_ => {},
+				}
+			}
+			
+			/// Helper function to get mutable reference to a node by path
+			pub fn get_node_mut_by_path<'a>(
+			node: &'a mut AstNode, path: &[u8],
+			) -> Option<&'a mut AstNode> {
+				let mut current = node;
+				for &index in path {
+					match current {
+						AstNode::BinaryOperation { left, right, .. } => {
+							current = if index == 0 { left } else { right };
+						},
+						AstNode::UnaryOperation { expression, .. } => {
+							current = expression;
+						},
+						_ => return None, // Path is invalid
+					}
+				}
+				Some(current)
+			}
+			
+			/// Performs ONE unfolding on a node that is *guaranteed* to be `Multiply`
+			/// and have at least one child that is `Plus` or `Minus`.
+			fn perform_expansion(node: AstNode) -> AstNode {
+				if let AstNode::BinaryOperation {
+					operation: BinaryOperationKind::Multiply,
+					left,
+					right,
+				} = node
+				{
+					// Case 1: A * (B +/- C)
+					if let AstNode::BinaryOperation {
+						operation: op @ (BinaryOperationKind::Plus | BinaryOperationKind::Minus),
+						left: b,  // B
+						right: c, // C
+					} = *right
+					{
+						// Create (A * B)
+						let new_left = AstNode::BinaryOperation {
+							operation: BinaryOperationKind::Multiply,
+							left: left.clone(), // A
+							right: b,
+						};
+						// Create (A * C)
+						let new_right = AstNode::BinaryOperation {
+							operation: BinaryOperationKind::Multiply,
+							left, // A
+							right: c,
+						};
+						// Return (A*B) +/- (A*C)
+						return AstNode::BinaryOperation {
+							operation: op,
+							left: Box::new(new_left),
+							right: Box::new(new_right),
+						};
+					}
+					
+					// Case 2: (A +/- B) * C
+					if let AstNode::BinaryOperation {
+						operation: op @ (BinaryOperationKind::Plus | BinaryOperationKind::Minus),
+						left: a,  // A
+						right: b, // B
+					} = *left
+					{
+						// Create (A * C)
+						let new_left = AstNode::BinaryOperation {
+							operation: BinaryOperationKind::Multiply,
+							left: a,
+							right: right.clone(), // C
+						};
+						// Create (B * C)
+						let new_right = AstNode::BinaryOperation {
+							operation: BinaryOperationKind::Multiply,
+							left: b,
+							right, // C
+						};
+						// Return (A*C) +/- (B*C)
+						return AstNode::BinaryOperation {
+							operation: op,
+							left: Box::new(new_left),
+							right: Box::new(new_right),
+						};
+					}
+					
+					// If patterns didn't match (e.g., this was called on a wrong node)
+					// return the original node.
+					return AstNode::BinaryOperation {
+						operation: BinaryOperationKind::Multiply,
+						left,
+						right,
+					};
+				}
+				
+				// Return the node as is if it's not `Multiply`
+				node
+			}
+		}
+	\end{lstlisting}
+	
+	\textbf{equivalent\_forms.rs}
+	
+	\begin{lstlisting}[language=Rust]
+		use crate::compiler::ast::tree::AbstractSyntaxTree;
+		use crate::compiler::reports::Reporter;
+		use crate::utils::StringBuffer;
+		use std::collections::{HashSet, VecDeque};
+		
+		impl AbstractSyntaxTree {
+			pub fn find_equivalent_forms(&self) -> Vec<AbstractSyntaxTree> {
+				let mut all_forms: Vec<AbstractSyntaxTree> = Vec::new();
+				let mut visited: HashSet<String> = HashSet::new();
+				let mut expansion_queue: VecDeque<AbstractSyntaxTree> = VecDeque::new();
+				
+				// --- Stage 1: Expansion (Distributive Law, Nodes 0-7 from memo) ---
+				// This stage finds all forms *only* by expanding parentheses.
+				// It performs a Breadth-First Search (BFS) starting from the original expression.
+				
+				let initial_key = self.to_canonical_string();
+				expansion_queue.push_back(self.clone());
+				visited.insert(initial_key);
+				all_forms.push(self.clone());
+				
+				let mut fully_expanded_node: Option<AbstractSyntaxTree> = None;
+				
+				while let Some(current_ast) = expansion_queue.pop_front() {
+					// Get all possible next forms by applying *one step* of expansion
+					let expansion_steps = current_ast.get_all_single_step_expansions();
+					
+					// If a node has no possible expansions, it's a "leaf" in this stage.
+					// We assume the first one we find is the fully expanded form (Node 7).
+					if expansion_steps.is_empty() && fully_expanded_node.is_none() {
+						fully_expanded_node = Some(current_ast.clone());
+					}
+					
+					for expanded_ast in expansion_steps {
+						let key = expanded_ast.to_canonical_string();
+						if !visited.contains(&key) {
+							visited.insert(key.clone());
+							all_forms.push(expanded_ast.clone());
+							expansion_queue.push_back(expanded_ast);
+						}
+					}
+				}
+				
+				// --- Stage 1.5: Flattening ---
+				// We take the "fully expanded" node (Node 7) and apply unary minus
+				// rules like `-(A-B) -> -A+B` to get the *truly* flat form.
+				// This is the form you're looking for, which has no parentheses.
+				
+				let Some(node_to_flatten) = fully_expanded_node else {
+					log::warn!(
+					"No fully expanded form (Node 7) found. Skipping Stage 1.5 and 2."
+					);
+					return all_forms;
+				};
+				
+				let node_to_flatten_copy = node_to_flatten.clone();
+				let start_node_for_factoring =
+				match Self::transform_recursive(node_to_flatten.peek)
+				.and_then(Self::fold_recursive)
+				{
+					Ok(flattened_node_peek) => {
+						let flattened_ast =
+						AbstractSyntaxTree::from_node(flattened_node_peek);
+						let key = flattened_ast.to_canonical_string();
+						if !visited.contains(&key) {
+							// Add this new, truly flat form if it's unique
+							visited.insert(key);
+							all_forms.push(flattened_ast.clone());
+						}
+						flattened_ast // This is the new starting point for factoring
+					},
+					Err(e) => {
+						log::error!("Failed to flatten Node 7: {:?}. Using un-flattened.", e);
+						node_to_flatten_copy // Fallback to the un-flattened node
+					},
+				};
+				
+				// --- Stage 2: Factoring (Associative Law, Nodes 7-13) ---
+				// This stage now starts from the *truly flat* form.
+				
+				let mut factoring_queue: VecDeque<AbstractSyntaxTree> = VecDeque::new();
+				factoring_queue.push_back(start_node_for_factoring);
+				// We don't need to re-add to `visited` or `all_forms`,
+				// as it was handled in Stage 1.5
+				
+				while let Some(current_ast) = factoring_queue.pop_front() {
+					let factoring_steps = current_ast.get_all_single_step_factorings();
+					
+					for factored_ast in factoring_steps {
+						let key = factored_ast.to_canonical_string();
+						if !visited.contains(&key) {
+							visited.insert(key.clone());
+							all_forms.push(factored_ast.clone());
+							factoring_queue.push_back(factored_ast);
+						}
+					}
+				}
+				
+				all_forms
+			}
+		}
+		
+		impl Reporter {
+			pub fn finding_equivalent_form(&self, forms: &[String]) -> String {
+				let mut buffer = StringBuffer::default();
+				
+				buffer.add_line(format!("Found {} equivalent forms!\n", forms.len()));
+				
+				for (index, form) in forms.iter().enumerate() {
+					buffer.add_line(format!("{}) {}", index + 1, form));
+				}
+				
+				buffer.get()
+			}
+		}
+	\end{lstlisting}
+\end{document}
