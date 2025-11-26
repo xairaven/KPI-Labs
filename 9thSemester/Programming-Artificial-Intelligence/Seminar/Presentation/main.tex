@@ -1,0 +1,236 @@
+\documentclass[10pt]{beamer}
+
+\usetheme{Berlin}
+\usecolortheme{beaver} 
+
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[ukrainian]{babel}
+\usepackage{graphicx}
+\usepackage{caption}
+% 1. Вмикаємо нумерацію підписів у Beamer
+\setbeamertemplate{caption}[numbered]
+
+% 2. Змінюємо слово "Рисунок" на "Рис." (через babel)
+\addto\captionsukrainian{\renewcommand{\figurename}{Рис.}}
+
+% 3. Налаштовуємо шрифт підпису (трохи менший)
+\setbeamerfont{caption}{size=\footnotesize}
+
+\graphicspath{{./images/}}
+
+% Metadata
+\title{Анотована історія сучасного ШІ та глибокого навчання}
+\subtitle{Від Лейбніца та Івахненка до Трансформерів}
+\author{Олександр Ковальов, ІМ-51мн}
+\institute[КПІ]{<<Київський політехнічний інститут імені Ігоря Сікорського>> \\ Група ІМ-51мн}
+\date{\today}
+
+\begin{document}
+	
+	\begin{frame}
+		\titlepage
+	\end{frame}
+	
+	\begin{frame}{План виступу}
+		\tableofcontents
+	\end{frame}
+	
+	\section{Фундамент (1676-1958)}
+	
+	\begin{frame}{Міф про 2012 рік}
+		\begin{block}{Поширений міф}
+			Штучний інтелект народився у 2012 році з появою AlexNet та потужних GPU.
+		\end{block}
+		
+		\vspace{0.5cm}
+		
+		\textbf{Реальність:}
+		\begin{itemize}
+			\item Математика була готова у XVII столітті.
+			\item Перші нейромережі працювали у XIX столітті.
+			\item Глибоке навчання винайшли у Києві в 1960-х.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Лейбніц і Ланцюгове правило (1676)}
+		Основа навчання сучасних мереж — \textbf{Backpropagation}.
+		Математично це просто ланцюгове правило диференціювання:
+		
+		\begin{equation}
+			\frac{\partial E}{\partial w} = \frac{\partial E}{\partial y} \cdot \frac{\partial y}{\partial w}
+		\end{equation}
+		
+		\begin{itemize}
+			\item \textbf{Готфрід Вільгельм Лейбніц (1676):} Сформулював це правило.
+			\item Без цього ми б не могли вирішити \textit{Credit Assignment Problem} (хто винен у помилці?).
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Перцептрон Розенблатта (1958)}
+		\begin{columns}
+			\column{0.6\textwidth}
+			\textbf{Френк Розенблатт, Mark I:}
+			\begin{itemize}
+				\item Перша фізична машина, що навчалася.
+				\item Ейфорія в New York Times.
+			\end{itemize}
+			
+			\vspace{0.3cm}
+			\alert{Проблема:} Це було \textbf{Shallow Learning}.
+			\begin{itemize}
+				\item Навчався лише останній шар.
+				\item Не міг вирішити задачу XOR (Мінський, 1969).
+			\end{itemize}
+			
+			\column{0.4\textwidth}
+			
+			\begin{figure}
+				\centering
+				\includegraphics[width=\textwidth]{01}
+				\caption{Схема: Навчається тільки вихід}
+				\label{fig:shadowlearning}
+			\end{figure}
+		\end{columns}
+	\end{frame}
+	
+	\section{Київський прорив (1965)}
+	
+	\begin{frame}{Народження Глибокого Навчання в Києві}
+		Поки Захід переживав "Зиму ШІ", у Києві (Інститут кібернетики) відбувалася революція.
+		
+		\begin{block}{Олексій Івахненко та Валентин Лапа (1965)}
+			Розробили \textbf{МГУА (GMDH)} — Метод групового врахування аргументів.
+		\end{block}
+		
+		\begin{itemize}
+			\item Перший алгоритм для \textbf{багатошарових} мереж.
+			\item Мережа росла сама (самоорганізація).
+			\item Функція активації — поліном:
+		\end{itemize}
+		\begin{equation}
+			y = w_0 + w_1 x_1 + w_2 x_2 + w_3 x_1^2 + w_4 x_2^2 + w_5 x_1 x_2
+		\end{equation}
+	\end{frame}
+	
+	\begin{frame}{Світовий рекорд 1971 року}
+		\begin{columns}
+			\column{0.5\textwidth}
+			\textbf{Досягнення Івахненка (1971):}
+			\begin{itemize}
+				\item Працююча глибока мережа.
+				\item \textbf{8 шарів} обробки інформації!
+				\item У той час на Заході ледве працювали з 1-2 шарами.
+			\end{itemize}
+			
+			\column{0.5\textwidth}
+			\begin{alertblock}{Чому забули?}
+				\begin{enumerate}
+					\item Публікації російською/українською.
+					\item Відсутність Backprop для фіксованих структур.
+					\item Слабкі комп'ютери 70-х.
+				\end{enumerate}
+			\end{alertblock}
+		\end{columns}
+	\end{frame}
+	
+	\section{Backpropagation та Архітектури}
+	
+	\begin{frame}{Справжня історія Backpropagation}
+		\textbf{Міф:} Винайдено у 1986 (Хінтон). \\
+		\textbf{Реальність:} Це "перевідкриття".
+		
+		\begin{itemize}
+			\item \textbf{1960-1961 (Келлі, Брайсон):} Використання для керування ракетами (аналітичний градієнт).
+			\item \textbf{1970 (Сеппо Ліннаінмаа):} \textit{Reverse Mode of Automatic Differentiation}.
+		\end{itemize}
+		
+		\vspace{0.5cm}
+		Саме Ліннаінмаа показав, як рахувати похідні ефективно:
+		\begin{equation}
+			\text{Cost}(\nabla f) \approx K \cdot \text{Cost}(f)
+		\end{equation}
+	\end{frame}
+	
+	\begin{frame}{Еволюція: Неокогнітрон (1979)}
+		\begin{columns}
+			\column{0.6\textwidth}
+			\textbf{Куніхіко Фукусіма (1979):}
+			\begin{itemize}
+				\item Предтеча сучасних CNN.
+				\item Натхнення: зорова кора котів (Хьюбел і Візел).
+			\end{itemize}
+			
+			\textbf{Архітектура:}
+			\begin{enumerate}
+				\item S-шари (Simple) $\to$ Згортка.
+				\item C-шари (Complex) $\to$ Пулінг.
+			\end{enumerate}
+			
+			\column{0.4\textwidth}
+			
+			\begin{figure}
+				\centering
+				\includegraphics[width=\textwidth]{02}
+				\caption{Неокогнітрон}
+				\label{fig:neocognitron}
+			\end{figure}
+		\end{columns}
+	\end{frame}
+	
+	% --- Розділ 4 ---
+	\section{LSTM та GPU}
+	
+	\begin{frame}{Проблема зникаючого градієнта (1991)}
+		У глибоких мережах (особливо RNN) градієнт множиться багато разів:
+		
+		\begin{equation}
+			\frac{\partial E}{\partial w} \propto \prod_{t=1}^{T} w_{rec}
+		\end{equation}
+		
+		Якщо вага $< 1$, градієнт прямує до 0. Мережа перестає вчитися.
+		
+		\vspace{0.5cm}
+		\textbf{Рішення: LSTM (Хохрайтер і Шмідхубер, 1997)}
+		\begin{itemize}
+			\item Constant Error Carousel (CEC).
+			\item Градієнт \textbf{додається}, а не множиться.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Ера GPU: DanNet (2011) проти AlexNet (2012)}
+		Революція почалася не з алгоритмів, а зі заліза (GPU).
+		
+		\begin{itemize}
+			\item \textbf{2010:} Ден Чірешан (команда Шмідхубера) портує глибокі мережі на CUDA (50x прискорення).
+			\item \textbf{2011 (DanNet):} Перша перемога над людиною (Traffic Sign Recognition, 0.56\% помилки).
+			\item \textbf{2012 (AlexNet):} Перемога на ImageNet. Це популяризація підходу Чірешана на більших даних.
+		\end{itemize}
+	\end{frame}
+	
+	% --- Висновки ---
+	\section{Висновки}
+	
+	\begin{frame}{Сучасність і Висновки}
+		\textbf{Трансформери (2017):}
+		\begin{itemize}
+			\item Механізм \textit{Attention} має коріння в концепції <<Fast Weights>> (Шмідхубер, 1991).
+			\item ChatGPT — це масштабування ідей минулого століття.
+		\end{itemize}
+		
+		\vspace{0.5cm}
+		\begin{alertblock}{Головний висновок}
+			Історія ШІ циклічна. Ми стоїмо на плечах гігантів: Лейбніца, Івахненка, Ліннаінмаа та Фукусіми.
+		\end{alertblock}
+	\end{frame}
+	
+	\begin{frame}
+		\centering
+		\Huge \textbf{Дякую за увагу!}
+		
+		\vspace{1cm}
+		\normalsize
+		Запитання?
+	\end{frame}
+	
+\end{document}
