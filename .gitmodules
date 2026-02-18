@@ -12,7 +12,7 @@
 	url = https://github.com/xairaven/AlarmClock
 [submodule "07thSemester/Computer-Graphics-1/Workspace"]
 	path = 07thSemester/Computer-Graphics-1/Workspace
-	url = https://github.com/xairaven/KPI-CompGraphics
+	url = git@github.com:xairaven/KPI-CompGraphics
 [submodule "BachelorDiploma/Project"]
     path = BachelorDiploma/Project
     url = https://github.com/xairaven/xailyser
