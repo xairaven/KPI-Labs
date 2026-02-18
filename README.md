@@ -83,4 +83,4 @@ VIII | ProjectLibre | [Управління ІТ проектами](./08thSemes
 IX | Rust, LaTeX | [Програмне забезпечення комп'ютерних систем](./09thSemester/Software-of-Computer-Systems/)
 IX | Mininet, LaTeX, Python | [Програмування комп'ютерних та віртуальних мереж](./09thSemester/Computer-Virtual-Networks/)
 IX | Python, Jupyter Notebook | [Програмування систем штучного інтелекту](./09thSemester/Programming-Artificial-Intelligence/)
-X | Kotlin | [Сучасні мобільні операційні системи](./10thSemester/Modern-Mobile-OS/)
+X | Kotlin, LaTeX | [Сучасні мобільні операційні системи](./10thSemester/Modern-Mobile-OS/)
