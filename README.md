@@ -23,7 +23,7 @@
 **Роки навчання**: 09.2025 <i>- 06.2027</i>. <br>
 
 > [!NOTE]
-> В процесі: 1 *(9)* семестр.
+> В процесі: 2 *(10)* семестр.
 
 [![Rust](https://img.shields.io/badge/Rust-fde7d5?style=for-the-badge&logo=rust&logoColor=black)](#)
 [![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=dotnet&logoColor=white)](#)
@@ -83,3 +83,4 @@ VIII | ProjectLibre | [Управління ІТ проектами](./8thSemest
 IX | Rust, LaTeX | [Програмне забезпечення комп'ютерних систем](./9thSemester/Software-of-Computer-Systems/)
 IX | Mininet, LaTeX, Python | [Програмування комп'ютерних та віртуальних мереж](./9thSemester/Computer-Virtual-Networks/)
 IX | Python, Jupyter Notebook | [Програмування систем штучного інтелекту](./9thSemester/Programming-Artificial-Intelligence/)
+X | Kotlin | [Сучасні мобільні операційні системи](./10thSemester/Modern-Mobile-OS/)
