@@ -1,17 +1,17 @@
-[submodule "3rdSemester/Numerical Analysis/KPI-Awarding"]
-	path = 3rdSemester/Numerical Analysis/KPI-Awarding
+[submodule "03rdSemester/Numerical Analysis/KPI-Awarding"]
+	path = 03rdSemester/Numerical Analysis/KPI-Awarding
 	url = https://github.com/xairaven/KPI-Awarding
-[submodule "4thSemester/Information Security/Crypto-system"]
-	path = 4thSemester/Information Security/Crypto-system
+[submodule "04thSemester/Information Security/Crypto-system"]
+	path = 04thSemester/Information Security/Crypto-system
 	url = https://github.com/xairaven/Crypto-system
-[submodule "4thSemester/Statistics/StatisticsCW"]
-	path = 4thSemester/Statistics/StatisticsCW
+[submodule "04thSemester/Statistics/StatisticsCW"]
+	path = 04thSemester/Statistics/StatisticsCW
 	url = https://github.com/xairaven/StatisticsCW
-[submodule "6thSemester/Graphical-Interfaces/Lab3/src"]
-	path = 6thSemester/Graphical-Interfaces/Lab3/src
+[submodule "06thSemester/Graphical-Interfaces/Lab3/src"]
+	path = 06thSemester/Graphical-Interfaces/Lab3/src
 	url = https://github.com/xairaven/AlarmClock
-[submodule "7thSemester/Computer-Graphics-1/Workspace"]
-	path = 7thSemester/Computer-Graphics-1/Workspace
+[submodule "07thSemester/Computer-Graphics-1/Workspace"]
+	path = 07thSemester/Computer-Graphics-1/Workspace
 	url = https://github.com/xairaven/KPI-CompGraphics
 [submodule "BachelorDiploma/Project"]
     path = BachelorDiploma/Project
