@@ -1,0 +1,313 @@
+\documentclass[14pt, a4paper]{extreport}
+
+\usepackage{kpi-lab}
+\input{data}
+
+\begin{document}
+	\pagenumbering{gobble}
+	
+	\begin{titlepage}
+		\begin{center}
+			\normalsize
+			Національний технічний університет України\\
+			«Київський політехнічний інститут імені Ігоря Сікорського» \\[0.5em]
+			Факультет інформатики та обчислювальної техніки\\
+			Кафедра обчислювальної техніки
+			
+			\vfill
+			
+			{\large \textbf{ЗВІТ}\\[0.5em]}
+			{з лабораторної роботи №\LabNumber \\}
+			{з дисципліни <<\CourseTitle>>}
+			
+			\vspace{2em}
+			
+			{\textbf{Тема: <<\Topic>>}}
+			
+			\vspace{1em}
+			
+			{\textbf{Варіант №\Variant}}
+			
+			\vfill
+			
+			\begin{flushright}
+				Виконав: \\ студент \CourseNumber{} курсу, групи \StudentGroup \\
+				\StudentName \\[1em]
+				Перевірив: \\ \Teacher
+			\end{flushright}
+			
+			\vfill
+			
+			\begin{flushright}
+				Дата здачі: \DTMtoday
+			\end{flushright}
+			
+			\vspace{5em}
+			КИЇВ -- \ReportYear
+		\end{center}
+	\end{titlepage}
+	
+	\clearpage
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+	
+	\subsection*{Мета роботи} 
+	Знайомство з інтерфейсом середовища програмування та вивчення структури проекту.
+	
+	\subsection*{Завдання}
+	Встановити Java Development Kit та Android Software Development Kit.
+	Створити проект програми, заповнити його дані, зберегти.  Створити додаток з одним екраном (\texttt{Activity}). Створити два \texttt{Activity} та організувати перехід між ними. Вміст \texttt{Activity 1} -- кнопка з ім'ям \texttt{btn1}. Вміст \texttt{Activity 2} -- \texttt{TextView} з текстом "Параметр: значення\_параметра". Значення\_параметра -- з \texttt{Activity 1}. При запуску програми користувач повинен потрапляти на екран з \texttt{Activity 1}. Після натискання на кнопку \texttt{btn1} необхідно здійснити перехід до \texttt{Activity 2} і передавати параметр з \texttt{Activity 1}. Як значення параметра використовувати своє прізвище.
+	
+	\section*{Хід роботи.}
+	
+	Для початку треба встановити JDK. Встановлено JDK версії 26.0:
+	
+	\image{3.2cm}{java-install}
+	
+	Далі, за пропозицією Android Studio, завантажено та встановлено Android SDK версії 14.0 (кодова назва <<UpsideDownCake>>) з API Level 34:
+	
+	\image{10cm}{android-sdk}
+	
+	Створено новий проект. В якості шаблону обрано <<No Activity>>, оскільки планується використовувати один кореневий каталог (репозиторій) для збереження проектів усіх лабораторних робіт у вигляді окремих модулів.
+	
+	\image[width=17cm]{9cm}{repo-activity}
+	
+	Заповнено метадані проекту. В якості основної мови розробки обрано Kotlin.
+	
+	\image[width=17cm]{12cm}{project-setup}
+	
+	Після завершення індексації файлів сформовано структуру проекту. Кореневий каталог слугуватиме репозиторієм. Стандартний модуль \texttt{app} видалено, а замість нього створено новий модуль для поточної роботи під назвою \texttt{lab1}. Мінімальною версією SDK обрано API 24 (Android 7.0 <<Nougat>>).
+	
+	\image{11cm}{lab-setup}
+	
+	Для модуля \texttt{lab1} використано шаблон активності <<Empty Views Activity>>:
+	
+	\image{10.3cm}{lab-activity}
+	
+	Ім'я головного класу активності (\texttt{Activity}) залишено за замовчуванням:
+	
+	\image{6cm}{activity-name}
+	
+	Шаблон проекту успішно згенеровано:
+	
+	\image{18cm}{project-template}
+	
+	Для коректного версіонування проекту налаштовано файл \texttt{.gitignore}, щоб виключити з репозиторію тимчасові файли та файли збірки:
+	
+	\image{9cm}{gitignore}
+	
+	Виконано першу фіксацію змін (commit):
+	
+	\image{4cm}{first-commit}
+	
+	Проект завантажено на віддалений сервер GitHub у приватний репозиторій:
+	
+	\image{8cm}{git-push}
+	
+	Для перевірки роботи додатку налаштовано емулятор (Android Virtual Device). Створено новий профіль пристрою:
+	
+	\image{10cm}{hardware-profile}
+	
+	З метою оптимізації споживання ресурсів ПК, обрано пристрій з невеликою роздільною здатністю екрану (720p) та виділено 4 ГБ оперативної пам'яті.
+	
+	\image{12cm}{emulator-main}
+	
+	В якості операційної системи емулятора обрано Android 11 (API 30), яка є найбільш стабільною для емуляції в середовищі Linux.
+	
+	\image{11cm}{emulator-api}
+	
+	Для покращення швидкодії емулятора увімкнено апаратне прискорення графіки (Hardware Acceleration). Тип завантаження встановлено на <<Cold Boot>> для уникнення помилок кешування стану.
+	
+	\image{10cm}{emulator-settings}
+	
+	Успішно запущено базовий шаблон додатку <<Hello World>>:
+	
+	\image{21cm}{hello-world}
+	
+	Розроблено графічний інтерфейс користувача (UI). Відредаговано \texttt{XML}-файли розмітки в каталозі \texttt{res/layout}. У головній активності (\texttt{MainActivity}) розміщено текстовий напис (\texttt{TextView}) та кнопку (\texttt{Button}). Елементам присвоєно ідентифікатори та налаштовано параметри прив'язки (\texttt{Constraints}) для коректного відображення.
+	
+	Реалізовано логіку додатка в класі \texttt{MainActivity}. Оголошено змінні для кнопки та константи для передачі даних (прізвища). Додано слухач подій (Listener) на кнопку: при натисканні створюється об'єкт \texttt{Intent}, до якого додається прізвище студента за ключем \texttt{SURNAME\_KEY}, після чого ініціюється запуск другої активності.
+	
+	\image{20cm}{phone-activity-first}
+	
+	Для другої активності створено аналогічну розмітку, що містить текстове поле для виводу результату. У класі \texttt{SecondActivity} реалізовано отримання переданих даних з \texttt{Intent} та відображення їх на екрані за допомогою інтерполяції рядків.
+	
+	Розмітка в другій активності аналогічна першій, окрім того, що там два написи. Їм також були присвоєні ідентифікатори, тощо. В логіці відбувається знаходження елементу напису, отримання результату за ключем з інтенту та присвоєння напису відповідного тексту, сформованого за допомогою інтерполяції.
+	
+	\image{14cm}{phone-activity-second}
+	
+	\subsection*{Висновок}
+	
+	В ході виконання лабораторної роботи було встановлено та налаштовано необхідне програмне забезпечення для розробки мобільних додатків: Java Development Kit (JDK) та Android SDK. Було проведено ознайомлення з інтерфейсом середовища розробки Android Studio та вивчено структуру файлів Android-проекту.
+	
+	Набуто практичних навичок у створенні та конфігурації віртуальних пристроїв (AVD) для емуляції роботи додатків на ПК. Було розроблено додаток мовою Kotlin із використанням \texttt{ConstraintLayout}, який складається з двох екранів (\texttt{Activity}). Реалізовано логіку переходу між екранами та передачу даних (прізвища) з однієї активності в іншу за допомогою класу \texttt{Intent}. \\
+	
+	\section*{Контрольні запитання.}
+	
+	\begin{enumerate}
+		\item \textbf{Що таке мобільний додаток, мобільна платформа?} \\ Мобільний додаток -- це програмне забезпечення, спеціально розроблене для використання на портативних пристроях, таких як смартфони або планшети. Мобільна платформа -- це операційна система, що керує апаратним забезпеченням мобільного пристрою та надає програмне середовище для виконання додатків (наприклад, Android або iOS).
+		
+		\item \textbf{Що собою являє архітектура мобільної платформи Android?} \\ Архітектура Android побудована у вигляді багаторівневого стека програмного забезпечення. В її основі лежить ядро Linux, яке відповідає за драйвери та керування пам'яттю. Над ним знаходиться рівень апаратних абстракцій (HAL), нативні бібліотеки C/C++ та середовище виконання Android Runtime (ART). Вищим рівнем є Java API Framework, який надає інструменти розробникам, а на вершині знаходяться системні та користувацькі додатки.
+		
+		\item \textbf{Які основні компоненти Android-додатку?} \\ До основних компонентів належать Activity (активність), яка відповідає за візуальний інтерфейс та взаємодію з користувачем, та Service (сервіс), що виконує фонові завдання без графічного інтерфейсу. Також важливими є Broadcast Receiver, який отримує та обробляє загальносистемні повідомлення, та Content Provider, що забезпечує керування даними та їх спільне використання між різними додатками.
+		
+		\item \textbf{Що собою являє структура Android-проєкту?} \\ Структура Android-проєкту -- це ієрархія каталогів та файлів, що розділяє логіку програми, ресурси та налаштування збірки. Вона зазвичай складається з модулів (наприклад, \texttt{app}), які містять вихідний код, файли маніфесту та ресурси, а також скриптів Gradle, які керують процесом компіляції та залежностями проєкту.
+		
+		\item \textbf{Що містить файл конфігурації \texttt{AndroidManifest.xml}, папки \texttt{java} та \texttt{res}?} \\ Файл \texttt{AndroidManifest.xml} описує фундаментальні характеристики додатку, такі як назва пакету, дозволи, зареєстровані компоненти (активності, сервіси). Папка \texttt{java} містить файли з вихідним кодом програми (Kotlin або Java), де прописана логіка роботи. Папка \texttt{res} зберігає некомпільовані ресурси, включаючи XML-файли розмітки інтерфейсу, зображення, рядкові константи та стилі оформлення. \\
+		
+		\item \textbf{Що таке графічна реалізація Аctivity?} \\ Графічна реалізація Activity -- це XML-файл розмітки (Layout), який декларативно описує структуру користувацького інтерфейсу. У цьому файлі визначаються візуальні елементи (\texttt{View}) та контейнери (\texttt{ViewGroup}), їх розташування, розміри та властивості, які потім завантажуються та відображаються класом \texttt{Activity} під час виконання програми.
+	\end{enumerate}
+	
+	\pagebreak
+	
+	\section*{Лістинг.}
+	
+	\textbf{MainActivity.kt}
+	
+	\begin{minted}{kotlin} 
+		package ua.kpi.lab1
+		
+		import android.content.Intent
+		import android.os.Bundle
+		import android.widget.Button
+		import androidx.activity.enableEdgeToEdge
+		import androidx.appcompat.app.AppCompatActivity
+		import androidx.core.view.ViewCompat
+		import androidx.core.view.WindowInsetsCompat
+		
+		class MainActivity : AppCompatActivity() {
+			override fun onCreate(savedInstanceState: Bundle?) {
+				super.onCreate(savedInstanceState)
+				enableEdgeToEdge()
+				setContentView(R.layout.activity_main)
+				
+				ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+					val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+					v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+					insets
+				}
+				
+				val surname = "Ковальов"
+				val btn1 = findViewById<Button>(R.id.btn1)
+				btn1.setOnClickListener {
+					val intent = Intent(this, SecondActivity::class.java)
+					
+					intent.putExtra("SURNAME_KEY", surname)
+					
+					startActivity(intent)
+				}
+			}
+		}
+	\end{minted}
+	
+	\textbf{activity\_main.xml}
+	
+	\begin{minted}{xml} 
+		<?xml version="1.0" encoding="utf-8"?>
+		<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/main"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:context=".MainActivity">
+		
+		<TextView
+		android:id="@+id/myTextView"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="20dp"
+		android:text="Activity 1"
+		android:textSize="24sp"
+		
+		app:layout_constraintBottom_toTopOf="@+id/btn1"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintVertical_chainStyle="packed" />
+		
+		<Button
+		android:id="@+id/btn1"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Передати прізвище"
+		
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/myTextView" />
+		
+		</androidx.constraintlayout.widget.ConstraintLayout>
+	\end{minted}
+	
+	\textbf{SecondActivity.kt}
+	
+	\begin{minted}{kotlin} 
+		package ua.kpi.lab1
+		
+		import android.os.Bundle
+		import android.widget.TextView
+		import androidx.activity.enableEdgeToEdge
+		import androidx.appcompat.app.AppCompatActivity
+		import androidx.core.view.ViewCompat
+		import androidx.core.view.WindowInsetsCompat
+		
+		class SecondActivity : AppCompatActivity() {
+			override fun onCreate(savedInstanceState: Bundle?) {
+				super.onCreate(savedInstanceState)
+				enableEdgeToEdge()
+				setContentView(R.layout.activity_second)
+				ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+					val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+					v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+					insets
+				}
+				
+				val tvResult = findViewById<TextView>(R.id.tvResult)
+				val surname = intent.getStringExtra("SURNAME_KEY")
+				tvResult.text = "Параметр: $surname"
+			}
+		}
+	\end{minted}
+	
+	\textbf{activity\_second.xml}
+	
+	\begin{minted}{xml} 
+		<?xml version="1.0" encoding="utf-8"?>
+		<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/main"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:context=".SecondActivity">
+		
+		<TextView
+		android:id="@+id/secondActivityTV"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="20dp"
+		android:text="Activity 2"
+		android:textSize="24sp"
+		
+		app:layout_constraintBottom_toTopOf="@+id/tvResult"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintVertical_chainStyle="packed" />
+		
+		<TextView
+		android:id="@+id/tvResult"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Чекаємо даних..."
+		android:textSize="24sp"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/secondActivityTV" />
+		
+		</androidx.constraintlayout.widget.ConstraintLayout>
+	\end{minted}
+	
+\end{document}
