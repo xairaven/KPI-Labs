@@ -1,0 +1,608 @@
+\documentclass[14pt, a4paper]{extreport}
+
+\usepackage{kpi-lab}
+\input{data}
+
+\begin{document}
+	\pagenumbering{gobble}
+	
+	\begin{titlepage}
+		\begin{center}
+			\normalsize
+			Національний технічний університет України\\
+			«Київський політехнічний інститут імені Ігоря Сікорського» \\[0.5em]
+			Факультет інформатики та обчислювальної техніки\\
+			Кафедра обчислювальної техніки
+			
+			\vfill
+			
+			{\large \textbf{ЗВІТ}\\[0.5em]}
+			{з лабораторної роботи №\LabNumber \\}
+			{з дисципліни <<\CourseTitle>>}
+			
+			\vspace{2em}
+			
+			{\textbf{Тема: <<\Topic>>}}
+			
+			\vspace{1em}
+			
+			{\textbf{Варіант №\Variant}}
+			
+			\vfill
+			
+			\begin{flushright}
+				Виконав: \\ студент \CourseNumber{} курсу, групи \StudentGroup \\
+				\StudentName \\[1em]
+				Перевірив: \\ \Teacher
+			\end{flushright}
+			
+			\vfill
+			
+			\begin{flushright}
+				Дата здачі: \DTMtoday
+			\end{flushright}
+			
+			\vspace{5em}
+			КИЇВ -- \ReportYear
+		\end{center}
+	\end{titlepage}
+	
+	\clearpage
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+	
+	\subsection*{Мета роботи} 
+	Вивчити основи верстки. Навчитися керувати інтерфейсом мобільного пристрою при розробці програми.
+	
+	\subsection*{Завдання}
+	Розробити мобільний додаток, що складається з чотирьох Activity. 
+	Після запуску програми користувач повинен потрапляти на екран з \texttt{Activity1}. На цьому екрані має бути представлено меню, що складається з чотирьох кнопок. Висота кнопок повинна складати 20\% від висоти екрана. Відстань між кнопками -- 2\%. Перша і остання кнопка повинні бути на рівній відстані від країв екрану. Ширина кнопок -- 75\%, вирівнювання посередині.
+	Після натискання на першу кнопку користувач повинен переходити до \texttt{Activity2}, його зовнішній вигляд представлений на \textit{рис. 1}. Верстка повинна здійснюватися з використанням \texttt{LinearLayout}, ширина кнопок повинна задаватися в відсотках від ширини екрану. 
+	
+	\image{16cm}{task-1}
+	
+	\begin{center}
+		\textit{Рис. 1 -- Зовнішній вигляд екрану для першого завдання.}
+	\end{center}
+	
+	Після натискання на другу кнопку в \texttt{Activity1} користувач повинен переходити до \texttt{Activity3}, його зовнішній вигляд представлений на \textit{рис. 2}. Верстка повинна здійснюватися з використанням \texttt{RelativeLayout} (не використовувати \texttt{LinearLayout}).
+	
+	\image{22cm}{task-2}
+	
+	\begin{center}
+		\textit{Рис. 2 -- Результат виконання першого етапу завдання.}
+	\end{center}
+	
+	Третя кнопка в \texttt{Activity1} повинна створювати \texttt{Activity4}. Зовнішній вигляд
+	\texttt{Activity4} наведений на \textit{рис. 3}. Кнопка повинна бути вирівняна по центру екрана. Колір обведення кнопки \texttt{\#505050}. Товщина обведення відповідно до місяця вашого народження (від 1 до 12). Радіус заокруглення -- \texttt{24dp}. Колір фону екрану -- \texttt{\#FFFFFF}. При натисканні на кнопку її колір повинен змінюватися на світло-зелений. 
+	Натискання на четверту кнопку в \texttt{Аctivity1} повинно призводити до закриття програми.
+	
+	\image{19cm}{task-3}
+	
+	\begin{center}
+		\textit{Рис. 3 -- Інтерфейс програми на етапі \texttt{Activity3}.}
+	\end{center}
+	
+	\section*{Хід роботи.}
+	
+	Створено модуль лабораторної роботи:
+	
+	\image[width=18cm]{13cm}{init-module}
+	
+	Для виконання першого завдання, треба використовувати елемент \texttt{LinearLayout}. Головний -- має вагу 100 та вертикальну орієнтацію. Всередині нього -- вкладені \texttt{LinearLayout} та елементи \texttt{View}, які слугують заглушками. Так як висота кнопок повинна бути 20\% від висоти екрану, а відстань між кнопками -- 2\%, треба заздалегідь розрахувати вагу елементів. 
+	
+	\begin{itemize}
+		\item \textbf{Кнопки:} 4 по 20\% = 80\%.
+		\item \textbf{Відступи між ними:} 3 по 2\% = 6\%.
+		\item \textbf{Разом зайнято:} 80\% + 6\% = 86\%.
+		\item \textbf{Залишилося вільного місця:} 100\% - 86\% = 14\%.
+		\item \textbf{Відступи зверху і знизу:} Щоб було симетрично (перша і остання на рівній відстані), треба поділити залишок навпіл: 14\% / 2 = 7\%.
+	\end{itemize}
+	
+	Отже, схема висоти: 7\% (View) - 20\% (\texttt{btn1}) - 2\% (View) - 20\% (\texttt{btn2}) - 2\% (View) - 20\% (\texttt{btn3}) - 2\% (View) - 20\% (\texttt{btn4}) - 7\% (View).
+	
+	Вкладені \texttt{LinearLayout} потрібні, щоб обмежити ширину кнопок на 75\%.
+	
+	\image{10.5cm}{activity-1}
+	
+	Щодо другої активності використовується той самий принцип, що і в головному меню. 
+	
+	\image{10.5cm}{activity-2}
+	
+	Для реалізації третього екрану було створено нову активність \texttt{RelativeActivity} та відповідний файл розмітки XML. Згідно із завданням, верстка інтерфейсу здійснювалася виключно за допомогою контейнера \texttt{RelativeLayout}, що вимагало використання відносного позиціонування елементів замість вагових коефіцієнтів.
+	
+	Для розділення верхньої частини екрану на дві рівні зони (по 50\% ширини для кнопок <<Left>> та <<Right>>) було застосовано техніку використання опорного елемента. У центрі верхньої частини контейнера було розміщено допоміжний невидимий об'єкт \texttt{View} з нульовими розмірами, вирівняний по горизонтальному центру батьківського елемента. Ліва кнопка була позиціонована за допомогою прив'язки її лівого краю до початку екрану, а правого -- до опорного центру. Права кнопка, відповідно, була прив'язана лівим краєм до центру, а правим -- до кінця екрану, що забезпечило симетричний розподіл простору без використання \texttt{LinearLayout}.
+	
+	Центральна група елементів була сформована відносно кнопки <<Center>>, для якої було встановлено атрибут центрування в межах батьківського контейнера (\texttt{centerInParent}). Кнопки <<\texttt{Center\_left}>> та <<\texttt{Center\_right}>> були розміщені відповідно ліворуч та праворуч від центрального елемента за допомогою атрибутів відносного розміщення (\texttt{layout\_toStartOf} та \texttt{layout\_toEndOf}) із вирівнюванням по верхньому краю центральної кнопки.
+	
+	Нижній елемент інтерфейсу -- кнопку «Bottom» -- було зафіксовано у нижній частині екрану за допомогою атрибута прив'язки до нижнього краю батьківського контейнера (\texttt{layout\_alignParentBottom}) та розтягнуто на всю доступну ширину. 
+	
+	\image{9cm}{activity-3}
+	
+	Для виконання четвертої частини завдання було реалізовано \texttt{FourthActivity}, перехід до якої здійснюється з головного меню через обробник подій кнопки за допомогою класу \texttt{Intent}. Верстка екрана базується на \texttt{ConstraintLayout} із встановленим білим фоном, де центральним елементом є кастомізована кнопка. Її візуальний стиль визначено у спеціальному XML-ресурсі \texttt{fourth\_btn.xml} з використанням тегу \texttt{selector}, що дозволяє змінювати вигляд компонента залежно від його стану. У звичайному режимі кнопка має білий фон, заокруглені кути радіусом \texttt{24dp} та сіре обведення (\texttt{\#505050}) товщиною \texttt{4dp}, що відповідає місяцю народження (квітень), а при натисканні колір заливки змінюється на світло-зелений (\texttt{\#90EE90}). Для коректного відображення власного фону замість стандартного кольору теми Material Design властивість \texttt{app:backgroundTint} встановлено у значення \texttt{@null}. Окрім тексту чорного кольору, до кнопки додано векторну іконку Android, яку за допомогою атрибутів \texttt{app:iconTint} та \texttt{app:iconGravity} пофарбовано у зелений колір та розміщено ліворуч від напису з відповідним відступом.
+	
+	\image{5cm}{activity-4}
+	
+	\subsection*{Висновок}
+	
+	В ході виконання лабораторної роботи було розроблено багатоекранний мобільний додаток та закріплено навички роботи з основними типами розмітки в Android. Зокрема, було практично досліджено можливості \texttt{LinearLayout} для створення адаптивних інтерфейсів із використанням вагових коефіцієнтів, що дозволило реалізувати складне пропорційне розміщення елементів головного меню та вкладених структур. Також було опановано принципи відносного позиціонування компонентів за допомогою \texttt{RelativeLayout}, завдяки чому вдалося відтворити задану схему розташування кнопок. Окрему увагу було приділено кастомізації елементів інтерфейсу: створено спеціальні XML-ресурси (\texttt{Selector}) для керування візуальним станом кнопки, налаштовано її геометричну форму, параметри обведення згідно з варіантом та реакцію на натискання. Реалізація переходів між чотирма активностями дозволила закріпити знання про використання класу \texttt{Intent} для організації навігації всередині додатку.
+	
+	\section*{Контрольні запитання.}
+	
+	\begin{enumerate}
+		\item \textbf{Що таке \texttt{Layout}?} \\ \texttt{Layout} (макет) -- це контейнер, який визначає візуальну структуру інтерфейсу користувача, наприклад, для активності або віджета додатку. Технічно він є спадкоємцем класу \texttt{ViewGroup} і відповідає за впорядкування, розміщення та відображення дочірніх елементів, якими можуть бути як прості віджети (кнопки, текстові поля), так і інші вкладені макети.
+		
+		\item \textbf{Які існують види \texttt{Layout}?} \\ Існує декілька основних видів макетів, кожен з яких реалізує різну логіку розташування елементів. Найпоширенішими є \texttt{LinearLayout}, який вибудовує компоненти в один горизонтальний або вертикальний ряд, \texttt{RelativeLayout}, що дозволяє розміщувати елементи відносно один одного або батьківського контейнера, та \texttt{ConstraintLayout}, який забезпечує створення гнучких адаптивних інтерфейсів за допомогою системи прив'язок. Також існують \texttt{FrameLayout} для накладання об'єктів, \texttt{TableLayout} для табличного розміщення та \texttt{GridLayout} для створення сіток.
+		
+		\item \textbf{Які параметри мають View-елементи?} \\ Всі \texttt{View}-елементи мають набір базових параметрів (атрибутів), що контролюють їхній вигляд та поведінку. Ключовими є ідентифікатор (\texttt{id}) для доступу з коду, а також ширина (\texttt{layout\_width}) та висота (\texttt{layout\_height}), які зазвичай приймають значення \texttt{wrap\_content} або \texttt{match\_parent}. До інших важливих параметрів належать зовнішні відступи (\texttt{margin}), внутрішні відступи (\texttt{padding}), вирівнювання вмісту (\texttt{gravity}), колір фону (\texttt{background}) та видимість (\texttt{visibility}).
+		
+		\item \textbf{Як створити Layout-файл для роботи в горизонтальній орієнтації
+			екрану мобільного пристрою? У яких випадках це необхідно?} \\ Для підтримки горизонтальної орієнтації необхідно створити в папці ресурсів \texttt{res} нову директорію з назвою \texttt{layout-land} і скопіювати туди XML-файл розмітки з такою ж назвою, як і основний файл. Це необхідно у випадках, коли просте розтягування вертикального макету призводить до неестетичного вигляду або нераціонального використання екранного простору, наприклад, коли потрібно розмістити елементи у дві колонки замість однієї або коли вертикального простору недостатньо для відображення всього контенту.
+			
+		\item \textbf{Для чого потрібні методи \texttt{setContentView}, \texttt{findViewById}?} \\ Метод \texttt{setContentView} викликається у життєвому циклі активності (зазвичай в \texttt{onCreate}) для прив'язки XML-файлу розмітки до вікна програми, ініціюючи процес <<інфлейтингу>> (перетворення XML у об'єкти). Метод \texttt{findViewById} використовується для пошуку конкретного дочірнього елемента в завантаженій ієрархії \texttt{View} за його унікальним ідентифікатором (\texttt{id}), що дозволяє отримати посилання на цей об'єкт для подальшої програмної взаємодії з ним.
+		
+		\item \textbf{Які існують способи обробки подій в Аctivity?} \\ Обробку подій користувача, таких як натискання (click), можна реалізувати декількома способами. Найсучаснішим підходом у Kotlin є використання лямбда-виразів, які передаються у метод \texttt{setOnClickListener}. Також можна використовувати анонімні внутрішні класи, реалізовувати інтерфейс \texttt{View.OnClickListener} безпосередньо класом активності або визначати метод обробки в XML-атрибуті \texttt{android:onClick} (хоча останній спосіб вважається застарілим).
+	\end{enumerate}
+	
+	\pagebreak
+	
+	\section*{Лістинг.}
+	
+	\textbf{MainActivity.kt}
+	
+	\begin{minted}{kotlin} 
+		package ua.kpi.lab2
+		
+		import android.content.Intent
+		import android.os.Bundle
+		import android.widget.Button
+		import androidx.activity.enableEdgeToEdge
+		import androidx.appcompat.app.AppCompatActivity
+		
+		class MainActivity : AppCompatActivity() {
+			override fun onCreate(savedInstanceState: Bundle?) {
+				super.onCreate(savedInstanceState)
+				enableEdgeToEdge()
+				setContentView(R.layout.activity_main)
+				
+				// Button 1
+				findViewById<Button>(R.id.btnToLinear).setOnClickListener {
+					startActivity(Intent(this, SecondActivity::class.java))
+				}
+				
+				// Button 2
+				findViewById<Button>(R.id.btnToRelative).setOnClickListener {
+					startActivity(Intent(this, ThirdActivity::class.java))
+				}
+				
+				// Button 3
+				findViewById<Button>(R.id.btnToStyle).setOnClickListener {
+					startActivity(Intent(this, FourthActivity::class.java))
+				}
+				
+				// Button 4
+				findViewById<Button>(R.id.btnExit).setOnClickListener {
+					finishAffinity()
+				}
+			}
+		}
+	\end{minted}
+	
+	\textbf{activity\_main.xml}
+	
+	\begin{minted}{xml} 
+		<?xml version="1.0" encoding="utf-8"?>
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical"
+		android:weightSum="100">
+		
+		<View
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="7" />
+		
+		<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="20"
+		android:gravity="center"
+		android:orientation="horizontal"
+		android:weightSum="100">
+		
+		<Button
+		android:id="@+id/btnToLinear"
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="75"
+		android:text="To Activity 2 (Linear)" />
+		</LinearLayout>
+		
+		<View
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="2" />
+		
+		<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="20"
+		android:gravity="center"
+		android:orientation="horizontal"
+		android:weightSum="100">
+		
+		<Button
+		android:id="@+id/btnToRelative"
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="75"
+		android:text="To Activity 3 (Relative)" />
+		</LinearLayout>
+		
+		<View
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="2" />
+		
+		<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="20"
+		android:gravity="center"
+		android:orientation="horizontal"
+		android:weightSum="100">
+		
+		<Button
+		android:id="@+id/btnToStyle"
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="75"
+		android:text="To Styled Activity" />
+		</LinearLayout>
+		
+		<View
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="2" />
+		
+		<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="20"
+		android:gravity="center"
+		android:orientation="horizontal"
+		android:weightSum="100">
+		
+		<Button
+		android:id="@+id/btnExit"
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="75"
+		android:text="Exit" />
+		</LinearLayout>
+		
+		<View
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="7" />
+		
+		</LinearLayout>
+	\end{minted}
+	
+	\textbf{SecondActivity.kt}
+	
+	\begin{minted}{kotlin} 
+		package ua.kpi.lab2
+		
+		import android.os.Bundle
+		import androidx.activity.enableEdgeToEdge
+		import androidx.appcompat.app.AppCompatActivity
+		import androidx.core.view.ViewCompat
+		import androidx.core.view.WindowInsetsCompat
+		
+		class SecondActivity : AppCompatActivity() {
+			override fun onCreate(savedInstanceState: Bundle?) {
+				super.onCreate(savedInstanceState)
+				enableEdgeToEdge()
+				setContentView(R.layout.activity_second)
+				
+				ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { v, insets ->
+					val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+					v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+					insets
+				}
+			}
+		}
+	\end{minted}
+	
+	\textbf{activity\_second.xml}
+	
+	\begin{minted}{xml} 
+		<?xml version="1.0" encoding="utf-8"?>
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical"
+		android:padding="16dp">
+		
+		<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:weightSum="3">
+		
+		<Button
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="Button 1" />
+		
+		<Button
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="Button 2" />
+		
+		<Button
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="Button 3" />
+		</LinearLayout>
+		
+		<View
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1" />
+		
+		
+		<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:weightSum="10">
+		
+		<View
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="2" />
+		
+		<Button
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="3"
+		android:text="Button 4" />
+		
+		<Button
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="3"
+		android:text="Button 5" />
+		
+		<View
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="2" />
+		
+		</LinearLayout>
+		
+		
+		<View
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1" />
+		
+		
+		<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:weightSum="4">
+		
+		<Button
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:text="Button 6" />
+		
+		<Button
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:text="Button 7" />
+		
+		<Button
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="2"
+		android:text="Button 8" />
+		</LinearLayout>
+		
+		</LinearLayout>
+	\end{minted}
+	
+	\textbf{ThirdActivity.kt}
+	
+	\begin{minted}{kotlin} 
+		package ua.kpi.lab2
+		
+		import android.os.Bundle
+		import androidx.activity.enableEdgeToEdge
+		import androidx.appcompat.app.AppCompatActivity
+		import androidx.core.view.ViewCompat
+		import androidx.core.view.WindowInsetsCompat
+		
+		class ThirdActivity : AppCompatActivity() {
+			override fun onCreate(savedInstanceState: Bundle?) {
+				super.onCreate(savedInstanceState)
+				enableEdgeToEdge()
+				setContentView(R.layout.activity_third)
+				ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { v, insets ->
+					val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+					v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+					insets
+				}
+			}
+		}
+	\end{minted}
+	
+	\textbf{activity\_third.xml}
+	
+	\begin{minted}{xml} 
+		<?xml version="1.0" encoding="utf-8"?>
+		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:padding="16dp">
+		
+		<View
+		android:id="@+id/topCenterAnchor"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
+		android:layout_centerHorizontal="true" />
+		
+		<Button
+		android:id="@+id/btnLeft50"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentStart="true"
+		android:layout_alignParentTop="true"
+		android:layout_marginEnd="5dp"
+		android:layout_toStartOf="@id/topCenterAnchor"
+		android:text="Left 50%" />
+		
+		<Button
+		android:id="@+id/btnRight50"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentEnd="true"
+		android:layout_marginStart="5dp"
+		android:layout_toEndOf="@id/topCenterAnchor"
+		android:text="Right 50%" />
+		
+		<Button
+		android:id="@+id/btnCenter"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:text="Center" />
+		
+		<Button
+		android:id="@+id/btnCenterLeft"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignTop="@id/btnCenter"
+		android:layout_toStartOf="@id/btnCenter"
+		android:text="Center_left" />
+		
+		<Button
+		android:id="@+id/btnCenterRight"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignTop="@id/btnCenter"
+		android:layout_toEndOf="@id/btnCenter"
+		android:text="Center_right" />
+		
+		
+		<Button
+		android:id="@+id/btnBottom"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:text="Bottom" />
+		
+		</RelativeLayout>
+	\end{minted}
+	
+	\textbf{FourthActivity.kt}
+	
+	\begin{minted}{kotlin} 
+		package ua.kpi.lab2
+		
+		import android.os.Bundle
+		import androidx.activity.enableEdgeToEdge
+		import androidx.appcompat.app.AppCompatActivity
+		import androidx.core.view.ViewCompat
+		import androidx.core.view.WindowInsetsCompat
+		
+		class FourthActivity : AppCompatActivity() {
+			override fun onCreate(savedInstanceState: Bundle?) {
+				super.onCreate(savedInstanceState)
+				enableEdgeToEdge()
+				setContentView(R.layout.activity_fourth)
+				ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { v, insets ->
+					val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+					v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+					insets
+				}
+			}
+		}
+	\end{minted}
+	
+	\textbf{activity\_fourth.xml}
+	
+	\begin{minted}{xml} 
+		<?xml version="1.0" encoding="utf-8"?>
+		<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="#FFFFFF">
+		
+		<Button
+		android:id="@+id/btnCustom"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="@drawable/fourth_btn"
+		android:paddingStart="20dp"
+		
+		android:paddingTop="10dp"
+		android:paddingEnd="20dp"
+		android:paddingBottom="10dp"
+		android:text="New Button"
+		
+		android:textColor="#000000"
+		app:backgroundTint="@null"
+		
+		app:icon="@drawable/baseline_android_24"
+		app:iconGravity="textStart"
+		app:iconPadding="8dp"
+		app:iconTint="#3DDC84"
+		
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+		</androidx.constraintlayout.widget.ConstraintLayout>
+	\end{minted}
+	
+	\textbf{fourth\_btn.xml}
+	
+	\begin{minted}{xml} 
+		<?xml version="1.0" encoding="utf-8"?>
+		<selector xmlns:android="http://schemas.android.com/apk/res/android">
+		<item android:state_pressed="true">
+		<shape android:shape="rectangle">
+		<solid android:color="#90EE90" />
+		
+		<corners android:radius="24dp" />
+		
+		<stroke android:width="4dp" android:color="#505050" />
+		</shape>
+		</item>
+		
+		<item>
+		<shape android:shape="rectangle">
+		<solid android:color="#FFFFFF" />
+		
+		<corners android:radius="24dp" />
+		
+		<stroke android:width="4dp" android:color="#505050" />
+		</shape>
+		</item>
+		</selector>
+	\end{minted}
+
+\end{document}
