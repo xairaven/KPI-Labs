@@ -1,0 +1,27 @@
+//
+// Do any local configuration here
+//
+
+zone "cat.com" {
+    type master;
+    file "/etc/bind/db.cat.com";
+    notify yes;
+    also-notify { 192.168.1.3; };
+    allow-transfer { 192.168.1.3; };
+};
+
+zone "1.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.1.168.192";
+    notify yes;
+    also-notify { 192.168.1.3; };
+    allow-transfer { 192.168.1.3; };
+};
+
+zone "zone03.net" {
+    type master;
+    file "/etc/bind/db.zone03.net";
+    notify yes;
+    also-notify { 192.168.1.3; };
+    allow-transfer { 192.168.1.3; };
+};

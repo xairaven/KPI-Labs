@@ -1,0 +1,39 @@
+;
+; BIND reverse data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     ns1.cat.com. admin.cat.com. (
+                        4       ; Serial
+                        604800  ; Refresh (Slave - Refresh DB after ...)
+                        86400   ; Retry (Slave - Retry query after x if not succeed)
+                        2419200 ; Expire (Slave consider information non-valid)
+                        604800  ; Negative Cache TTL
+
+);
+
+@       IN      NS      ns1.cat.com.
+@       IN      NS      ns2.cat.com.
+@	IN	NS	ns1.zone03.net.
+@	IN	NS	ns2.zone03.net.
+
+; NS RECORDS - cat.com
+2     	IN      PTR     ns1.cat.com.
+3     	IN      PTR     ns2.cat.com.
+
+; NS RECORDS -  zone03.net
+2	IN	PTR	ns1.zone03.net.
+3	IN	PTR	ns2.zone03.net.
+
+; RECORDS - cat.com
+11	IN      PTR     tiger.cat.com.
+12	IN      PTR     lion.cat.com.
+13	IN      PTR     lynx.cat.com.
+14	IN      PTR     leopard.cat.com.
+15	IN      PTR     jaguar.cat.com.
+
+; RECORDS - zone03.net
+11      IN      PTR     tiger.zone03.net.
+12      IN      PTR     lion.zone03.net.
+13      IN      PTR     lynx.zone03.net.
+14      IN      PTR     leopard.zone03.net.
+15      IN      PTR     jaguar.zone03.net.

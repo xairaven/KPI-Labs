@@ -1,0 +1,22 @@
+//
+// Do any local configuration here
+//
+
+
+zone "cat.com" {
+    type slave;
+    file "/var/cache/bind/db.cat.com";
+    masters { 192.168.1.2; };
+};
+
+zone "1.168.192.in-addr.arpa" {
+    type slave;
+    file "/var/cache/bind/db.1.168.192";
+    masters { 192.168.1.2; };
+};
+
+zone "zone03.net" {
+    type slave;
+    file "/var/cache/bind/db.zone03.net";
+    masters { 192.168.1.2; };
+};
