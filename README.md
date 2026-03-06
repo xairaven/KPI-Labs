@@ -83,5 +83,6 @@ VIII | ProjectLibre | [Управління ІТ проектами](./08thSemes
 IX | Rust | [Програмне забезпечення комп'ютерних систем](./09thSemester/Software-of-Computer-Systems/)
 IX | Mininet, Python | [Програмування комп'ютерних та віртуальних мереж](./09thSemester/Computer-Virtual-Networks/)
 IX | Python, Jupyter Notebook | [Програмування систем штучного інтелекту](./09thSemester/Programming-Artificial-Intelligence/)
+X | Linux | [Інтернет технології](./10thSemester/Internet-Technologies/)
 X | Kotlin | [Сучасні мобільні операційні системи](./10thSemester/Modern-Mobile-OS/)
 X | C | [Технології та методика програмування вбудованих систем](./10thSemester/Embedded/)
