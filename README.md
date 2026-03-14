@@ -84,5 +84,6 @@ IX | Rust | [Програмне забезпечення комп'ютерних
 IX | Mininet, Python | [Програмування комп'ютерних та віртуальних мереж](./09thSemester/Computer-Virtual-Networks/)
 IX | Python, Jupyter Notebook | [Програмування систем штучного інтелекту](./09thSemester/Programming-Artificial-Intelligence/)
 X | Linux | [Інтернет технології](./10thSemester/Internet-Technologies/)
+X | Rust | [Методи та технології паралельного програмування](./10thSemester/Parallel-Programming/)
 X | Kotlin | [Сучасні мобільні операційні системи](./10thSemester/Modern-Mobile-OS/)
 X | C | [Технології та методика програмування вбудованих систем](./10thSemester/Embedded/)
