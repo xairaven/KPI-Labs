@@ -1,0 +1,17 @@
+Max error: 0
+Collecting data...
+Generating '/tmp/nsys-report-9d7e.qdstrm'
+[1/1] [0%                          ] nsys_easy.nsys-rep[1/1] [0%                          ] nsys_easy.nsys-rep[1/1] [==========49%               ] nsys_easy.nsys-rep[1/1] [=======================95%  ] nsys_easy.nsys-rep[1/1] [=======================96%  ] nsys_easy.nsys-rep[1/1] [========================100%] nsys_easy.nsys-rep[1/1] [========================100%] nsys_easy.nsys-rep
+Generated:
+	/home/xairaven/Files/University/10/GPT/Even-Easier-Introduction-Cuda/nsys_easy.nsys-rep
+Generating SQLite file nsys_easy.sqlite from nsys_easy.nsys-rep
+Processing [nsys_easy.sqlite] with [/opt/nvidia/nsight-systems/2025.6.3/host-linux-x64/reports/cuda_gpu_sum.py]... 
+
+ ** CUDA GPU Summary (Kernels/MemOps) (cuda_gpu_sum):
+
+ Time (%)  Total Time (ns)  Instances   Avg (ns)     Med (ns)    Min (ns)   Max (ns)   StdDev (ns)   Category                 Operation              
+ --------  ---------------  ---------  -----------  -----------  ---------  ---------  -----------  -----------  ------------------------------------
+     98.6        147968476          1  147968476.0  147968476.0  147968476  147968476          0.0  CUDA_KERNEL  add(int, float *, float *)          
+      1.0          1431245         48      29817.6       6687.5       2015     171941      49543.8  MEMORY_OPER  [CUDA memcpy Unified Host-to-Device]
+      0.4           657733         24      27405.5       5871.5       1471     159396      46617.3  MEMORY_OPER  [CUDA memcpy Unified Device-to-Host]
+
