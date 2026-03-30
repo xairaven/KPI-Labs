@@ -87,4 +87,4 @@ X | Linux | [Інтернет технології](./10thSemester/Internet-Tech
 X | Rust | [Методи та технології паралельного програмування](./10thSemester/Parallel-Programming/)
 X | Kotlin | [Сучасні мобільні операційні системи](./10thSemester/Modern-Mobile-OS/)
 X | CUDA | [Технології графічного процесінгу](./10thSemester/Graphics-Processing-Technologies/)
-X | C | [Технології та методика програмування вбудованих систем](./10thSemester/Embedded/)
+X | C, AVR Assembly | [Технології та методика програмування вбудованих систем](./10thSemester/Embedded/)

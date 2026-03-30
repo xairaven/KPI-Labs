@@ -6,6 +6,7 @@
 [![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](#)
 [![C](https://img.shields.io/badge/C-7B8794?style=for-the-badge&logo=c&logoColor=white)](#)
 [![CUDA](https://img.shields.io/badge/CUDA-76B900?style=for-the-badge&logo=NVIDIA&logoColor=black)](#)
+[![Assembly](https://img.shields.io/badge/Assembly-007ACC?style=for-the-badge&logo=assemblyscript&logoColor=white)](#)
 
 1. Інтернет технології
 2. Методи та технології паралельного програмування
@@ -22,4 +23,4 @@ Linux | [Інтернет технології](./Internet-Technologies/) | Inte
 Rust | [Методи та технології паралельного програмування](./Parallel-Programming/) | Parallel Programming Methods and Technologies
 Kotlin | [Сучасні мобільні операційні системи](./Modern-Mobile-OS/) | Modern Mobile Operation Systems
 CUDA | [Технології графічного процесінгу](./Graphics-Processing-Technologies/) | Graphics Processing Technologies
-C | [Технології та методика програмування вбудованих систем](./Embedded/) | Embedded systems
+C, AVR Assembly | [Технології та методика програмування вбудованих систем](./Embedded/) | Embedded systems
