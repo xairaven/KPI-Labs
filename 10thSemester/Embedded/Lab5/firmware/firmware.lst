@@ -1,0 +1,127 @@
+
+AVRA   Ver. 1.4.2 /home/xairaven/Files/University/10/Embedded/Lab5/code/firmware.asm Mon Mar 30 03:58:01 2026
+
+
+          .list
+         
+          .def Counter = R16
+          .def Temp = R17
+         
+          .CSEG
+          .ORG 0x0000
+C:000000 c000      RJMP Reset
+         
+          Reset:
+             ; Initialize stack pointer
+C:000001 e51f          LDI Temp, low(RAMEND)
+C:000002 bf1d          OUT SPL, Temp
+C:000003 e014          LDI Temp, high(RAMEND)
+C:000004 bf1e          OUT SPH, Temp
+         
+          Init:
+             ; Configure Port D as output
+C:000005 ef1f          LDI Temp, 0xFF
+C:000006 bb11          OUT DDRD, Temp
+C:000007 bb12          OUT PORTD, Temp
+             
+             ; Clear counter
+C:000008 2700          CLR Counter
+         
+          Loop:
+             ; Load base address of sine table into Z register
+C:000009 e2e4          LDI ZL, low(Sinus*2)
+C:00000a e0f0          LDI ZH, high(Sinus*2)
+         
+             ; Add current counter value to address
+C:00000b 0fe0          ADD ZL, Counter
+C:00000c 2711          CLR Temp
+C:00000d 1ff1          ADC ZH, Temp
+         
+             ; Read sine value from flash memory
+C:00000e 9114          LPM Temp, Z
+         
+             ; Output value to DAC (Port D)
+C:00000f bb12          OUT PORTD, Temp
+         
+             ; Increment counter (auto-wraps to 0 after 255)
+C:000010 9503          INC Counter
+         
+             ; Repeat loop
+C:000011 cff7          RJMP Loop
+         
+         ; Sine wave values table (256 values)
+          Sinus:
+          .DB 64,65,67,68,70,72,73,75
+C:000012 404143444648494B
+          .DB 76,78,79,81,82,84,85,87
+C:000016 4C4E4F5152545557
+          .DB 88,90,91,92,94,95,97,98
+C:00001A 585A5B5C5E5F6162
+          .DB 99,100,102,103,104,105,107,108
+C:00001E 6364666768696B6C
+          .DB 109,110,111,112,113,114,115,116
+C:000022 6D6E6F7071727374
+          .DB 117,118,118,119,120,121,121,122
+C:000026 757676777879797A
+          .DB 123,123,124,124,125,125,126,126
+C:00002A 7B7B7C7C7D7D7E7E
+          .DB 126,127,127,127,127,127,127,127
+C:00002E 7E7F7F7F7F7F7F7F
+          .DB 128,127,127,127,127,127,127,127
+C:000032 807F7F7F7F7F7F7F
+          .DB 126,126,126,125,125,124,124,123
+C:000036 7E7E7E7D7D7C7C7B
+          .DB 123,122,121,121,120,119,118,118
+C:00003A 7B7A797978777676
+          .DB 117,116,115,114,113,112,111,110
+C:00003E 7574737271706F6E
+          .DB 109,108,107,105,104,103,102,100
+C:000042 6D6C6B6968676664
+          .DB 99,98,97,95,94,92,91,90
+C:000046 6362615F5E5C5B5A
+          .DB 88,87,85,84,82,81,79,78
+C:00004A 5857555452514F4E
+          .DB 76,75,73,72,70,68,67,65
+C:00004E 4C4B494846444341
+          .DB 64,62,61,59,58,56,54,53
+C:000052 403E3D3B3A383635
+          .DB 51,50,48,47,45,44,42,41
+C:000056 3332302F2D2C2A29
+          .DB 39,38,36,35,34,32,31,30
+C:00005A 2726242322201F1E
+          .DB 28,27,26,25,23,22,21,20
+C:00005E 1C1B1A1917161514
+          .DB 19,18,17,15,14,13,13,12
+C:000062 1312110F0E0D0D0C
+          .DB 11,10,9,8,8,7,6,5
+C:000066 0B0A090808070605
+          .DB 5,4,4,3,3,2,2,2
+C:00006A 0504040303020202
+          .DB 1,1,1,0,0,0,0,0
+C:00006E 0101010000000000
+          .DB 0,0,0,0,0,0,1,1
+C:000072 0000000000000101
+          .DB 1,2,2,2,3,3,4,4
+C:000076 0102020203030404
+          .DB 5,5,6,7,8,8,9,10
+C:00007A 050506070808090A
+          .DB 11,12,13,13,14,15,17,18
+C:00007E 0B0C0D0D0E0F1112
+          .DB 19,20,21,22,23,25,26,27
+C:000082 1314151617191A1B
+          .DB 28,30,31,32,34,35,36,38
+C:000086 1C1E1F2022232426
+          .DB 39,41,42,44,45,47,48,50
+C:00008A 27292A2C2D2F3032
+          .DB 51,53,54,56,58,59,61,62
+C:00008E 333536383A3B3D3E
+Used memory blocks:
+   code      :  Start = 0x0000, End = 0x0091, Length = 0x0092 (146 words), Overlap=N
+
+
+Segment usage:
+   Code      :       146 words (292 bytes)
+   Data      :         0 bytes
+   EEPROM    :         0 bytes
+
+Assembly completed with no errors.
