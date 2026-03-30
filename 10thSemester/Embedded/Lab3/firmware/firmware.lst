@@ -1,0 +1,90 @@
+
+AVRA   Ver. 1.4.2 /home/xairaven/Files/University/10/Embedded/Lab3/code/firmware.asm Sat Mar 28 17:08:58 2026
+
+
+          .list
+         
+          .equ fck = 8000000
+          .equ BAUD = 9600
+          .equ UBRR_value = (fck/(BAUD*16))-1
+         
+          .cseg
+          .org 0
+         
+          Start:
+             ; Initialize Stack Pointer
+C:000000 e008          ldi R16, high(RAMEND)
+C:000001 bf0e          out SPH, R16
+C:000002 e50f          ldi R16, low(RAMEND)
+C:000003 bf0d          out SPL, R16
+         
+C:000004 d00b          rcall init_USART
+         
+             ; Configure PORTC as output for LEDs
+C:000005 ef0f          ldi R16, 0xFF
+C:000006 bb04          out DDRC, R16
+         
+          Main_Loop:
+             ; Receive data from terminal
+C:000007 d015          rcall USART_receive
+             ; Output received data to LEDs
+C:000008 bb05          out PORTC, R16
+         
+             ; Configure PORTA as input for switches
+C:000009 e000          ldi R16, 0x00
+C:00000a bb0a          out DDRA, R16
+             
+             ; Enable internal pull-up resistors for PORTA
+C:00000b ef0f          ldi R16, 0xFF
+C:00000c bb0b          out PORTA, R16
+         
+             ; Read switches state
+C:00000d b309          in R16, PINA
+             ; Send data to terminal
+C:00000e d00a          rcall USART_send
+         
+C:00000f cff7          rjmp Main_Loop
+         
+          init_USART:
+             ; Set baud rate
+C:000010 e000          ldi R16, high(UBRR_value)
+C:000011 bd00          out UBRRH, R16
+C:000012 e303          ldi R16, low(UBRR_value)
+C:000013 b909          out UBRRL, R16
+         
+             ; Enable receiver and transmitter
+C:000014 e108          ldi R16, (1<<RXEN)|(1<<TXEN)|(0<<RXCIE)|(0<<TXCIE)|(0<<UDRIE)
+C:000015 b90a          out UCSRB, R16
+         
+             ; Set frame format: 8 data bits, no parity, 1 stop bit
+C:000016 e806          ldi R16, (1<<URSEL)|(1<<UCSZ1)|(1<<UCSZ0)
+C:000017 bd00          out UCSRC, R16
+C:000018 9508          ret
+         
+          USART_send:
+             ; Wait for empty transmit buffer
+          sending:
+C:000019 9b5d          sbis UCSRA, UDRE
+C:00001a cffe          rjmp sending
+             ; Put data into buffer, sends the data
+C:00001b b90c          out UDR, R16
+C:00001c 9508          ret
+         
+          USART_receive:
+             ; Wait for data to be received
+          receiving:
+C:00001d 9b5f          sbis UCSRA, RXC
+C:00001e cffe          rjmp receiving
+             ; Get and return received data from buffer
+C:00001f b10c          in R16, UDR
+C:000020 9508          ret
+Used memory blocks:
+   code      :  Start = 0x0000, End = 0x0020, Length = 0x0021 (33 words), Overlap=N
+
+
+Segment usage:
+   Code      :        33 words (66 bytes)
+   Data      :         0 bytes
+   EEPROM    :         0 bytes
+
+Assembly completed with no errors.
