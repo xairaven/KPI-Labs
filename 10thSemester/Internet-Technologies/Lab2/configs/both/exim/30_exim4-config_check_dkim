@@ -1,0 +1,32 @@
+acl_check_dkim:
+
+	accept hosts = +relay_from_hosts
+	accept authenticated = *
+
+	# Message without sign
+	accept dkim_status = none
+		condition = ${if eq {$acl_c_dkim_hdr}{1} {no}{yes}}
+	set acl_c_dkim_hdr = 1
+	add_header = :at_start:X-DKIM: Exim 4 on $primary_hostname (no dkim signature)
+
+	# Message with sign, begin
+	warn condition = ${if eq {$acl_c_dkim_hdr}{1} {no}{yes}}
+	set acl_c_dkim_hdr = 1
+		add_header = :at_start:X-DKIM: Exim 4 on $primary_hostname
+
+	# Message with sign, bad signature
+	deny dkim_status = fail
+		message = Rejected: $dkim_verify_reason
+	logwrite = X-Auth: DKIM test failed: (address=$sender_address domain=$dkim_cur_signer), signature is bad.
+
+	# Message with sign, invalid signature
+	accept dkim_status = invalid
+	add_header = :at_start:Authentication-Results: $primary_hostname $dkim_cur_signer ($dkim_verify_status); $dkim_verify_reason
+	logwrite = X-Auth: DKIM test passed (address=$sender_address domain=$dkim_cur_signer), but signature is invalid.
+
+	# Message with sign, good signature
+	accept dkim_status = pass
+	add_header = :at_start:Authentication-Results: $primary_hostname; dkim=$dkim_verify_status header.i=@$dkim_cur_signer
+	logwrite = X-Auth: DKIM test passed (address=$sender_address domain=$dkim_cur_signer), good signature.
+
+	accept

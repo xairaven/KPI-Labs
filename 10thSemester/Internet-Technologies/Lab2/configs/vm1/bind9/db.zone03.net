@@ -1,0 +1,36 @@
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     ns1.zone03.net. admin.zone03.net. (
+                        8       ; Serial
+                        604800  ; Refresh (Slave - Refresh DB after ...)
+                        86400   ; Retry (Slave - Retry query after x if not succeed)
+                        2419200 ; Expire (Slave consider information non-valid)
+                        604800  ; Negative Cache TTL
+
+);
+
+@       IN      NS      ns1.zone03.net.
+@       IN      NS      ns2.zone03.net.
+
+@	IN	MX	10 mail.zone03.net.
+mail	IN	A	192.168.1.3
+@	IN	TXT	"v=spf1 a mx -all"
+
+ns1     IN      A       192.168.1.2
+ns2     IN      A       192.168.1.3
+
+tiger   IN      A       192.168.1.11
+lion    IN      A       192.168.1.12
+lynx    IN      A       192.168.1.13
+leopard IN      A       192.168.1.14
+jaguar  IN      A       192.168.1.15
+
+www     IN      CNAME   tiger
+ftp     IN      CNAME   lion
+ssh     IN      CNAME   lynx
+pop3    IN      CNAME   leopard
+imap    IN      CNAME   jaguar
+
+dkim._domainkey	IN	TXT	"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCoqaaxSgAYVAUfLtT6/K7A/6IV88w8GDcmHGJh8kqTWKTlCyBC+3iTGB2Z0B3MfR4jcrX7CSeFOyzI5cSAHm62AlqmNfujVB291R+e5MZBKZbS+wxjnZtWMmphcnmz6C/4mnlshs9oTTiW2sFHXpsjSIQtQe/d2r0et8eC17xb/QIDAQAB"

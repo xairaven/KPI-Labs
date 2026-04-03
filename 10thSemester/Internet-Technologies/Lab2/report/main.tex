@@ -1,0 +1,2031 @@
+\documentclass[14pt, a4paper]{extreport}
+
+\usepackage{kpi-lab}
+\input{data}
+
+\begin{document}
+	\pagenumbering{gobble}
+	
+	\begin{titlepage}
+		\begin{center}
+			\normalsize
+			Національний технічний університет України\\
+			«Київський політехнічний інститут імені Ігоря Сікорського» \\[0.5em]
+			Факультет інформатики та обчислювальної техніки\\
+			Кафедра обчислювальної техніки
+			
+			\vfill
+			
+			{\large \textbf{ЗВІТ}\\[0.5em]}
+			{з лабораторної роботи №\LabNumber \\}
+			{з дисципліни <<\CourseTitle>>}
+			
+			\vspace{2em}
+			
+			{\textbf{Тема: <<\Topic>>}}
+			
+			\vspace{1em}
+			
+			{\textbf{Варіант №\Variant}}
+			
+			\vfill
+			
+			\begin{flushright}
+				Виконав: \\ студент \CourseNumber{} курсу, групи \StudentGroup \\
+				\StudentName \\[1em]
+				Перевірив: \\ \Teacher
+			\end{flushright}
+			
+			\vfill
+			
+			\begin{flushright}
+				Дата здачі: \DTMtoday
+			\end{flushright}
+			
+			\vspace{5em}
+			КИЇВ -- \ReportYear
+		\end{center}
+	\end{titlepage}
+	
+	\clearpage
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+	
+	\subsection*{Мета роботи} 
+	Ознайомитися з сервісом електронної пошти.
+	
+	\subsection*{Завдання}
+	Створити центр сертифікації (CA) \texttt{issuer} і \texttt{subject} якого відповідають варіанту завдання. Сертифікати для поштових серверів мають підписуватись сертифікатом та ключем створеного СА. Сертифікат створеного СА необхідно додати в список довірених на всіх вузлах, які використовуються в роботі.
+	
+	Встановити та налаштувати 2 поштових сервери (mail/message transfer agent -- MTA) для пересилки повідомлень електронної пошти за допомогою протоколу SMTP, які відповідають наступним вимогам:
+	
+	\begin{itemize}
+		\item кожний поштовий сервер є кінцевим отримувачем повідомлень для домену, ім'я якого відповідає варіанту завдання;
+		
+		\item доменне ім'я поштового серверу має відповідати формату: \texttt{mail.<ім'я домену>};
+		
+		\item в кожному домені створені поштові скриньки з іменами, які відповідають варіанту завдання;
+		
+		\item обов'язкова автентифікація користувачів при відправленні повідомлень на зовнішні MTA;
+		
+		\item підтримка TLS для передачі повідомлень;
+		
+		\item вихідні повідомлення містять підпис DKIM;
+		
+		\item перевірка вхідних повідомлень на наявність та коректність підпису DKIM, повідомлення з некоректним підписом відкидаються;
+		
+		\item перевірка домену відправника повідомлення та обробка повідомлення у відповідності з SPF, яка відповідає варіанту завдання;
+		
+		\item перевірка повідомлень на наявність шкідливого програмного забезпечення;
+		
+		\item контекстний аналіз повідомлень для виконання спам-фільтрації.
+	\end{itemize}
+	
+	Для кожного сервера додати функціонал доставлення повідомлень засобами протоколів POP3 та IMAP з підтримкою TLS.
+	
+	Виконати аналіз протокольного обміну між вузлами під час відправлення, пересилки та доставлення поштових повідомлень. Проаналізувати заголовки листів.
+	
+	Рекомендується використовувати наступне програмне забезпечення:
+	
+	\begin{itemize}
+		\item MTA: exim або postfix;
+		
+		\item доставлення повідомлень засобами POP3 та IMAP: dovecot;
+		
+		\item антивірусна фільтрація: ClamAV;
+		
+		\item спам-фільтрація: SpamAssassin.
+	\end{itemize}
+	
+	Кожний поштовий сервер рекомендується встановлювати та налаштовувати на окремій віртуальній машині. Для перевірки роботи модулів поштового сервера та аналізу протокольного обміну рекомендується використовувати утиліти: telnet, openssl, swaks.
+	
+	Додати необхідні записи типів: MX та TXT для забезпечення функціонування поштових серверів згідно з варіантом завдання.
+	
+	\begin{itemize}
+		\item \textbf{Issuer та Subject CA}: 
+		
+		\begin{itemize}
+			\item \texttt{C=UA}
+			
+			\item \texttt{ST=Ukraine}
+			
+			\item \texttt{L=Kyiv}
+			
+			\item \texttt{O=KPI}
+			
+			\item \texttt{OU=OT}
+			
+			\item \texttt{cat CA}
+		\end{itemize}
+		
+		\item \textbf{Домен 1}: \texttt{cat.com}
+		
+		\item \textbf{Домен 2}: \texttt{zone03.net}
+		
+		\item \textbf{Поштові скриньки}: \texttt{tiger@cat.com}, \texttt{lion@cat.com}, \texttt{lynx@cat.com}, \texttt{leopard@zone03.net}, \texttt{jaguar@zone03.net}
+		
+		\item \textbf{Політика SPF}: \texttt{v=spf1 a mx -all}
+	\end{itemize}
+	
+	\section*{Хід роботи.}
+	
+	\subsection*{Налаштування центру сертифікації}
+	
+	Робота була розпочата зі створення локального центру сертифікації, тобто довіреного вузлу, який підтверджує справжність криптографічних ключів за допомогою цифрових сертифікатів. Спочатку необхідно створити кореневий сертифікат центру сертифікації та його приватний ключ. Для цього на першій віртуальній машині була запущена команда генерації за допомогою утиліти OpenSSL. Вона створить закритий ключ та самопідписаний сертифікат терміном на десять років. Аргументи зі завдання були передані через параметр \texttt{subj}. 
+	
+	\begin{minted}{bash}
+		# Generate Root CA private key and self-signed certificate
+		openssl req -x509 -newkey rsa:4096 -days 3650 -nodes -keyout ca.key -out ca.crt -subj "/C=UA/ST=Ukraine/L=Kyiv/O=KPI/OU=OT/CN=cat CA"
+	\end{minted}
+	
+	Далі потрібно створити сертифікати для самих поштових серверів та підписати їх створеним CA. Цю процедуру потрібно виконати для обох доменів. Почнемо з домену \texttt{cat.com}. Спочатку генерується закритий ключ для поштового сервера. Потім створюється запит на підпис сертифіката (Certificate Signing Request або CSR), де вказується ім'я поштового сервера \texttt{mail.cat.com}. Після цього цей запит підписується ключем кореневого центру сертифікації.
+	
+	\begin{minted}{bash}
+		# Generate private key for mail.cat.com
+		openssl genrsa -out mail.cat.com.key 2048
+		
+		# Create Certificate Signing Request (CSR) for mail.cat.com
+		openssl req -new -key mail.cat.com.key -out mail.cat.com.csr -subj "/C=UA/ST=Ukraine/L=Kyiv/O=KPI/OU=OT/CN=mail.cat.com"
+		
+		# Sign the CSR with Root CA to generate the certificate
+		openssl x509 -req -in mail.cat.com.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out mail.cat.com.crt -days 365
+	\end{minted}
+	
+	Маємо результат:
+	
+	\begin{minted}{text}
+		Certificate request self-signature ok
+		subject=C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=mail.cat.com
+	\end{minted}
+	
+	Аналогічну процедуру необхідно провести для другого поштового сервера у домені \texttt{zone03.net}. Змінюється лише доменне ім'я вузла (CN) на \texttt{mail.zone03.net}.
+	
+	\begin{minted}{bash}
+		# Generate private key for mail.zone03.net
+		openssl genrsa -out mail.zone03.net.key 2048
+		
+		# Create Certificate Signing Request (CSR) for mail.zone03.net
+		openssl req -new -key mail.zone03.net.key -out mail.zone03.net.csr -subj "/C=UA/ST=Ukraine/L=Kyiv/O=KPI/OU=OT/CN=mail.zone03.net"
+		
+		# Sign the CSR with Root CA to generate the certificate
+		openssl x509 -req -in mail.zone03.net.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out mail.zone03.net.crt -days 365
+	\end{minted}
+	
+	Далі треба розмістити файли по відповідним машинам. Маємо таке розташування:
+	
+	\begin{minted}{text}
+		user1@vm1:~/CA$ ls
+		ca.crt  ca.key  ca.srl  mail.cat.com.crt  mail.cat.com.key
+		
+		user2@vm2:~/CA$ ls
+		ca.crt  mail.zone03.net.crt  mail.zone03.net.key
+	\end{minted}
+	
+	У Linux-системах, таких як Debian чи Ubuntu, існують загальноприйняті стандарти для зберігання криптографічних матеріалів. Дотримання цих правил не лише підвищує безпеку, але й значно спрощує подальше налаштування служб, оскільки багато з них за замовчуванням шукають ключі саме в цих місцях.
+	
+	Публічні сертифікати поштових серверів, а саме файли \texttt{mail.cat.com.crt} та \texttt{mail.zone03.net.crt}, найкраще покласти до директорії \texttt{/etc/ssl/certs/} на відповідних віртуальних машинах. Ця тека призначена саме для публічних даних. Сертифікати не є таємницею, тому їх можуть читати всі служби, яким потрібно забезпечити TLS-з'єднання.
+	
+	Приватні ключі серверів, тобто файли \texttt{mail.cat.com.key} та \texttt{mail.zone03.net.key}, є секретною інформацією. Їхнє стандартне місце -- директорія \texttt{/etc/ssl/private/} на відповідних машинах. Ця папка має спеціальні права доступу, які обмежують читання для звичайних користувачів. Після переміщення туди приватного ключа, обов'язково треба встановити на нього максимально суворі права. Це робиться для того, щоб ключ міг прочитати лише суперкористувач \texttt{root}.
+	
+	Що стосується файлів самого Центру Сертифікації, зокрема вашого головного приватного ключа \texttt{ca.key} та файлу \texttt{ca.srl}, їх взагалі не потрібно тримати поруч із робочими файлами пошти. Цей ключ є коренем довіри вашої інфраструктури. Найкраще створити окрему приховану теку безпосередньо в домашній папці адміністратора на першій машині, наприклад \texttt{/root/ca/}, і зберігати ці файли там. Поштові сервери ніколи не звертатимуться до цього ключа напряму під час своєї роботи.
+	
+	Відповідно, маємо такий порядок виконання команд на першій віртуальній машині:
+	
+	\begin{minted}{bash}
+		user1@vm1:~/CA$ ls
+		ca.crt  ca.key  ca.srl  mail.cat.com.crt  mail.cat.com.key
+		user1@vm1:~/CA$ sudo mv mail.cat.com.key /etc/ssl/private/
+		user1@vm1:~/CA$ sudo mv mail.cat.com.crt /etc/ssl/certs/
+		user1@vm1:~/CA$ sudo chmod 600 /etc/ssl/private/mail.cat.com.key
+		user1@vm1:~/CA$ sudo mkdir /root/ca/
+		user1@vm1:~/CA$ ls
+		ca.crt  ca.key  ca.srl
+		user1@vm1:~/CA$ sudo mv ca.key  ca.srl /root/ca/
+		user1@vm1:~/CA$ sudo mv ca.srl /root/ca/
+		user1@vm1:~/CA$ sudo ls /root/ca/
+		ca.key  ca.srl
+	\end{minted}
+	
+	На другій:
+	
+	\begin{minted}{bash}
+		user2@vm2:~/CA$ sudo mv mail.zone03.net.key /etc/ssl/private/
+		user2@vm2:~/CA$ sudo mv mail.zone03.net.crt /etc/ssl/certs/
+		user2@vm2:~/CA$ sudo chmod 600 /etc/ssl/private/mail.zone03.net.key
+	\end{minted}
+	
+	На обох машинах, і на першій, і на другій, файл публічного сертифіката \texttt{ca.crt} потрібно розмістити в абсолютно однаковому місці, щоб операційні системи почали довіряти центру сертифікації.
+	
+	Цільова директорія для цього файлу в системах на базі Debian або Ubuntu -- це \texttt{/usr/local/share/ca-certificates/}. Це стандартне розташування для локально доданих кореневих сертифікатів. Дуже важливо, щоб файл зберігав розширення \texttt{.crt}, оскільки системні утиліти шукають саме такі файли під час оновлення сховища.
+	
+	Після копіювання, необхідно буде виконати команду оновлення. Ця команда змусить систему просканувати директорію, знайти новий сертифікат і офіційно додати його до загального системного списку довірених вузлів. Отримуємо однаковий результат на обох машинах.
+	
+	\begin{minted}{bash}
+		user1@vm1:~/CA$ sudo mv ca.crt /usr/local/share/ca-certificates/
+		user1@vm1:~/CA$ sudo update-ca-certificates
+		Updating certificates in /etc/ssl/certs...
+		rehash: warning: skipping ca-certificates.crt, it does not contain exactly one certificate or CRL
+		1 added, 0 removed; done.
+		Running hooks in /etc/ca-certificates/update.d...
+		done.
+	\end{minted}
+	
+	Щойно друга команда завершить роботу, у терміналі має з'явитися короткий звіт про те, що було додано один новий сертифікат. Це є підтвердженням того, що обидві машини відтепер розпізнаватимуть і довірятимуть сертифікатам поштових серверів. Це забезпечить коректну роботу TLS-з'єднань між ними без помилок перевірки автентичності.
+	
+	\subsection*{DNS та exim}
+	
+	Спочатку оновимо пакети на першій та другій машинах.
+	
+	\image{6cm}{apt-upgrade}
+	
+	Перевіряємо роботу DNS:
+	
+	\image{6cm}{is-dns-working}
+	
+	Змінюємо налаштування BIND9. Параметр \texttt{directory} задає базову робочу папку сервера для збереження кешу та файлів підлеглих зон. Опція \texttt{reuseport} вимикає зайвий для лабораторної механізм розподілу мережевого навантаження між ядрами процесора. Налаштування \texttt{listen-on} змушує сервер приймати запити виключно на вказаних адресах, що є базовим правилом безпеки. Нарешті, \texttt{listen-on-v6} повністю відключає протокол IPv6, оскільки у мережі використовується лише IPv4.
+	
+	Перша машина (файл -- \texttt{/etc/bind/named.conf.options}):
+	
+	\begin{minted}{text}
+		options {
+			directory "/var/cache/bind";
+			reuseport no;
+			listen-on port 53 { 192.168.1.2; 127.0.0.1; };
+			listen-on-v6 { none; };
+		};
+	\end{minted}
+	
+	Дві зони вже були налаштовані в першій лабораторній роботі. Але, для другої роботи треба внести правки. Спочатку додаємо запис MX який посилається на машину <<mail>>, яка і є першою віртуальною. Треба додати два рядки в файл \texttt{/etc/bind/db.cat.com}:
+	
+	\begin{minted}{text}
+		@	IN	MX	10 mail.cat.com.
+		mail	IN	A	192.168.1.2
+	\end{minted}
+	
+	Такі ж зміни і для \texttt{/etc/bind/db.zone03.net}, але посилаємося вже на другу віртуальну машину:
+	
+	\begin{minted}{text}
+		@	IN	MX	10 mail.zone03.net.
+		mail	IN	A	192.168.1.3
+	\end{minted}
+	
+	Не забуваємо про зворотню зону (\texttt{/etc/bind/db.1.168.192}).
+	
+	\begin{minted}{text}
+		; MAIL RECORDS
+		2       IN      PTR     mail.cat.com.
+		3       IN      PTR     mail.zone03.net.
+	\end{minted}
+	
+	Перезапускаємо сервер, перевіряємо статус.
+	
+	\image{6cm}{bind-restart-01}
+	
+	Перевіряємо, чи можемо знайти пошту.
+	
+	\image{8cm}{dig-mail-cat}
+	
+	Перевіряємо відкриті порти. Бачиом, що відкриті порти DNS лише для інтерфейсу віртуальної машини (за яким підключаємося, налаштовувався в першій роботі), localhost, і ці два для TCP та UDP. Задовільно.
+	
+	\image{6cm}{ports-open-dns}
+	
+	Відредагуємо \texttt{/etc/resolv.conf}:
+	
+	\begin{minted}{text}
+		domain cat.com
+		search cat.com
+		nameserver 192.168.1.2
+		nameserver 192.168.1.3
+	\end{minted}
+	
+	Змінимо \texttt{/etc/hosts}:
+	
+	\begin{minted}{text}
+		127.0.0.1	localhost
+		127.0.1.1	mail.cat.com	mail
+		
+		# The following lines are desirable for IPv6 capable hosts
+		::1     localhost ip6-localhost ip6-loopback
+		ff02::1 ip6-allnodes
+		ff02::2 ip6-allrouters
+	\end{minted}
+	
+	Перейменовуємо першу машину:
+	
+	\begin{minted}{text}
+		sudo hostnamectl hostname mail.cat.com
+	\end{minted}
+	
+	Встановлюємо пакети \texttt{exim4-daemon-heavy} та \texttt{swaks} на обох машинах:
+	
+	\image[width=18cm]{11cm}{exim4-install}
+	
+	Починаємо налаштування \texttt{exim4} командою:
+	
+	\begin{minted}{bash}
+		sudo dpkg-reconfigure exim4-config
+	\end{minted}
+	
+	Обираємо повноцінний варіант налаштування:
+	
+	\image{4cm}{config-01}
+	
+	Ім'я вузла залишаємо:
+	
+	\image{4cm}{config-02}
+	
+	Слухаємо всі порти:
+	
+	\image{3cm}{config-03}
+	
+	Які домени буде обслуговувати пошта:
+	
+	\image{2.5cm}{config-04}
+	
+	Не обслуговуємо інші домени:
+	
+	\image{2.5cm}{config-05}
+	
+	Те ж саме стосується ІР-адрес.
+	
+	\image{3cm}{config-06}
+	
+	Оптимізація DNS-запитів не потрібна:
+	
+	\image{3cm}{config-07}
+	
+	Формат зберігання листів:
+	
+	\image{3cm}{config-08}
+	
+	Конфігураційні файли будемо розбивати.
+	
+	\image{3cm}{config-09}
+	
+	Перезапускаємо сервіс. 
+	
+	\image[width=18cm]{8cm}{exim-restart-01}
+	
+	Перевіримо, чи прослуховуються порти:
+	
+	\image{3cm}{ports-open-exim}
+	
+	Переглянемо, які дані знаходяться в сертифікаті, щоб впевнитись, що вони відповідають заданим в завданні.
+	
+	\image{6cm}{cert-info}
+	
+	За допомогою скрипту додаємо віртуального користувача:
+	
+	\begin{minted}{text}
+		user1@vm1:/etc/exim4$ sudo /usr/share/doc/exim4-base/examples/exim-adduser
+		User: tiger
+		Password: rootpass
+	\end{minted}
+
+	В файл \texttt{/etc/exim4/passwd} додаємо нік користувача вдруге, щоб відповідати потрібному формату.
+	
+	\begin{minted}{text}
+		user1@vm1:/etc/exim4$ cat passwd
+		tiger:$1$vXuU$VVT2jCXxNpK0BuGMz1B/F0:rootpass:tiger
+	\end{minted}
+	
+	Скопіюємо в цю директорію сертифікат та ключ.
+	
+	\begin{minted}{text}
+		user1@vm1:/etc/exim4$ sudo cp /etc/ssl/certs/mail.cat.com.crt exim.crt
+		user1@vm1:/etc/exim4$ sudo cp /etc/ssl/private/mail.cat.com.key exim.key
+		user1@vm1:/etc/exim4$ ls
+		conf.d  exim4.conf.template  exim.crt  exim.key  passwd  passwd.client  update-exim4.conf.conf
+	\end{minted}
+	
+	Увімкнемо TLS, додавши один рядок в файл \texttt{/etc/exim4/conf.d/main/03\_exim4-config\_tlsoptions}.
+	
+	\begin{minted}{text}
+		MAIN_TLS_ENABLE = 1
+	\end{minted}
+	
+	В файлі \texttt{/etc/exim4/conf.d/auth/30\_exim4-config\_examples} вмикаємо plain та login аутентифікацію.
+	
+	\image[width=18cm]{12cm}{exim4-auth-plain-login}
+	
+	Вимикаємо DNS Lookup, змінивши рядок в файлі \texttt{/etc/exim4/conf.d/router/200\_exim4-config\_primary}.
+	
+	\begin{minted}{text}
+		ROUTER_DNSLOOKUP_IGNORE_TARGET_HOSTS = <; 0.0.0.0 ; 127.0.0.0/8 ; 192.168.0.0/16 ; 255.255.255.255 ; ::/128 ; ::1/128 ; fc00::/7 ; fe80::/10 ; 100::/64
+	\end{minted}
+	
+	Створюємо файл \texttt{/etc/exim4/conf.d/router/350\_exim4-config-virtual\_local} з таким змістом:
+	
+	\begin{minted}{text}
+		virtual_local:
+			driver = accept
+			domains = +local_domains
+			local_parts = lsearch;/etc/exim4/passwd
+			transport = virtual_maildir
+	\end{minted}
+	
+	Створюємо каталог, в якому буде зберігатися пошта, і надаємо права до неї користувачу створеному сервісом.
+	
+	\begin{minted}{bash}
+		user1@mail:/etc/exim4$ sudo mkdir /var/vmail
+		
+		user1@mail:/etc/exim4$ sudo chown Debian-exim:Debian-exim /var/vmail
+	\end{minted}
+	
+	Вказуємо порти для пошти в файлі \texttt{/etc/exim4/conf.d/main/01\_exim4-config\_listmacrosdefs}. Треба додати два рядки:
+	
+	\begin{minted}{text}
+		tls_on_connect_ports = 465
+		daemon_smtp_ports = 25 : 465 : 587
+	\end{minted}
+	
+	Перезавантажуємо сервіс \texttt{exim4} і перевіряємо статус. Якщо все добре, йдемо далі. Приклад перевірки і перезавантаження був наведений раніше.
+	
+	Якщо виникає помилка \texttt{454 TLS currently unavailable}, можна спробувати змінити права до сертифікату та ключа.
+	
+	\begin{minted}{text}
+		user1@mail:/etc/exim4$ sudo chown Debian-exim:Debian-exim /etc/exim4/exim.crt /etc/exim4/exim.key
+		user1@mail:/etc/exim4$ sudo chmod 640 /etc/exim4/exim.crt /etc/exim4/exim.key
+		user1@mail:/etc/exim4$ sudo systemctl restart exim4
+	\end{minted}
+	
+	Перевіряємо роботу TLS за допомогою команди \texttt{swaks -a -tls -q AUTH -s mail.cat.com -au tiger}. Бачимо, що все працює!
+	
+	\image{7cm}{tls-working}
+	
+	Також бачимо помилку, якщо передати неправильні дані.
+	
+	\image{12cm}{swaks-wrong-data}
+	
+	Нарешті переходимо до другої віртуальної машини.
+	
+	Змінюємо файл \texttt{/etc/bind/named.conf.options}:
+	
+	\begin{minted}{text}
+		options {
+			directory "/var/cache/bind";
+			reuseport no;
+			listen-on port 53 { 192.168.1.3; 127.0.0.1; };
+			listen-on-v6 { none; };
+		};
+	\end{minted}
+	
+	Відредагуємо \texttt{/etc/resolv.conf}:
+	
+	\begin{minted}{text}
+		domain zone03.net
+		search zone03.net
+		nameserver 192.168.1.2
+		nameserver 192.168.1.3
+	\end{minted}
+	
+	Змінимо \texttt{/etc/hosts}:
+	
+	\begin{minted}{text}
+		127.0.0.1	localhost
+		127.0.1.1	mail.cat.com	mail
+		
+		# The following lines are desirable for IPv6 capable hosts
+		::1     localhost ip6-localhost ip6-loopback
+		ff02::1 ip6-allnodes
+		ff02::2 ip6-allrouters
+	\end{minted}
+	
+	Файл \texttt{resolv.conf} може змінюватися. Щоб його зафіксувати, можна виконати ці команди:
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo rm /etc/resolv.conf 
+		
+		user1@mail:~$ sudo vim /etc/resolv.conf # Тут перезапишіть контент файлу відповідно машини
+		
+		user1@mail:~$ sudo chattr +i /etc/resolv.conf
+	\end{minted}
+	
+	Змінимо ім'я машини. 
+	
+	\begin{minted}{bash}
+		user2@vm2:~$ sudo hostnamectl hostname mail.zone03.net
+	\end{minted}
+	
+	Перезавантажуємо \texttt{bind9}, перевіряємо статус. Якщо все добре, тестуємо через \texttt{dig}.
+	
+	\image{10cm}{dig-mail-zone}
+	
+	Далі виконуємо аналогічне налаштування \texttt{exim4} через \texttt{dpkg-reconfigure} як і на першій машині, але, звичайно ж, всюди замінюємо \texttt{cat.com} на \texttt{zone03.net}. Все інше -- аналогічно.
+	
+	Переходимо в директорію \texttt{exim4}, копіюємо сертифікат та ключ.
+	
+	\begin{minted}{bash}
+		user2@vm2:/etc/exim4$ sudo cp /etc/ssl/certs/mail.zone03.net.crt exim.crt
+		user2@vm2:/etc/exim4$ sudo cp /etc/ssl/private/mail.zone03.net.key exim.key
+		user2@vm2:/etc/exim4$ sudo chown Debian-exim:Debian-exim /etc/exim4/exim.crt /etc/exim4/exim.
+		user2@vm2:/etc/exim4$ sudo chown Debian-exim:Debian-exim /etc/exim4/exim.crt /etc/exim4/exim.key
+		user2@vm2:/etc/exim4$ sudo chmod 640 /etc/exim4/exim.crt /etc/exim4/exim.key
+		user2@vm2:/etc/exim4$ sudo systemctl restart exim4
+	\end{minted}
+	
+	Далі, абсолютно таким же чином як і на першій машині налаштовуємо файли \texttt{main/03\_exim4-config\_tlsoptions}, \texttt{auth/30\_exim4-config\_examples}, \texttt{router/200\_exim4-config\_primary},
+	\texttt{router/350\_exim4-config\_virtual\_local},
+	\texttt{transport/120\_exim4-config\_virtual\_users},
+	\texttt{main/01\_exim4-config\_listmacrosdefs}.
+	
+	Додаємо віртуального користувача.
+	
+	\begin{minted}{bash}
+		user2@mail:~$ sudo /usr/share/doc/exim4-base/examples/exim-adduser 
+		User: leopard
+		Password: rootpass
+	\end{minted}
+	
+	Знову ж, змінюємо файл \texttt{passwd}, щоб в кінці через двокрапку вказувався користувач. Це треба робити кожного разу при його <<реєстрації>>.
+	
+	\begin{minted}{bash}
+		user2@mail:~$ sudo vim /etc/exim4/passwd
+		user2@mail:~$ cat /etc/exim4/passwd
+		leopard:$1$J4n8$iJ/sNWB5LVO8evieYZK8j1:rootpass:leopard
+	\end{minted}
+	
+	Аналогічно створюємо каталог, в якому буде зберігатися пошта, і надаємо права до неї користувачу створеному сервісом.
+	
+	\begin{minted}{bash}
+		user2@mail:/etc/exim4$ sudo mkdir /var/vmail
+		
+		user2@mail:/etc/exim4$ sudo chown Debian-exim:Debian-exim /var/vmail
+	\end{minted}
+	
+	Перезапускаємо сервіс \texttt{exim4}, перевіряємо статус.
+	
+	Знову перевіряємо, чи прослуховуються порти.
+	
+	\image[width=18cm]{12cm}{ports-open-exim-2}
+	
+	Перевіряємо, чи працює відправка з першого вузла на нього ж, через другий вузол.
+	
+	\begin{minted}{bash}
+		user1@mail:/etc/exim4$ swaks --from leopard@zone03.net --to tiger@cat.com --h-Subject "Test 1" -s mail.zone03.net --auth-user leopard -tls
+	\end{minted}
+	
+	Успіх:
+	
+	\image{11cm}{swaks-success-01}
+	
+	Перевіряємо в зворотньому напрямку, з другого вузла на другий через перший.
+	
+	\begin{minted}{bash}
+		user2@mail:/etc/exim4$ swaks --to leopard@zone03.net --from tiger@cat.com --h-Subject "Test 2" -s mail.cat.com --auth-user tiger -tls
+		Password: rootpass
+	\end{minted}
+	
+	Все працює. Повідомлення є:
+	
+	\begin{minted}{bash}
+		user2@mail:~$ sudo ls /var/vmail/leopard/new/1775206735.M81466P2949.mail.zone03.net
+		/var/vmail/leopard/new/1775206735.M81466P2949.mail.zone03.net
+	\end{minted}
+	
+	Починаємо налаштування SPF. Для цього переходимо на першу машину. Додаємо в файл \texttt{/etc/bind/db.cat.com} відповідний запис, який відповідає політиці SPF \textbf{за варіантом}:
+	
+	\begin{minted}{text}
+		@	IN	TXT	"v=spf1 a mx -all"
+	\end{minted}
+	
+	Такі ж зміни вносимо в файл \texttt{/etc/bind/db.zone03.net}. Перезапускаємо сервіс, перевіряємо статус. Якщо все добре, перевіримо наявність записів:
+	
+	\image{11cm}{dig-mail-spf}
+	
+	Але наразі політика застосована тільки на рівні DNS. Продемонструємо це, порушивши її:
+	
+	\begin{minted}{bash}
+		user1@mail:~$ swaks --to leopard@zone03.net --from tiger@zone03.net --h-Subject "SPF NOT WORKING" -s mail.zone03.net
+		
+		user2@mail:~$ sudo cat /var/vmail/leopard/new/1775207923.M598308P3026.mail.zone03.net
+		Return-path: <tiger@zone03.net>
+		Envelope-to: leopard@zone03.net
+		Delivery-date: Fri, 03 Apr 2026 12:18:43 +0300
+		Received: from ns1.zone03.net ([192.168.1.2] helo=mail.cat.com)
+		by mail.zone03.net with esmtp (Exim 4.98.2)
+		(envelope-from <tiger@zone03.net>)
+		id 1w8afr-000000000mm-2RvY
+		for leopard@zone03.net;
+		Fri, 03 Apr 2026 12:18:43 +0300
+		Date: Fri, 03 Apr 2026 12:18:43 +0300
+		To: leopard@zone03.net
+		From: tiger@zone03.net
+		Subject: SPF NOT WORKING
+		Message-Id: <20260403121843.002666@mail.cat.com>
+		X-Mailer: swaks v20240103.0 jetmore.org/john/code/swaks/
+		
+		This is a test mailing
+	\end{minted}
+	
+	В зворотньому напрямку теж все працює, політика порушена.
+	
+	\begin{minted}{bash}
+		user2@mail:~$ swaks --from leopard@cat.com --to tiger@cat.com --h-Subject "SPF Not working" -s mail.cat.com
+		user1@mail:~$ sudo cat /var/vmail/tiger/new/1775208187.M46304P2684.mail.cat.com
+	\end{minted}
+	
+	Для того щоб повністю встановити політику, треба спочатку встановити пакет (на обох машинах):
+	
+	\begin{minted}{bash}
+		sudo apt install spf-tools-perl
+	\end{minted}
+	
+	Також додаємо на обох машинах в файл \texttt{/etc/exim4/conf.d/main/01\_exim4-config\_listmacrosdefs} рядок:
+	
+	\begin{minted}{text}
+		CHECK_RCPT_SPF = true
+	\end{minted}
+	
+	Після цього на обох машинах перезапускаємо сервіс \texttt{exim4} та перевіряємо його статус. Також варто перевірити й відкриті порти -- на \texttt{0.0.0.0} повинні бути відкриті 587, 25 та 465, як і раніше.
+	
+	Тепер політика SPF працює. Тести, які відпрацьовували раніше (з порушенням політики) вже не працюють, маємо помилку 550.
+	
+	\begin{minted}{bash}
+		user1@mail:~$ swaks --to leopard@zone03.net --from tiger@zone03.net --h-Subject "SPF NOT WORKING" -s mail.zone03.net
+		=== Trying mail.zone03.net:25...
+		=== Connected to mail.zone03.net.
+		<-  220 mail.zone03.net ESMTP Exim 4.98.2 Fri, 03 Apr 2026 12:34:49 +0300
+		-> EHLO mail.cat.com
+		<-  250-mail.zone03.net Hello ns1.zone03.net [192.168.1.2]
+		<-  250-SIZE 52428800
+		<-  250-LIMITS MAILMAX=1000 RCPTMAX=50000
+		<-  250-8BITMIME
+		<-  250-PIPELINING
+		<-  250-PIPECONNECT
+		<-  250-CHUNKING
+		<-  250-STARTTLS
+		<-  250-PRDR
+		<-  250 HELP
+		-> MAIL FROM:<tiger@zone03.net>
+		<-  250 OK
+		-> RCPT TO:<leopard@zone03.net>
+		<** 550 [SPF] 192.168.1.2 is not allowed to send mail from zone03.net.
+		-> QUIT
+		<-  221 mail.zone03.net closing connection
+		=== Connection closed with remote host.
+		
+		user2@mail:~$ swaks --from leopard@cat.com --to tiger@cat.com --h-Subject "SPF Not working" -s mail.cat.com
+		=== Trying mail.cat.com:25...
+		=== Connected to mail.cat.com.
+		<-  220 mail.cat.com ESMTP Exim 4.98.2 Fri, 03 Apr 2026 12:34:58 +0300
+		-> EHLO mail.zone03.net
+		<-  250-mail.cat.com Hello ns2.cat.com [192.168.1.3]
+		<-  250-SIZE 52428800
+		<-  250-LIMITS MAILMAX=1000 RCPTMAX=50000
+		<-  250-8BITMIME
+		<-  250-PIPELINING
+		<-  250-PIPECONNECT
+		<-  250-CHUNKING
+		<-  250-STARTTLS
+		<-  250-PRDR
+		<-  250 HELP
+		-> MAIL FROM:<leopard@cat.com>
+		<-  250 OK
+		-> RCPT TO:<tiger@cat.com>
+		<** 550 [SPF] 192.168.1.3 is not allowed to send mail from cat.com.
+		-> QUIT
+		<-  221 mail.cat.com closing connection
+		=== Connection closed with remote host.
+	\end{minted}
+	
+	Переходимо до налаштувань DKIM.  Створимо публічний та приватний ключ.
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo mkdir -p /etc/exim4/dkim
+		user1@mail:~$ sudo chown Debian-exim:Debian-exim /etc/exim4/dkim
+		user1@mail:~$ cd /etc/exim4/dkim
+		user1@mail:/etc/exim4/dkim$ sudo openssl genrsa -out cat.com.key 1024
+		user1@mail:/etc/exim4/dkim$ sudo bash -c "openssl rsa -in cat.com.key -pubout > cat.com.pub"
+		writing RSA key
+		user1@mail:/etc/exim4/dkim$ ls -la
+		total 16
+		drwxr-xr-x 2 Debian-exim Debian-exim 4096 Apr  3 12:56 .
+		drwxr-xr-x 4 root        root        4096 Apr  3 12:37 ..
+		-rw------- 1 root        root         916 Apr  3 12:53 cat.com.key
+		-rw-r--r-- 1 root        root         272 Apr  3 12:56 cat.com.pub
+		
+		user1@mail:/etc/exim4/dkim$ sudo chown Debian-exim:Debian-exim cat.com.key
+		user1@mail:/etc/exim4/dkim$ sudo chmod 640 cat.com.key
+		user1@mail:/etc/exim4/dkim$ ls -la
+		total 16
+		drwxr-xr-x 2 Debian-exim Debian-exim 4096 Apr  3 12:56 .
+		drwxr-xr-x 4 root        root        4096 Apr  3 12:37 ..
+		-rw-r----- 1 Debian-exim Debian-exim  916 Apr  3 12:53 cat.com.key
+		-rw-r--r-- 1 root        root         272 Apr  3 12:56 cat.com.pub
+	\end{minted}
+	
+	Додамо в файл \texttt{transport/30\_exim4-config\_remote\_smtp} такі рядки (перша машина):
+	
+	\begin{minted}{text}
+		DKIM_DOMAIN = ${lc:${domain:$h_from:}}
+		DKIM_KEY_FILE = /etc/exim4/dkim/cat.com.key
+		DKIM_PRIVATE_KEY = ${if exists{DKIM_KEY_FILE}{DKIM_KEY_FILE}{0}}
+		DKIM_SELECTOR = dkim
+	\end{minted}
+	
+	Перезапускаємо \texttt{exim4}, перевіряємо статус.
+	
+	Треба додати публічний ключ в DNS. Копіюємо його, змінюємо файл:
+	
+	\begin{minted}{bash}
+		user1@mail:/etc/exim4/dkim$ copy cat.com.pub 
+		user1@mail:/etc/exim4/dkim$ sudo vim /etc/bind/db.cat.com 
+	\end{minted}
+	
+	Додаємо рядок (перша машина):
+	
+	\begin{minted}{text}
+		dkim._domainkey	IN	TXT	"v=DKIM1; k=rsa; p=...ТУТ-ТЕКСТ-КЛЮЧА-БЕЗ-СИГНАТУРИ"
+	\end{minted}
+	
+	Перезапускаємо \texttt{bind9}. Перевіряємо:
+	
+	\begin{minted}{bash}
+		user1@mail:/etc/exim4/dkim$ dig -t txt dkim._domainkey.cat.com
+		
+		; <<>> DiG 9.20.21-1~deb13u1-Debian <<>> -t txt dkim._domainkey.cat.com
+		;; global options: +cmd
+		;; Got answer:
+		;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 49366
+		;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+		
+		;; OPT PSEUDOSECTION:
+		; EDNS: version: 0, flags:; udp: 1232
+		; COOKIE: 311ce0fc544cbcce0100000069cf93440d92972da2248183 (good)
+		;; QUESTION SECTION:
+		;dkim._domainkey.cat.com.       IN      TXT
+		
+		;; ANSWER SECTION:
+		dkim._domainkey.cat.com. 604800 IN      TXT     "v=DKIM1; k=rsa; p=MIGf..."
+		
+		;; Query time: 0 msec
+		;; SERVER: 192.168.1.2#53(192.168.1.2) (UDP)
+		;; WHEN: Fri Apr 03 13:15:32 EEST 2026
+		;; MSG SIZE  rcvd: 327
+	\end{minted}
+	
+	Додаємо в файл \texttt{main/02\_exim4-config\_options} рядок (перша машина):
+	
+	\begin{minted}{text}
+		acl_smtp_dkim = acl_check_dkim
+	\end{minted}
+	
+	Створюємо файл \texttt{/etc/exim4/conf.d/acl/30\_exim4-config\_check\_dkim}, додаємо туди конфігурацію:
+	
+	\begin{minted}{bash}
+		user1@mail:/etc/exim4/dkim$ sudo touch /etc/exim4/conf.d/acl/30_exim4-config_check_dkim
+		user1@mail:/etc/exim4/dkim$ sudo vim /etc/exim4/conf.d/acl/30_exim4-config_check_dkim
+		
+		acl_check_dkim:
+		
+		accept hosts = +relay_from_hosts
+		accept authenticated = *
+		
+		# Message without sign
+		accept dkim_status = none
+		condition = ${if eq {$acl_c_dkim_hdr}{1} {no}{yes}}
+		set acl_c_dkim_hdr = 1
+		add_header = :at_start:X-DKIM: Exim 4 on $primary_hostname (no dkim signature)
+		
+		# Message with sign, begin
+		warn condition = ${if eq {$acl_c_dkim_hdr}{1} {no}{yes}}
+		set acl_c_dkim_hdr = 1
+		add_header = :at_start:X-DKIM: Exim 4 on $primary_hostname
+		
+		# Message with sign, bad signature
+		deny dkim_status = fail
+		message = Rejected: $dkim_verify_reason
+		logwrite = X-Auth: DKIM test failed: (address=$sender_address domain=$dkim_cur_signer), signature is bad.
+		
+		# Message with sign, invalid signature
+		accept dkim_status = invalid
+		add_header = :at_start:Authentication-Results: $primary_hostname $dkim_cur_signer ($dkim_verify_status); $dkim_verify_reason
+		logwrite = X-Auth: DKIM test passed (address=$sender_address domain=$dkim_cur_signer), but signature is invalid.
+		
+		# Message with sign, good signature
+		accept dkim_status = pass
+		add_header = :at_start:Authentication-Results: $primary_hostname; dkim=$dkim_verify_status header.i=@$dkim_cur_signer
+		logwrite = X-Auth: DKIM test passed (address=$sender_address domain=$dkim_cur_signer), good signature.
+		
+		accept
+	\end{minted}
+	
+	Знову перезапускаємо сервіс \texttt{exim4}, перевіряємо статус.
+	
+	Тепер всі дії треба повторити і на другій машині.
+	
+	\begin{minted}{bash}
+		user2@mail:~$ cd /etc/exim4
+		user2@mail:/etc/exim4$ sudo mkdir -p /etc/exim4/dkim
+		user2@mail:/etc/exim4$  sudo chown Debian-exim:Debian-exim /etc/exim4/dkim
+		user2@mail:/etc/exim4$ cd /etc/exim4/dkim
+		user2@mail:/etc/exim4/dkim$ sudo openssl genrsa -out zone03.net.key 1024
+		user2@mail:/etc/exim4/dkim$ sudo bash -c "openssl rsa -in zone03.net.key -pubout > zone03.net.pub"
+		writing RSA key
+		user2@mail:/etc/exim4/dkim$ sudo chown Debian-exim:Debian-exim zone03.net.key 
+		user2@mail:/etc/exim4/dkim$ sudo chmod 640 zone03.net.key 
+		user2@mail:/etc/exim4/dkim$ ls -la
+		total 16
+		drwxr-xr-x 2 Debian-exim Debian-exim 4096 Apr  3 13:34 .
+		drwxr-xr-x 4 root        root        4096 Apr  3 13:32 ..
+		-rw-r----- 1 Debian-exim Debian-exim  916 Apr  3 13:33 zone03.net.key
+		-rw-r--r-- 1 root        root         272 Apr  3 13:34 zone03.net.pub
+		
+		user2@mail:/etc/exim4/dkim$ sudo vim /etc/exim4/conf.d/transport/30_exim4-config_remote_smtp
+		
+		# Вставляємо 4 рядки...
+		DKIM_DOMAIN = ${lc:${domain:$h_from:}}
+		DKIM_KEY_FILE = /etc/exim4/dkim/zone03.net.key
+		DKIM_PRIVATE_KEY = ${if exists{DKIM_KEY_FILE}{DKIM_KEY_FILE}{0}}
+		DKIM_SELECTOR = dkim
+		# ...
+		
+		user2@mail:/etc/exim4/dkim$ copy zone03.net.pub
+		
+		user1@mail:/etc/exim4/dkim$ sudo vim /etc/bind/db.zone03.net 
+		
+		#... Додаємо запис, і, як завжди, змінюємо серійний номер
+		dkim._domainkey	IN	TXT	"v=DKIM1; k=rsa; p=MIGfM..."
+	\end{minted}
+	
+	Перезапускаємо \texttt{bind9}, перевіряємо статус. Додаємо в файл \texttt{/etc/exim4/conf.d/main/02\_exim4-config\_options} такий самий рядок як і на першій машині (стосовно DKIM):
+	
+	\begin{minted}{text}
+		acl_smtp_dkim = acl_check_dkim
+	\end{minted}
+	
+	Також дублюємо зміст файлу \texttt{/etc/exim4/conf.d/acl/30\_exim4-config\_check\_dkim} з першої машини.
+	
+	Перезавантажуємо сервіс \texttt{exim4}. Перевіряємо статус.
+	
+	Проведемо тест:
+	
+	\begin{minted}{bash}
+		user1@mail:/etc/exim4/dkim$ swaks --to leopard@zone03.net --from tiger@cat.com --h-Subject "Check DKIM 1" -s mail.cat.com --auth-user tiger -tls
+		Password: rootpass
+		=== Trying mail.cat.com:25...
+		=== Connected to mail.cat.com.
+		<-  220 mail.cat.com ESMTP Exim 4.98.2 Fri, 03 Apr 2026 14:26:16 +0300
+		-> EHLO mail.cat.com
+		<-  250-mail.cat.com Hello mail.cat.com [127.0.0.1]
+		<-  250-SIZE 52428800
+		<-  250-LIMITS MAILMAX=1000 RCPTMAX=50000
+		<-  250-8BITMIME
+		<-  250-PIPELINING
+		<-  250-PIPECONNECT
+		<-  250-CHUNKING
+		<-  250-STARTTLS
+		<-  250-PRDR
+		<-  250 HELP
+		-> STARTTLS
+		<-  220 TLS go ahead
+		=== TLS started with cipher TLSv1.3:TLS_AES_256_GCM_SHA384:256
+		=== TLS client certificate not requested and not sent
+		=== TLS no client certificate set
+		=== TLS peer[0]   subject=[/C=UA/ST=Ukraine/L=Kyiv/O=KPI/OU=OT/CN=mail.cat.com]
+		===               commonName=[mail.cat.com], subjectAltName=[] notAfter=[2027-04-02T20:47:47Z]
+		=== TLS peer certificate passed CA verification, passed host verification (using host mail.cat.com to verify)
+		~> EHLO mail.cat.com
+		<~  250-mail.cat.com Hello mail.cat.com [127.0.0.1]
+		<~  250-SIZE 52428800
+		<~  250-LIMITS MAILMAX=1000 RCPTMAX=50000
+		<~  250-8BITMIME
+		<~  250-PIPELINING
+		<~  250-PIPECONNECT
+		<~  250-AUTH PLAIN LOGIN
+		<~  250-CHUNKING
+		<~  250-PRDR
+		<~  250 HELP
+		~> AUTH LOGIN
+		<~  334 VXNlcm5hbWU6
+		~> dGlnZXI=
+		<~  334 UGFzc3dvcmQ6
+		~> cm9vdHBhc3M=
+		<~  235 Authentication succeeded
+		~> MAIL FROM:<tiger@cat.com>
+		<~  250 OK
+		~> RCPT TO:<leopard@zone03.net>
+		<~  250 Accepted
+		~> DATA
+		<~  354 Enter message, ending with "." on a line by itself
+		~> Date: Fri, 03 Apr 2026 14:26:14 +0300
+		~> To: leopard@zone03.net
+		~> From: tiger@cat.com
+		~> Subject: Check DKIM 1
+		~> Message-Id: <20260403142614.005469@mail.cat.com>
+		~> X-Mailer: swaks v20240103.0 jetmore.org/john/code/swaks/
+		~> 
+		~> This is a test mailing
+		~> 
+		~> 
+		~> .
+		<~  250 OK id=1w8cfI-000000001QE-481U
+		~> QUIT
+		<~  221 mail.cat.com closing connection
+		=== Connection closed with remote host.
+		
+		user2@mail:/etc/exim4/dkim$ sudo ls -la /var/vmail/leopard/new
+		total 24
+		drwx------ 2 Debian-exim Debian-exim 4096 Apr  3 14:26 .
+		drwx------ 5 Debian-exim Debian-exim 4096 Apr  3 11:58 ..
+		-rw-rw---- 1 Debian-exim Debian-exim  865 Apr  3 11:58 1775206735.M81466P2949.mail.zone03.net
+		-rw-rw---- 1 Debian-exim Debian-exim  583 Apr  3 12:18 1775207923.M598308P3026.mail.zone03.net
+		-rw-rw---- 1 Debian-exim Debian-exim  897 Apr  3 13:54 1775213660.M815048P4672.mail.zone03.net
+		-rw-rw---- 1 Debian-exim Debian-exim 1801 Apr  3 14:26 1775215577.M55505P5216.mail.zone03.net
+		user2@mail:/etc/exim4/dkim$ sudo cat /var/vmail/leopard/new/1775215577.M55505P5216.mail.zone03.net
+		Return-path: <tiger@cat.com>
+		Envelope-to: leopard@zone03.net
+		Delivery-date: Fri, 03 Apr 2026 14:26:17 +0300
+		Authentication-Results: mail.zone03.net; dkim=pass header.i=@cat.com
+		X-DKIM: Exim 4 on mail.zone03.net
+		Received-SPF: pass (mail.zone03.net: domain of cat.com designates 192.168.1.2 as permitted sender) client-ip=192.168.1.2; envelope-from=tiger@cat.com; helo=mail.cat.com;
+		Received: from ns1.cat.com ([192.168.1.2] helo=mail.cat.com)
+		by mail.zone03.net with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+		(Exim 4.98.2)
+		(envelope-from <tiger@cat.com>)
+		id 1w8cfJ-000000001M6-0AMm
+		for leopard@zone03.net;
+		Fri, 03 Apr 2026 14:26:17 +0300
+		DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cat.com;
+		s=dkim; h=Message-Id:Subject:From:To:Date:Sender:Reply-To:Cc:MIME-Version:
+		Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+		Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+		In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+		List-Post:List-Owner:List-Archive;
+		bh=ecGWgWCJeWxJFeM0urOVWP+KOlqqvsQYKOpYUP8nk7I=; b=YEH65a0RxTkVF6klWZ54hJZJaq
+		BeqJvSkkbLKyNgXu/N1HVQeQXF0tvdOtJ09E4AieecB5PUgTyddHYuRwIKgcf38roEwd9/4yIlcl3
+		PtbQtRr1SmW+L2e0FsC4rpN9sX8z42RV6JpodWQp2CIpzkfVIyBDHSLymvfBdzvfHcVU=;
+		Received: from [127.0.0.1] (helo=mail.cat.com)
+		by mail.cat.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+		(Exim 4.98.2)
+		(envelope-from <tiger@cat.com>)
+		id 1w8cfI-000000001QE-481U
+		for leopard@zone03.net;
+		Fri, 03 Apr 2026 14:26:16 +0300
+		Date: Fri, 03 Apr 2026 14:26:14 +0300
+		To: leopard@zone03.net
+		From: tiger@cat.com
+		Subject: Check DKIM 1
+		Message-Id: <20260403142614.005469@mail.cat.com>
+		X-Mailer: swaks v20240103.0 jetmore.org/john/code/swaks/
+		
+		This is a test mailing
+	\end{minted}
+	
+	Бачимо що і SPF, і DKIM працюють. Чудово! Тепер робимо навпаки.
+	
+	\begin{minted}{bash}
+		user2@mail:/etc/exim4/dkim$ swaks --to tiger@cat.com --from leopard@zone03.net --h-Subject "Check DKIM 2" -s mail.zone03.net --auth-user leopard -tls
+		Password: rootpass
+		=== Trying mail.zone03.net:25...
+		=== Connected to mail.zone03.net.
+		<-  220 mail.zone03.net ESMTP Exim 4.98.2 Fri, 03 Apr 2026 14:33:35 +0300
+		-> EHLO mail.zone03.net
+		<-  250-mail.zone03.net Hello mail.zone03.net [127.0.0.1]
+		<-  250-SIZE 52428800
+		<-  250-LIMITS MAILMAX=1000 RCPTMAX=50000
+		<-  250-8BITMIME
+		<-  250-PIPELINING
+		<-  250-PIPECONNECT
+		<-  250-CHUNKING
+		<-  250-STARTTLS
+		<-  250-PRDR
+		<-  250 HELP
+		-> STARTTLS
+		<-  220 TLS go ahead
+		=== TLS started with cipher TLSv1.3:TLS_AES_256_GCM_SHA384:256
+		=== TLS client certificate not requested and not sent
+		=== TLS no client certificate set
+		=== TLS peer[0]   subject=[/C=UA/ST=Ukraine/L=Kyiv/O=KPI/OU=OT/CN=mail.zone03.net]
+		===               commonName=[mail.zone03.net], subjectAltName=[] notAfter=[2027-04-02T20:58:39Z]
+		=== TLS peer certificate passed CA verification, passed host verification (using host mail.zone03.net to verify)
+		~> EHLO mail.zone03.net
+		<~  250-mail.zone03.net Hello mail.zone03.net [127.0.0.1]
+		<~  250-SIZE 52428800
+		<~  250-LIMITS MAILMAX=1000 RCPTMAX=50000
+		<~  250-8BITMIME
+		<~  250-PIPELINING
+		<~  250-PIPECONNECT
+		<~  250-AUTH PLAIN LOGIN
+		<~  250-CHUNKING
+		<~  250-PRDR
+		<~  250 HELP
+		~> AUTH LOGIN
+		<~  334 VXNlcm5hbWU6
+		~> bGVvcGFyZA==
+		<~  334 UGFzc3dvcmQ6
+		~> cm9vdHBhc3M=
+		<~  235 Authentication succeeded
+		~> MAIL FROM:<leopard@zone03.net>
+		<~  250 OK
+		~> RCPT TO:<tiger@cat.com>
+		<~  250 Accepted
+		~> DATA
+		<~  354 Enter message, ending with "." on a line by itself
+		~> Date: Fri, 03 Apr 2026 14:33:33 +0300
+		~> To: tiger@cat.com
+		~> From: leopard@zone03.net
+		~> Subject: Check DKIM 2
+		~> Message-Id: <20260403143333.005263@mail.zone03.net>
+		~> X-Mailer: swaks v20240103.0 jetmore.org/john/code/swaks/
+		~> 
+		~> This is a test mailing
+		~> 
+		~> 
+		~> .
+		<~  250 OK id=1w8cmN-000000001Mu-1AaN
+		~> QUIT
+		<~  221 mail.zone03.net closing connection
+		=== Connection closed with remote host.
+		
+		user1@mail:/etc/exim4/dkim$ sudo ls -la /var/vmail/tiger/new
+		total 24
+		drwx------ 2 Debian-exim Debian-exim 4096 Apr  3 14:33 .
+		drwx------ 5 Debian-exim Debian-exim 4096 Apr  3 11:48 ..
+		-rw-rw---- 1 Debian-exim Debian-exim  871 Apr  3 11:48 1775206115.M581895P2085.mail.cat.com
+		-rw-rw---- 1 Debian-exim Debian-exim  882 Apr  3 11:52 1775206377.M900388P2500.mail.cat.com
+		-rw-rw---- 1 Debian-exim Debian-exim  565 Apr  3 12:23 1775208187.M46304P2684.mail.cat.com
+		-rw-rw---- 1 Debian-exim Debian-exim 1801 Apr  3 14:33 1775216015.M349180P5512.mail.cat.com
+		user1@mail:/etc/exim4/dkim$ sudo cat /var/vmail/tiger/new/1775216015.M349180P5512.mail.cat.com
+		Return-path: <leopard@zone03.net>
+		Envelope-to: tiger@cat.com
+		Delivery-date: Fri, 03 Apr 2026 14:33:35 +0300
+		Authentication-Results: mail.cat.com; dkim=pass header.i=@zone03.net
+		X-DKIM: Exim 4 on mail.cat.com
+		Received-SPF: pass (mail.cat.com: domain of zone03.net designates 192.168.1.3 as permitted sender) client-ip=192.168.1.3; envelope-from=leopard@zone03.net; helo=mail.zone03.net;
+		Received: from mail.zone03.net ([192.168.1.3])
+		by mail.cat.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+		(Exim 4.98.2)
+		(envelope-from <leopard@zone03.net>)
+		id 1w8cmN-000000001Qs-1PRv
+		for tiger@cat.com;
+		Fri, 03 Apr 2026 14:33:35 +0300
+		DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=zone03.net;
+		s=dkim; h=Message-Id:Subject:From:To:Date:Sender:Reply-To:Cc:MIME-Version:
+		Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+		Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+		In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+		List-Post:List-Owner:List-Archive;
+		bh=ecGWgWCJeWxJFeM0urOVWP+KOlqqvsQYKOpYUP8nk7I=; b=ZeUYHt2jfYmqCXN2CW2s/5maql
+		CoW6hEPZM6lpE5wEP/zW8luzNw5Z1oQ6zY0OYFNBURdXqxbhxmzJaihLorlhl47Fu7j6v5KkuFemD
+		z80jt5fcYgfUo6m1xWb7hO3FxqDpbsbVBvF4seqDIgm/kEENY6PCCeqUxHgy200+GlNk=;
+		Received: from [127.0.0.1] (helo=mail.zone03.net)
+		by mail.zone03.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+		(Exim 4.98.2)
+		(envelope-from <leopard@zone03.net>)
+		id 1w8cmN-000000001Mu-1AaN
+		for tiger@cat.com;
+		Fri, 03 Apr 2026 14:33:35 +0300
+		Date: Fri, 03 Apr 2026 14:33:33 +0300
+		To: tiger@cat.com
+		From: leopard@zone03.net
+		Subject: Check DKIM 2
+		Message-Id: <20260403143333.005263@mail.zone03.net>
+		X-Mailer: swaks v20240103.0 jetmore.org/john/code/swaks/
+		
+		This is a test mailing
+	\end{minted}
+	
+	Все працює!
+	
+	Переходимо до етапу додавання інших користувачів. Для першої машини треба ще додати \texttt{lion@cat.com} та \texttt{lynx@cat.com}, а для другої -- \texttt{jaguar@zone03.net}.
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo /usr/share/doc/exim4-base/examples/exim-adduser
+		User: lion
+		Password: rootpass
+		user1@mail:~$ sudo /usr/share/doc/exim4-base/examples/exim-adduser
+		User: lynx
+		Password: rootpass
+		user1@mail:~$ sudo vim /etc/exim4/passwd
+		user1@mail:~$ sudo cat /etc/exim4/passwd
+		tiger:$1$vXuU$VVT2jCXxNpK0BuGMz1B/F0:rootpass:tiger
+		lion:$1$mh6O$WEoOBlnNA4D8aY5m8w2ix1:rootpass:lion
+		lynx:$1$OmJK$al0cdYb/YoIj1Vrz9jNd7/:rootpass:lynx
+	\end{minted}
+	
+	І для другої машини:
+	
+	\begin{minted}{bash}
+		user2@mail:~$ sudo /usr/share/doc/exim4-base/examples/exim-adduser
+		User: jaguar
+		Password: rootpass
+		user2@mail:~$ sudo vim /etc/exim4/passwd
+		user2@mail:~$ sudo cat /etc/exim4/passwd
+		leopard:$1$J4n8$iJ/sNWB5LVO8evieYZK8j1:rootpass:leopard
+		jaguar:$1$mKgj$wM9yGHfvACQTk8cn5w1T70:rootpass:jaguar
+	\end{minted}
+	
+	Робимо тест. Все працює.
+	
+	\begin{minted}{bash}
+		user2@mail:~$ swaks --to lynx@cat.com --from jaguar@zone03.net --h-Subject "Check New Users" -s mail.zone03.net --auth-user jaguar -tls
+		Password: rootpass
+		=== Trying mail.zone03.net:25...
+		=== Connected to mail.zone03.net.
+		<-  220 mail.zone03.net ESMTP Exim 4.98.2 Fri, 03 Apr 2026 14:46:28 +0300
+		-> EHLO mail.zone03.net
+		<-  250-mail.zone03.net Hello mail.zone03.net [127.0.0.1]
+		<-  250-SIZE 52428800
+		<-  250-LIMITS MAILMAX=1000 RCPTMAX=50000
+		<-  250-8BITMIME
+		<-  250-PIPELINING
+		<-  250-PIPECONNECT
+		<-  250-CHUNKING
+		<-  250-STARTTLS
+		<-  250-PRDR
+		<-  250 HELP
+		-> STARTTLS
+		<-  220 TLS go ahead
+		=== TLS started with cipher TLSv1.3:TLS_AES_256_GCM_SHA384:256
+		=== TLS client certificate not requested and not sent
+		=== TLS no client certificate set
+		=== TLS peer[0]   subject=[/C=UA/ST=Ukraine/L=Kyiv/O=KPI/OU=OT/CN=mail.zone03.net]
+		===               commonName=[mail.zone03.net], subjectAltName=[] notAfter=[2027-04-02T20:58:39Z]
+		=== TLS peer certificate passed CA verification, passed host verification (using host mail.zone03.net to verify)
+		~> EHLO mail.zone03.net
+		<~  250-mail.zone03.net Hello mail.zone03.net [127.0.0.1]
+		<~  250-SIZE 52428800
+		<~  250-LIMITS MAILMAX=1000 RCPTMAX=50000
+		<~  250-8BITMIME
+		<~  250-PIPELINING
+		<~  250-PIPECONNECT
+		<~  250-AUTH PLAIN LOGIN
+		<~  250-CHUNKING
+		<~  250-PRDR
+		<~  250 HELP
+		~> AUTH LOGIN
+		<~  334 VXNlcm5hbWU6
+		~> amFndWFy
+		<~  334 UGFzc3dvcmQ6
+		~> cm9vdHBhc3M=
+		<~  235 Authentication succeeded
+		~> MAIL FROM:<jaguar@zone03.net>
+		<~  250 OK
+		~> RCPT TO:<lynx@cat.com>
+		<~  250 Accepted
+		~> DATA
+		<~  354 Enter message, ending with "." on a line by itself
+		~> Date: Fri, 03 Apr 2026 14:46:26 +0300
+		~> To: lynx@cat.com
+		~> From: jaguar@zone03.net
+		~> Subject: Check New Users
+		~> Message-Id: <20260403144626.005315@mail.zone03.net>
+		~> X-Mailer: swaks v20240103.0 jetmore.org/john/code/swaks/
+		~> 
+		~> This is a test mailing
+		~> 
+		~> 
+		~> .
+		<~  250 OK id=1w8cyq-000000001Nk-2PDz
+		~> QUIT
+		<~  221 mail.zone03.net closing connection
+		=== Connection closed with remote host.
+		
+		user1@mail:~$ sudo ls -la /var/vmail/lynx/new
+		total 12
+		drwx------ 2 Debian-exim Debian-exim 4096 Apr  3 14:46 .
+		drwx------ 5 Debian-exim Debian-exim 4096 Apr  3 14:46 ..
+		-rw-rw---- 1 Debian-exim Debian-exim 1812 Apr  3 14:46 1775216788.M650839P5592.mail.cat.com
+		user1@mail:~$ sudo cat /var/vmail/lynx/new/1775216788.M650839P5592.mail.cat.com
+		Return-path: <jaguar@zone03.net>
+		Envelope-to: lynx@cat.com
+		Delivery-date: Fri, 03 Apr 2026 14:46:28 +0300
+		Authentication-Results: mail.cat.com; dkim=pass header.i=@zone03.net
+		X-DKIM: Exim 4 on mail.cat.com
+		Received-SPF: pass (mail.cat.com: domain of zone03.net designates 192.168.1.3 as permitted sender) client-ip=192.168.1.3; envelope-from=jaguar@zone03.net; helo=mail.zone03.net;
+		Received: from ns2.cat.com ([192.168.1.3] helo=mail.zone03.net)
+		by mail.cat.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+		(Exim 4.98.2)
+		(envelope-from <jaguar@zone03.net>)
+		id 1w8cyq-000000001SA-2fbX
+		for lynx@cat.com;
+		Fri, 03 Apr 2026 14:46:28 +0300
+		DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=zone03.net;
+		s=dkim; h=Message-Id:Subject:From:To:Date:Sender:Reply-To:Cc:MIME-Version:
+		Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+		Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+		In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+		List-Post:List-Owner:List-Archive;
+		bh=ecGWgWCJeWxJFeM0urOVWP+KOlqqvsQYKOpYUP8nk7I=; b=NDg9kDBdzuHxY2/+pSzEvdzzAS
+		/+RvkLkhr2IOr4TRkr04yObqLkI2G0jTJeSPG+qNMB2FdqVoLKUwEwARm/d/1QTJtB8ISNIFQXcOY
+		h3fR6u13B4Aixm0eJiTX1BIpLqfzealO+lgjwsYwueTlblN5htV5FuPWRRFhh7JygcaM=;
+		Received: from [127.0.0.1] (helo=mail.zone03.net)
+		by mail.zone03.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+		(Exim 4.98.2)
+		(envelope-from <jaguar@zone03.net>)
+		id 1w8cyq-000000001Nk-2PDz
+		for lynx@cat.com;
+		Fri, 03 Apr 2026 14:46:28 +0300
+		Date: Fri, 03 Apr 2026 14:46:26 +0300
+		To: lynx@cat.com
+		From: jaguar@zone03.net
+		Subject: Check New Users
+		Message-Id: <20260403144626.005315@mail.zone03.net>
+		X-Mailer: swaks v20240103.0 jetmore.org/john/code/swaks/
+		
+		This is a test mailing
+	\end{minted}
+	
+	\subsection*{dovecot} Надалі, кожен блок команд буде підписаний курсивом, вказуючи, на яких машинах треба виконати команди. Наприклад -- \textit{[1, 2]}. Для початку налаштування, встановимо потрібні пакети \textit{[1, 2]}. 
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo apt install dovecot-core dovecot-imapd dovecot-pop3d
+	\end{minted}
+	
+	Налаштуємо файл \texttt{/etc/dovecot/conf.d/10-mail.conf}  \textit{[1, 2]}. Закоментовані коментарі нижче -- розкоментовані. Тому, їх треба закоментувати. Замість них вказуємо параметри формату зберігання листів та шлях до листів. Також, надаємо можливість користувачу Debian-exim працювати з dovecot. Так як він, скоріш за все, має UID менше 500, а утиліта забороняє працювати з нею системним обліковим записам, то треба додати відповідну інструкцію.
+	
+	\begin{minted}{bash}
+		# mail_driver = mbox
+		# mail_home = /home/%{user | username}
+		# mail_path = %{home}/mail
+		# mail_inbox_path = /var/mail/%{user}
+		
+		# Specify the mail driver format
+		mail_driver = maildir
+		
+		# Specify the exact path to the mailboxes
+		mail_path = /var/vmail/%{user | username}
+		
+		# Valid UID range for users, defaults to 500 and above. This is mostly
+		# to make sure that users can't log in as daemons or other system users.
+		# Note that denying root logins is hardcoded to dovecot binary and can't
+		# be done even if first_valid_uid is set to 0.
+		first_valid_uid = 100
+	\end{minted}
+	
+	Надаємо права на роботу для групи \textit{[1, 2]}.
+	
+	\begin{minted}{bash}
+		sudo usermod -aG Debian-exim dovecot
+	\end{minted}
+	
+	Далі, налаштовуємо файл \texttt{/etc/dovecot/conf.d/10-auth.conf} \textit{[1, 2]}. Також, треба закоментувати певні інклуди, а інші розкоментувати, рівно як вказано нижче.
+	
+	\begin{minted}{bash}
+		# Allow legacy password hashes like MD5-CRYPT
+		auth_allow_weak_schemes = yes
+		
+		# Space separated list of wanted authentication mechanisms:
+		#   plain login digest-md5 cram-md5 ntlm anonymous gssapi
+		#   gss-spnego xoauth2 oauthbearer
+		# NOTE: See also auth_allow_cleartext setting.
+		auth_mechanisms = plain login 
+		
+		# Enable LOGIN command and all other plaintext authentications even if
+		# SSL/TLS is not used (LOGINDISABLED capability). Note that if the remote IP
+		# matches the local IP (ie. you're connecting from the same computer), the
+		# connection is considered secure and plaintext authentication is allowed,
+		# unless ssl = required.
+		auth_allow_cleartext = yes
+		
+		#!include auth-deny.conf.ext
+		#!include auth-master.conf.ext
+		#!include auth-oauth2.conf.ext
+		
+		#!include auth-system.conf.ext
+		#!include auth-sql.conf.ext
+		#!include auth-ldap.conf.ext
+		!include auth-passwdfile.conf.ext
+		#!include auth-static.conf.ext
+	\end{minted}
+	
+	Після цього, важливо встановити налаштування бази даних паролів. Редагуємо файл \texttt{/etc/dovecot/conf.d/auth-passwdfile.conf.ext} \textit{[1, 2]}.
+	
+	\begin{minted}{bash}
+		# Configure password database using 2.4 syntax
+		passdb passwd-file {
+			default_password_scheme = CRYPT
+			auth_username_format = %{user | username}
+			passwd_file_path = /etc/exim4/passwd
+		}
+		
+		# Configure static user database wrapped in fields block
+		userdb static {
+			fields {
+				uid = Debian-exim
+				gid = Debian-exim
+				home = /var/vmail/%{user | username}
+			}
+		}
+	\end{minted}
+	
+	Налаштовуємо файл \texttt{/etc/dovecot/conf.d/10-ssl.conf}. Тут будуть різні налаштування відповідно кожної машини.
+	
+	Перша машина:
+	
+	\begin{minted}{bash}
+		# SSL/TLS support: yes, no, required. <https://doc.dovecot.org/latest/core/config/ssl.html>
+		ssl = yes
+		
+		# PEM encoded X.509 SSL/TLS certificate and private key.  By default, Debian
+		# installs a self-signed certificate.  This is useful for testing, but you
+		# should obtain a real certificate from a recognized certificate authority.
+		#
+		# These files are opened before dropping root privileges, so keep the key file
+		# unreadable by anyone but root. Included /usr/share/dovecot/mkcert.sh can be
+		# used to easily generate self-signed certificate, just make sure to update the
+		# domains in dovecot-openssl.cnf
+		# 
+		# Preferred permissions: root:root 0444
+		#ssl_server_cert_file = /etc/dovecot/private/dovecot.pem
+		ssl_server_cert_file = /etc/ssl/certs/mail.cat.com.crt
+		# Preferred permissions: root:root 0400
+		#ssl_server_key_file = /etc/dovecot/private/dovecot.key
+		ssl_server_key_file = /etc/ssl/private/mail.cat.com.key
+	\end{minted}
+	
+	Друга машина:
+	
+	\begin{minted}{bash}
+		# SSL/TLS support: yes, no, required. <https://doc.dovecot.org/latest/core/config/ssl.html>
+		ssl = yes
+		
+		# PEM encoded X.509 SSL/TLS certificate and private key.  By default, Debian
+		# installs a self-signed certificate.  This is useful for testing, but you
+		# should obtain a real certificate from a recognized certificate authority.
+		#
+		# These files are opened before dropping root privileges, so keep the key file
+		# unreadable by anyone but root. Included /usr/share/dovecot/mkcert.sh can be
+		# used to easily generate self-signed certificate, just make sure to update the
+		# domains in dovecot-openssl.cnf
+		# 
+		# Preferred permissions: root:root 0444
+		ssl_server_cert_file = /etc/ssl/certs/mail.zone03.net.crt
+		# Preferred permissions: root:root 0400
+		ssl_server_key_file = /etc/ssl/private/mail.zone03.net.key
+	\end{minted}
+	
+	Перезавантажуємо сервіс \textit{[1, 2]}.
+	
+	\begin{minted}{bash}
+		# Restart the Dovecot service to apply changes
+		sudo systemctl restart dovecot
+		
+		# Check the status of the service to ensure it is running
+		sudo systemctl status dovecot
+		
+		# Check config
+		sudo doveconf
+	\end{minted}
+	
+	Перевіримо конфігурацію IMAPS на першій машині. Аналогічно можна зробити на другій, замінивши домен.
+	
+	\begin{minted}{bash}
+		user1@mail:~$ openssl s_client -crlf -connect mail.cat.com:993
+		Connecting to 127.0.1.1
+		CONNECTED(00000003)
+		depth=1 C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=cat CA
+		verify return:1
+		depth=0 C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=mail.cat.com
+		verify return:1
+		---
+		Certificate chain
+		0 s:C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=mail.cat.com
+		i:C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=cat CA
+		a:PKEY: RSA, 2048 (bit); sigalg: sha256WithRSAEncryption
+		v:NotBefore: Apr  2 20:47:47 2026 GMT; NotAfter: Apr  2 20:47:47 2027 GMT
+		---
+		Server certificate
+		-----BEGIN CERTIFICATE-----
+		MIIEijCCAnKgAwIBAgIUGdQ/w96l/acz5PbHxDg6aZ5KATUwDQYJKoZIhvcNAQEL
+		BQAwWjELMAkGA1UEBhMCVUExEDAOBgNVBAgMB1VrcmFpbmUxDTALBgNVBAcMBEt5
+		aXYxDDAKBgNVBAoMA0tQSTELMAkGA1UECwwCT1QxDzANBgNVBAMMBmNhdCBDQTAe
+		Fw0yNjA0MDIyMDQ3NDdaFw0yNzA0MDIyMDQ3NDdaMGAxCzAJBgNVBAYTAlVBMRAw
+		DgYDVQQIDAdVa3JhaW5lMQ0wCwYDVQQHDARLeWl2MQwwCgYDVQQKDANLUEkxCzAJ
+		BgNVBAsMAk9UMRUwEwYDVQQDDAxtYWlsLmNhdC5jb20wggEiMA0GCSqGSIb3DQEB
+		AQUAA4IBDwAwggEKAoIBAQDGK6KJq4k3aqrdkQs5UkMIDc9NGS05hlCeJKATjZXR
+		m72VgcUh5NRZa3p1Ep21gcgaGZnSqg1TGE914QjpgobeKuUDU3HBlBrio9VmEacn
+		IgGGKxmN2dgaxQEwoSUdhllIbdZsICHTOuOyEpHc4Jz90F3x7iGuEytCRXsqo11d
+		PzOn8l+3ZOOI5AI/Hmmo3fmwqa0OS8byydChxKkhZCzt1zSMEYtiEgUjGd9z2o3D
+		nF/bZxyFBg2QZ0ts/1hSnLm7dYPRLcM7zXCM9pnxDsd/nqkEXGXS+atIDrBQYz6a
+		/6XgrVvPnYpv0ie+/aa/EHe+IqrjIYMk3nV7jtX9kbDnAgMBAAGjQjBAMB0GA1Ud
+		DgQWBBTmmKdNKeUIAuGHW6anuhoxKtEqTTAfBgNVHSMEGDAWgBSRtSUX1xIoh2Pi
+		M2Jhv634AFWbzDANBgkqhkiG9w0BAQsFAAOCAgEAa8fu0ReSCOffGmHZnCUwg4JH
+		xIX0AxcrLt68ww27lfsCrz1//YfOZB7ssO2Cm1Cx2Jl5GPQl46dbj7ldeIAKmZsb
+		YeApUw7gIzdphUt0j2GT+9L/pmW3DrzIyCaMmZ9RqFWqfymnvnQXcUPO5luOuYrK
+		DBYDo8ZWvGoUqjLG/2cS5HKU7fxaPt9w3oHnfcOVuY5MO1yNlcD0Op9SQWGkh7yK
+		eopffcgsfOHNMB8Ro4ofx+T5TRlYC/eYi5hg4SUgIuCR/xkejAqIFaAX4N7enzBn
+		KAl33sSArDCFaeSs6CMd2b4jNWvDehlwGkI/gxsb1Vw2b+c2K86hZA4XvruWHltf
+		wmF922yzt/49VOA1hnweQCjiRdE39ZRyGxJjWdD9PBiuR04bEiqR+AsEx/V5V07B
+		koVcYi9+rZJXply2fhMmKyKGYcCUemq7Q4w6L2+Cew62NbSJXSltaiP0sjbt3nn7
+		UPbocH+YxidonmxsWROYmj6h8ekb4RzH6DNVZm4MqFuB7xDD9+T2w4m9YyF2in4U
+		PufcuFY1NOFvtVhkz6/moSf+kdktFT/lrGsNYvwdGrgDzaElajMyrRg1/b+lb/x6
+		JZ7+szzcH1hI/jDdX2B82hb3TIEpmc9hgvyoJdj2bcs4vDoHnlfjOvncoetuNGdz
+		cEagD4+vs9tgnSecd1Y=
+		-----END CERTIFICATE-----
+		subject=C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=mail.cat.com
+		issuer=C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=cat CA
+		---
+		No client certificate CA names sent
+		Peer signing digest: SHA256
+		Peer signature type: rsa_pss_rsae_sha256
+		Negotiated TLS1.3 group: X25519MLKEM768
+		---
+		SSL handshake has read 2810 bytes and written 1634 bytes
+		Verification: OK
+		---
+		New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+		Protocol: TLSv1.3
+		Server public key is 2048 bit
+		This TLS version forbids renegotiation.
+		Compression: NONE
+		Expansion: NONE
+		No ALPN negotiated
+		Early data was not sent
+		Verify return code: 0 (ok)
+		---
+		---
+		Post-Handshake New Session Ticket arrived:
+		SSL-Session:
+		Protocol  : TLSv1.3
+		Cipher    : TLS_AES_256_GCM_SHA384
+		Session-ID: F5673EBECCB89110AB86006D7FF03B1747C3FF03DF50801045A8BA5BBACEE651
+		Session-ID-ctx: 
+		Resumption PSK: 9796988236B7CE8AA0ACC3B321443CF87EFD0F5EE0FFD2C45248C9BF0F48E0292CFC44BBA2AECB52C422DCFF6C883556
+		PSK identity: None
+		PSK identity hint: None
+		SRP username: None
+		TLS session ticket lifetime hint: 7200 (seconds)
+		TLS session ticket:
+		0000 - a4 c6 2a b9 0f c1 68 0e-27 f2 55 0c 07 7b b4 90   ..*...h.'.U..{..
+			0010 - d6 a0 c5 2f 79 26 06 2b-81 76 7b e3 f5 e5 d6 a3   .../y&.+.v{.....
+				0020 - 54 44 63 58 21 51 4c ae-6b 63 cd c7 10 d9 cf bf   TDcX!QL.kc......
+				0030 - c8 6d 27 03 59 89 33 9f-7d d1 f2 f3 0b 4c a5 e4   .m'.Y.3.}....L..
+			0040 - e1 4b c3 49 48 9a 44 ec-de c3 9e 4e 0b ff 3c 30   .K.IH.D....N..<0
+			0050 - e5 5d ea 4c b5 86 db c2-2e 9e e3 7c 91 ce 49 ab   .].L.......|..I.
+			0060 - e9 4c 6c 05 48 32 32 7a-61 fd 9d 9c 3b 09 d2 ce   .Ll.H22za...;...
+			0070 - 32 36 1d 3d ff 0b 93 9e-dd a2 f0 b5 f4 b8 97 d0   26.=............
+			0080 - 82 e3 c4 db e6 4a 4a b9-f1 39 8e 01 56 4a 78 0d   .....JJ..9..VJx.
+			0090 - 43 ae 98 e4 72 1c 77 a3-da 8a d3 b5 bc 08 81 ec   C...r.w.........
+			00a0 - 3c cc 4d 4e 4f a7 be c1-32 61 70 15 f5 12 55 71   <.MNO...2ap...Uq
+			00b0 - 5d 2e e8 c2 52 3e 2c 64-80 31 f2 b8 59 b4 28 5d   ]...R>,d.1..Y.(]
+			00c0 - 08 1d 7a b6 70 82 db 85-1a e3 8a 40 81 41 1d 4b   ..z.p......@.A.K
+			
+			Start Time: 1775236153
+			Timeout   : 7200 (sec)
+			Verify return code: 0 (ok)
+			Extended master secret: no
+			Max Early Data: 0
+			---
+			read R BLOCK
+			---
+			Post-Handshake New Session Ticket arrived:
+			SSL-Session:
+			Protocol  : TLSv1.3
+			Cipher    : TLS_AES_256_GCM_SHA384
+			Session-ID: 8F30CE644818CA4C308A562C679180C5668067106805D4D9AE7E85528ED31F39
+			Session-ID-ctx: 
+			Resumption PSK: C26DB4A45E25F9CDFD416A244DBF2FCF1F82F906AC034609C93E05D5D7C6CEB067860318C774971D91E302C64FEAFF3D
+			PSK identity: None
+			PSK identity hint: None
+			SRP username: None
+			TLS session ticket lifetime hint: 7200 (seconds)
+			TLS session ticket:
+			0000 - a4 c6 2a b9 0f c1 68 0e-27 f2 55 0c 07 7b b4 90   ..*...h.'.U..{..
+				0010 - d9 da 96 de 50 04 51 c8-9c 99 f8 4a 10 86 7c 32   ....P.Q....J..|2
+				0020 - ae 62 80 ff 47 1e 44 4e-ed 48 2c f7 cb 10 3a 0d   .b..G.DN.H,...:.
+				0030 - 62 17 cd 31 c4 08 6e 80-43 eb 6e 4f 66 43 79 13   b..1..n.C.nOfCy.
+				0040 - 5a 69 5a 61 9d 7c bf ea-b6 a9 e5 aa 7c 39 ac e1   ZiZa.|......|9..
+				0050 - 81 9b ce 0f 02 71 cb 81-87 71 f0 f9 47 85 d0 34   .....q...q..G..4
+				0060 - 62 19 1a b4 e5 25 58 e9-a5 8c 71 e5 31 8e eb d5   b....%X...q.1...
+				0070 - 0e c8 b7 57 b3 af 49 90-09 37 75 f2 39 89 9e d0   ...W..I..7u.9...
+				0080 - e7 3e 6a 16 45 3a 57 d2-9e 39 89 7d 33 5c 3c 4c   .>j.E:W..9.}3\<L
+			0090 - fc c0 44 7d 81 4c 41 4b-2b ff 95 08 4c 63 52 0f   ..D}.LAK+...LcR.
+		00a0 - fc a3 a2 88 92 56 ec 4a-1c 45 e9 9f 88 00 f8 85   .....V.J.E......
+		00b0 - e6 9d 51 28 a9 62 96 55-52 48 3e 46 24 ff ee 18   ..Q(.b.URH>F$...
+		00c0 - 4b 5b b1 66 ca 85 f1 58-75 0d c1 a4 36 64 39 58   K[.f...Xu...6d9X
+		
+		Start Time: 1775236153
+		Timeout   : 7200 (sec)
+		Verify return code: 0 (ok)
+		Extended master secret: no
+		Max Early Data: 0
+		---
+		read R BLOCK
+		* OK [CAPABILITY IMAP4rev1 LOGIN-REFERRALS ID ENABLE IDLE SASL-IR LITERAL+ AUTH=PLAIN AUTH=LOGIN] Dovecot ready.
+		
+		> a1 LOGIN tiger rootpass
+		
+		a1 OK [CAPABILITY IMAP4rev1 SASL-IR LOGIN-REFERRALS ID ENABLE IDLE SORT SORT=DISPLAY THREAD=REFERENCES THREAD=REFS THREAD=ORDEREDSUBJECT MULTIAPPEND URL-PARTIAL CATENATE UNSELECT CHILDREN NAMESPACE UIDPLUS LIST-EXTENDED I18NLEVEL=1 CONDSTORE QRESYNC ESEARCH ESORT SEARCHRES WITHIN CONTEXT=SEARCH LIST-STATUS BINARY MOVE REPLACE SNIPPET=FUZZY PREVIEW=FUZZY PREVIEW SPECIAL-USE STATUS=SIZE SAVEDATE COMPRESS=DEFLATE INPROGRESS NOTIFY LITERAL+] Logged in
+		
+		> a2 SELECT INBOX
+		
+		* FLAGS (\Answered \Flagged \Deleted \Seen \Draft)
+		* OK [PERMANENTFLAGS (\Answered \Flagged \Deleted \Seen \Draft \*)] Flags permitted.
+		* 4 EXISTS
+		* 4 RECENT
+		* OK [UNSEEN 1] First unseen.
+		* OK [UIDVALIDITY 1775236171] UIDs valid
+		* OK [UIDNEXT 5] Predicted next UID
+		a2 OK [READ-WRITE] Select completed (0.019 + 0.000 + 0.018 secs).
+		
+		> a3 FETCH 1 BODY[]
+		
+		* 1 FETCH (FLAGS (\Seen \Recent) BODY[] {898}
+		Return-path: <leopard@zone03.net>
+		Envelope-to: tiger@cat.com
+		Delivery-date: Fri, 03 Apr 2026 11:48:35 +0300
+		Received: from mail.zone03.net ([192.168.1.3])
+		by mail.cat.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+		(Exim 4.98.2)
+		(envelope-from <leopard@zone03.net>)
+		id 1w8aCh-000000000Xb-2NNv
+		for tiger@cat.com;
+		Fri, 03 Apr 2026 11:48:35 +0300
+		Received: from [127.0.0.1] (helo=mail.zone03.net)
+		by mail.zone03.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+		(Exim 4.98.2)
+		(envelope-from <leopard@zone03.net>)
+		id 1w8aCh-000000000eW-298W
+		for tiger@cat.com;
+		Fri, 03 Apr 2026 11:48:35 +0300
+		Date: Fri, 03 Apr 2026 11:48:32 +0300
+		To: tiger@cat.com
+		From: leopard@zone03.net
+		Subject: Test 1
+		Message-Id: <20260403114832.002511@mail.zone03.net>
+		X-Mailer: swaks v20240103.0 jetmore.org/john/code/swaks/
+		
+		This is a test mailing
+		
+		
+		)
+		a3 OK Fetch completed (0.006 + 0.000 + 0.005 secs).
+		
+		> a4 LOGOUT
+		
+		* BYE Logging out
+		a4 OK Logout completed (0.001 + 0.000 secs).
+		closed
+	\end{minted}
+	
+	Все працює. Перевіримо POP3S на другій машині.
+	
+	\begin{minted}{bash}
+		user2@mail:~$ openssl s_client -crlf -connect mail.zone03.net:995
+		
+		Connecting to 127.0.1.1
+		CONNECTED(00000003)
+		depth=1 C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=cat CA
+		verify return:1
+		depth=0 C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=mail.zone03.net
+		verify return:1
+		---
+		Certificate chain
+		0 s:C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=mail.zone03.net
+		i:C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=cat CA
+		a:PKEY: RSA, 2048 (bit); sigalg: sha256WithRSAEncryption
+		v:NotBefore: Apr  2 20:58:39 2026 GMT; NotAfter: Apr  2 20:58:39 2027 GMT
+		---
+		Server certificate
+		-----BEGIN CERTIFICATE-----
+		MIIEjTCCAnWgAwIBAgIUGdQ/w96l/acz5PbHxDg6aZ5KATYwDQYJKoZIhvcNAQEL
+		BQAwWjELMAkGA1UEBhMCVUExEDAOBgNVBAgMB1VrcmFpbmUxDTALBgNVBAcMBEt5
+		aXYxDDAKBgNVBAoMA0tQSTELMAkGA1UECwwCT1QxDzANBgNVBAMMBmNhdCBDQTAe
+		Fw0yNjA0MDIyMDU4MzlaFw0yNzA0MDIyMDU4MzlaMGMxCzAJBgNVBAYTAlVBMRAw
+		DgYDVQQIDAdVa3JhaW5lMQ0wCwYDVQQHDARLeWl2MQwwCgYDVQQKDANLUEkxCzAJ
+		BgNVBAsMAk9UMRgwFgYDVQQDDA9tYWlsLnpvbmUwMy5uZXQwggEiMA0GCSqGSIb3
+		DQEBAQUAA4IBDwAwggEKAoIBAQDRk9OAI1olIsoMjB1F5MSD8DJscJUOamVEr9oq
+		yANOGffN/7QlDYPLT7q96aUvsEynoDQX37eeRdLuH9+8iKK72Ep5f3zuHzcrgS5j
+		dNeQ+V30Dpq2ZVNanELjdjTI/8rZ4iICMlslDs5G7aFFKRfr5P2zdz93pbEZikd4
+		FA2XngBaZwfjkgpRof1PHIWgBU20CMQDKOUMj2q5nxRkx73frQ1LSlF6zqStdFkZ
+		RxC/uPPThNBGRq82XSQgwQi+oZ2rAOLGAh1C2Zn66SK5+MCmCslLgEDoC2X//ctb
+		FhX0Kv1IJm61GejkOVe+D7fx7ZR3HUSldAGWZjuZHxHMXsSbAgMBAAGjQjBAMB0G
+		A1UdDgQWBBR1o448SRxO9bS5DBAgbQJdjhViATAfBgNVHSMEGDAWgBSRtSUX1xIo
+		h2PiM2Jhv634AFWbzDANBgkqhkiG9w0BAQsFAAOCAgEAktvUDtChBhuHUgFDe1Xj
+		QTOQkDm6zJ7KC0TwACIU9/Fvt3DepHdB+wUGx0DSzBlkbMSi8wEDPPEtRQEtJ4lM
+		uIBqs+Tflpj/i7IYplpDzCT6SKlpvYb7NZEQHgRc8rHF71j7VWU9Vyba0QrJNx2B
+		i2R039DphfE9JgbavIVzEwDg+RtYdKV8vKhGxV5pN9zKV9U/WzjFbgtdrqkedlyc
+		RXWY7jqQLM2cq+19xui6C7Bp60i1x2dzX4XuscSppEjFu3HKveOe1KdBT/9h+CvD
+		TbN9OLnBcroWATH5KNsqhdXFfIDhNs8itBm5hNWadIzM4irbU9j+RRaUcOe6qu72
+		JZWSPrxjQmY16rEM8TX0Ro1k4Ug5ZzcxFoj0zxqSGZCfYbsQSAnhTqLJP/GYpD/y
+		IW75IOXI2kXOwu8yTUCQ0MWkABJ+/AXxEmlSz1F5T/Az9kYBB9xWeGTbijM3mGTl
+		uapZUMDoOkxasrRQ/4rggjhyjgjN/uBDwLRnbQw1hQ5l4aS7scNHBjWH/DxgYlfc
+		enbANPe/6SBTcvWbXS328cORPuwfK4fpBkfh7Dw6vMZIKim7wiqCDazDKpE63uqA
+		L/iULnPLAROMVOqLF2UNLJeqw9O6Y1zyKnyumYo8p3scrBhkslJtU2U4lyMQ3PGL
+		zrhfGXBwbW2yOZb9zAV2+aY=
+		-----END CERTIFICATE-----
+		subject=C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=mail.zone03.net
+		issuer=C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=cat CA
+		---
+		No client certificate CA names sent
+		Peer signing digest: SHA256
+		Peer signature type: rsa_pss_rsae_sha256
+		Negotiated TLS1.3 group: X25519MLKEM768
+		---
+		SSL handshake has read 2813 bytes and written 1637 bytes
+		Verification: OK
+		---
+		New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+		Protocol: TLSv1.3
+		Server public key is 2048 bit
+		This TLS version forbids renegotiation.
+		Compression: NONE
+		Expansion: NONE
+		No ALPN negotiated
+		Early data was not sent
+		Verify return code: 0 (ok)
+		---
+		---
+		Post-Handshake New Session Ticket arrived:
+		SSL-Session:
+		Protocol  : TLSv1.3
+		Cipher    : TLS_AES_256_GCM_SHA384
+		Session-ID: 11F5DF182F614B02F286C9768B83A4399ED16AC5CC5C849CADA594A2D97CBE5D
+		Session-ID-ctx: 
+		Resumption PSK: 84461C719BC03D6B008B7C39D58457D68505FCA51B01C00468288E3CCFF589201BBBB368DFE10D7D8FCAE557A45DD54C
+		PSK identity: None
+		PSK identity hint: None
+		SRP username: None
+		TLS session ticket lifetime hint: 7200 (seconds)
+		TLS session ticket:
+		0000 - c9 eb 5e 56 50 3f 48 cb-cb f1 c3 44 fe a5 a5 fd   ..^VP?H....D....
+		0010 - bd 7b 23 d1 e8 d6 bf 48-dd fa 9a cc fd f3 b5 e3   .{#....H........
+			0020 - 1b 3d e5 a9 11 38 81 b0-e1 03 e7 aa ca 95 37 23   .=...8........7#
+			0030 - 4a 54 f5 dc 3e 12 7b 82-f6 6d 6a 85 9d 52 a5 62   JT..>.{..mj..R.b
+				0040 - 9a c9 a4 b3 95 d0 f1 0f-48 a5 0b 9b 9a d0 37 dc   ........H.....7.
+				0050 - c0 0b 6e 1d 11 84 cf 1a-74 d4 5e fc 21 df 40 7b   ..n.....t.^.!.@{
+					0060 - 22 7b 9f a5 67 13 de 92-87 04 d1 dd 98 2b 2e b9   "{..g........+..
+						0070 - e7 b4 6f d1 03 71 65 c8-ff 20 73 83 9e 39 41 95   ..o..qe.. s..9A.
+						0080 - e9 7a 97 36 9a 5d f9 c8-cd 5b fe 4e 86 37 1b 27   .z.6.]...[.N.7.'
+						0090 - ff 32 9b 2e 5a 8d 0e 98-a6 10 5d e0 48 41 01 f1   .2..Z.....].HA..
+						00a0 - 9d d9 47 b0 e7 6a f6 9b-7a 71 a2 47 9e cd 31 99   ..G..j..zq.G..1.
+						00b0 - f5 f5 bd 72 22 a5 50 f5-44 29 db c5 53 21 f0 ac   ...r".P.D)..S!..
+						00c0 - d4 b5 a8 3a 79 55 07 8d-2f 2c 60 5f 26 f5 aa c6   ...:yU../,`_&...
+						
+						Start Time: 1775236360
+						Timeout   : 7200 (sec)
+						Verify return code: 0 (ok)
+						Extended master secret: no
+						Max Early Data: 0
+						---
+						read R BLOCK
+						---
+						Post-Handshake New Session Ticket arrived:
+						SSL-Session:
+						Protocol  : TLSv1.3
+						Cipher    : TLS_AES_256_GCM_SHA384
+						Session-ID: BE144420CF5B6182E8E4014EBFDDB19D0FEAD7A3144B4B16DC72C92A88F47FD7
+						Session-ID-ctx: 
+						Resumption PSK: F6F178DD9074D9AAB9121A65F160D354A7A32E4F853C9936D543DFA5F1EA5EC93C955836F7D18AED254F407511463CC6
+						PSK identity: None
+						PSK identity hint: None
+						SRP username: None
+						TLS session ticket lifetime hint: 7200 (seconds)
+						TLS session ticket:
+						0000 - c9 eb 5e 56 50 3f 48 cb-cb f1 c3 44 fe a5 a5 fd   ..^VP?H....D....
+						0010 - 45 20 85 41 98 4b bd c6-74 69 2b 6b 62 62 e8 b1   E .A.K..ti+kbb..
+						0020 - 77 01 b3 ab 54 99 8d 74-81 50 3b 54 e7 43 f1 a6   w...T..t.P;T.C..
+						0030 - ab d3 c7 ca 3a 1f a5 ab-a5 d5 0b 2f 58 36 90 c4   ....:....../X6..
+						0040 - 3d cf 08 7d 48 be 4b 41-5d 97 7d 24 c5 e5 30 43   =..}H.KA].}$..0C
+				0050 - 30 67 37 97 64 28 b3 0e-05 8a a4 8d 44 9e 16 cf   0g7.d(......D...
+				0060 - 11 a8 3c 8f 55 97 af 84-dd 13 ab 9f 58 b6 70 71   ..<.U.......X.pq
+				0070 - fd bc b8 d7 f7 a3 a8 c7-97 db 3f 9e eb 1c 4d 7d   ..........?...M}
+			0080 - c4 70 a3 e0 d8 c2 04 ac-9d 0d ac 08 6c 18 af 88   .p..........l...
+			0090 - 32 c9 41 d8 81 b2 4e ea-fb 7d 59 fe 05 4f 5c 13   2.A...N..}Y..O\.
+		00a0 - 29 9a a1 ee 25 74 cf 06-f5 cb c1 88 e6 2b 49 e7   )...%t.......+I.
+		00b0 - 44 3e f5 ec 59 80 da a4-0c b3 b6 fe 78 15 31 d6   D>..Y.......x.1.
+		00c0 - 73 17 39 af 0e b6 c8 96-b9 e0 e6 a7 52 fa 52 39   s.9.........R.R9
+		
+		Start Time: 1775236360
+		Timeout   : 7200 (sec)
+		Verify return code: 0 (ok)
+		Extended master secret: no
+		Max Early Data: 0
+		---
+		read R BLOCK
+		+OK Dovecot ready.
+		
+		> USER leopard
+		
+		+OK
+		
+		> PASS rootpass
+		
+		+OK Logged in.
+		
+		> STAT
+		
+		+OK 4 4258
+		
+		> retr 1
+		
+		+OK 892 octets
+		Return-path: <tiger@cat.com>
+		Envelope-to: leopard@zone03.net
+		Delivery-date: Fri, 03 Apr 2026 11:58:55 +0300
+		Received: from mail.cat.com ([192.168.1.2])
+		by mail.zone03.net with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+		(Exim 4.98.2)
+		(envelope-from <tiger@cat.com>)
+		id 1w8aMh-000000000lX-0GEx
+		for leopard@zone03.net;
+		Fri, 03 Apr 2026 11:58:55 +0300
+		Received: from mail.zone03.net ([192.168.1.3])
+		by mail.cat.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+		(Exim 4.98.2)
+		(envelope-from <tiger@cat.com>)
+		id 1w8aMh-000000000f4-045w
+		for leopard@zone03.net;
+		Fri, 03 Apr 2026 11:58:55 +0300
+		Date: Fri, 03 Apr 2026 11:58:53 +0300
+		To: leopard@zone03.net
+		From: tiger@cat.com
+		Subject: Test 2
+		Message-Id: <20260403115853.002946@mail.zone03.net>
+		X-Mailer: swaks v20240103.0 jetmore.org/john/code/swaks/
+		
+		This is a test mailing
+		
+		
+		.
+		
+		> QUIT
+		
+		DONE
+	\end{minted}
+	
+	Все працює!
+	
+	\subsection*{ClamAV} 
+	
+	Для початку, встановимо потрібні пакети -- сам антивірус та його демон \textit{[1, 2]}.
+	
+	\begin{minted}{bash}
+		sudo apt install clamav clamav-daemon
+	\end{minted}
+	
+	Далі потрібно вирішити питання з правами доступу. Коли Exim отримує лист, він розпаковує його у свою тимчасову директорію для сканування. Щоб антивірус міг прочитати ці розпаковані файли, нам потрібно додати користувача \texttt{clamav} до групи поштового сервера \textit{[1, 2]}.
+	
+	\begin{minted}{bash}
+		sudo usermod -aG Debian-exim clamav
+	\end{minted}
+	
+	Тепер навчимо Exim взаємодіяти з антивірусом. Відкриваємо файл з макросами -- \texttt{/etc/exim4/conf.d/main/01\_exim4-config\_listmacrosdefs}. Додаємо рядок, вказаний нижче. Це вкаже поштовому серверу точний шлях до системного сокета, через який спілкується служба ClamAV \textit{[1, 2]}.
+	
+	\begin{minted}{bash}
+		# System socket for ClamAV
+		av_scanner = clamd:/var/run/clamav/clamd.ctl
+	\end{minted}
+	
+	Після цього потрібно увімкнути саме правило блокування заражених листів. Відкриваємо файл перевірки даних \texttt{/etc/exim4/conf.d/acl/40\_exim4-config\_check\_data}. Знаходимо закоментовані блоки, які відповідають за перевірку на шкідливе програмне забезпечення. Розкоментовуємо їх. Також, рядок \texttt{spam = nobody:true} замінюємо на \texttt{spam = debian-spamd:true} \textit{[1, 2]}.
+	
+	\begin{minted}{bash}
+		
+		### acl/40_exim4-config_check_data
+		#################################
+		
+		# This ACL is used after the contents of a message have been received. This
+		# is the ACL in which you can test a message's headers or body, and in
+		# particular, this is where you can invoke external virus or spam scanners.
+		
+		acl_check_data:
+		
+		# Deny if the message contains an overlong line.  Per the standards
+		# we should never receive one such via SMTP.
+		#
+		.ifndef IGNORE_SMTP_LINE_LENGTH_LIMIT
+		deny
+		condition  = ${if > {$max_received_linelength}{998}}
+		message    = maximum allowed line length is 998 octets, \
+		got $max_received_linelength
+		.endif
+		
+		# Deny if the headers contain badly-formed addresses.
+		#
+		.ifndef NO_CHECK_DATA_VERIFY_HEADER_SYNTAX
+		deny
+		!acl = acl_local_deny_exceptions
+		!verify = header_syntax
+		message = header syntax
+		log_message = header syntax ($acl_verify_message)
+		.endif
+		
+		
+		# require that there is a verifiable sender address in at least
+		# one of the "Sender:", "Reply-To:", or "From:" header lines.
+		.ifdef CHECK_DATA_VERIFY_HEADER_SENDER
+		deny
+		!acl = acl_local_deny_exceptions
+		!verify = header_sender
+		message = No verifiable sender address in message headers
+		.endif
+		
+		
+		# Deny if the message contains malware. Before enabling this check, you
+		# must install a virus scanner and set the av_scanner option in the
+		# main configuration.
+		#
+		# exim4-daemon-heavy must be used for this section to work.
+		#
+		deny
+		malware = *
+		message = This message was detected as possible malware ($malware_name).
+		
+		
+		# Add headers to a message if it is judged to be spam. Before enabling this,
+		# you must install SpamAssassin. You may also need to set the spamd_address
+		# option in the main configuration.
+		#
+		# exim4-daemon-heavy must be used for this section to work.
+		#
+		# Please note that this is only suiteable as an example. See
+		# /usr/share/doc/exim4-base/README.Debian.gz
+		#
+		# See the exim docs and the exim wiki for more suitable examples.
+		#
+		# # Remove internal headers
+		# warn
+		#   remove_header = X-Spam_score: X-Spam_score_int : X-Spam_bar : \
+		#                   X-Spam_report
+		#
+		warn
+		condition = ${if <{$message_size}{120k}{1}{0}}
+		#   # ":true" to add headers/acl variables even if not spam
+		spam = debian-spamd:true
+		add_header = X-Spam_score: $spam_score
+		add_header = X-Spam_bar: $spam_bar
+		#   # Do not enable this unless you have shorted SpamAssassin's report
+		#   #add_header = X-Spam_report: $spam_report
+		#
+		# Reject spam messages (score >15.0).
+		# This breaks mailing list and forward messages.
+		deny
+		condition = ${if <{$message_size}{120k}{1}{0}}
+		condition = ${if >{$spam_score_int}{150}{true}{false}}
+		message = Classified as spam (score $spam_score)
+		
+		
+		# This hook allows you to hook in your own ACLs without having to
+		# modify this file. If you do it like we suggest, you'll end up with
+		# a small performance penalty since there is an additional file being
+		# accessed. This doesn't happen if you leave the macro unset.
+		.ifdef CHECK_DATA_LOCAL_ACL_FILE
+		.include CHECK_DATA_LOCAL_ACL_FILE
+		.endif
+		
+		# accept otherwise
+		accept
+	\end{minted}
+	
+	Наостанок перезапустимо обидві служби, щоб вони підхопили нові конфігурації \textit{[1, 2]}.
+	
+	\begin{minted}{bash}
+		user2@mail:~$ sudo systemctl restart clamav-daemon
+		user2@mail:~$ sudo systemctl status clamav-daemon
+		● clamav-daemon.service - Clam AntiVirus userspace daemon
+		Loaded: loaded (/usr/lib/systemd/system/clamav-daemon.service; enabled; preset: enabled)
+		Drop-In: /etc/systemd/system/clamav-daemon.service.d
+		└─extend.conf
+		Active: active (running) since Fri 2026-04-03 20:35:37 EEST; 10s ago
+		Invocation: dc19543181af4c09a81b21f9e87c12c3
+		TriggeredBy: ● clamav-daemon.socket
+		Docs: man:clamd(8)
+		man:clamd.conf(5)
+		https://docs.clamav.net/
+		Process: 13885 ExecStartPre=/bin/mkdir -p /run/clamav (code=exited, status=0/SUCCESS)
+		Process: 13886 ExecStartPre=/bin/chown clamav /run/clamav (code=exited, status=0/SUCCESS)
+		Main PID: 13889 (clamd)
+		Tasks: 2 (limit: 2301)
+		Memory: 958.2M (peak: 958.4M)
+		CPU: 6.476s
+		CGroup: /system.slice/clamav-daemon.service
+		└─13889 /usr/sbin/clamd --foreground=true
+		
+		Apr 03 20:35:44 mail.zone03.net clamd[13889]: Fri Apr  3 20:35:44 2026 -> ELF support enabled.
+		Apr 03 20:35:44 mail.zone03.net clamd[13889]: Fri Apr  3 20:35:44 2026 -> Mail files support enabled.
+		Apr 03 20:35:44 mail.zone03.net clamd[13889]: Fri Apr  3 20:35:44 2026 -> OLE2 support enabled.
+		Apr 03 20:35:44 mail.zone03.net clamd[13889]: Fri Apr  3 20:35:44 2026 -> PDF support enabled.
+		Apr 03 20:35:44 mail.zone03.net clamd[13889]: Fri Apr  3 20:35:44 2026 -> SWF support enabled.
+		Apr 03 20:35:44 mail.zone03.net clamd[13889]: Fri Apr  3 20:35:44 2026 -> HTML support enabled.
+		Apr 03 20:35:44 mail.zone03.net clamd[13889]: Fri Apr  3 20:35:44 2026 -> XMLDOCS support enabled.
+		Apr 03 20:35:44 mail.zone03.net clamd[13889]: Fri Apr  3 20:35:44 2026 -> HWP3 support enabled.
+		Apr 03 20:35:44 mail.zone03.net clamd[13889]: Fri Apr  3 20:35:44 2026 -> OneNote support enabled.
+		Apr 03 20:35:44 mail.zone03.net clamd[13889]: Fri Apr  3 20:35:44 2026 -> Self checking every 3600 seconds.
+		user2@mail:~$ sudo systemctl restart exim4
+		user2@mail:~$ sudo systemctl status exim4
+		● exim4.service - exim Mail Transport Agent
+		Loaded: loaded (/usr/lib/systemd/system/exim4.service; enabled; preset: enabled)
+		Active: active (running) since Fri 2026-04-03 20:35:59 EEST; 4s ago
+		Invocation: 44214562ed1c42ac8e3e7cfffbfac025
+		Docs: man:exim(8)
+		https://exim.org/docs.html
+		Process: 13905 ExecStartPre=/usr/sbin/update-exim4.conf $UPEX4OPTS (code=exited, status=0/SUCCESS)
+		Main PID: 14247 (exim4)
+		Tasks: 1 (limit: 2301)
+		Memory: 10.7M (peak: 21.3M)
+		CPU: 166ms
+		CGroup: /system.slice/exim4.service
+		└─14247 /usr/sbin/exim4 -bdf -q30m
+		
+		Apr 03 20:35:59 mail.zone03.net systemd[1]: Starting exim4.service - exim Mail Transport Agent...
+		Apr 03 20:35:59 mail.zone03.net systemd[1]: Started exim4.service - exim Mail Transport Agent.
+	\end{minted}
+	
+	Тепер ми можемо провести справжній бойовий тест. Для перевірки антивірусів у всьому світі використовується спеціальний безпечний текстовий сигнатурний рядок EICAR. Антивіруси розпізнають його як загрозу, що дозволяє системним адміністраторам перевірити захист без використання реальних вірусів. Відправляємо тестового листа з цією сигнатурою в тілі повідомлення за допомогою утиліти swaks.
+	
+	\begin{minted}{bash}
+		swaks --to lynx@cat.com --from tiger@cat.com -s mail.cat.com --auth-user tiger -tls --body 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*'
+	\end{minted}
+	
+	Все спрацювало як треба!
+	
+	\image{3cm}{clamav-check-success}
+	
+	\subsection*{SpamAssassin}
+	
+	Як зазвичай, починаємо зі встановлення пакету \textit{[1, 2]}.
+	
+	\begin{minted}{bash}
+		sudo apt install spamassassin
+	\end{minted}
+	
+	Тепер потрібно вказати поштовому серверу Exim, як зв'язатися з цим фільтром. Відкриваємо файл \texttt{/etc/exim4/conf.d/main/01\_exim4-config\_listmacrosdefs} та додаємо рядки \textit{[1, 2]}:
+	
+	\begin{minted}{bash}
+		# Define SpamAssassin address and port
+		spamd_address = 127.0.0.1 783
+	\end{minted}
+	
+	Далі треба розкоментувати нижчевказані рядки в файлі \texttt{/etc/exim4/conf.d/acl/40\_exim4-config\_check\_data}. Це вже було зроблено раніше, але варто перевірити \textit{[1, 2]}.
+	
+	\begin{minted}{bash}
+		# Uncomment these lines to reject spam messages
+		deny
+			condition = ${if <{$message_size}{120k}{1}{0}}
+			condition = ${if >{$spam_score_int}{150}{true}{false}}
+			message = Classified as spam (score $spam_score)
+	\end{minted}
+	
+	Зберігаємо файл і запускаємо службу SpamAssassin, а також перезапускаємо Exim, щоб він підхопив нові конфігурації \textit{[1, 2]}.
+	
+	\begin{minted}{bash}
+		# Enable and start SpamAssassin service
+		sudo systemctl enable --now spamd
+		
+		# Restart spamd
+		sudo systemctl restart spamd
+		
+		# Restart Exim to apply new ACL and macros
+		sudo systemctl restart exim4
+	\end{minted}
+	
+	Окрім цього, оновимо базу даних правил спаму \textit{[1, 2]}.
+	
+	\begin{minted}{bash}
+		# Download and compile the latest SpamAssassin rule updates
+		sudo sa-update
+		
+		# Restart the daemon to load the new rules into memory
+		sudo systemctl restart spamd
+	\end{minted}
+	
+	Для перевірки з локалхосту, додамо кастомні правила \textit{[1, 2]}.
+	
+	\begin{minted}{bash}
+		# Add a custom rule to detect the GTUBE string and assign it a massive score
+		echo "body LOCAL_GTUBE /GTUBE-STANDARD-ANTI-SPAM-TEST-EMAIL/" | sudo tee -a /etc/spamassassin/local.cf
+		echo "score LOCAL_GTUBE 200.0" | sudo tee -a /etc/spamassassin/local.cf
+		
+		# Restart the service to load our new custom rule
+		sudo systemctl restart spamd
+	\end{minted}
+	
+	Для перевірки спам-фільтрів існує спеціальний безпечний рядок GTUBE, який працює за тим самим принципом, що й EICAR для вірусів. Спам-фільтри в усьому світі розпізнають його і миттєво нараховують листу 1000 балів спаму. Перевіряємо роботу фільтру.
+	
+	\begin{minted}{bash}
+		user1@mail:~$ swaks --to lynx@cat.com --from tiger@cat.com -s mail.cat.com --auth-user tiger -tls --body 'XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-SPAM-TEST-EMAIL*C.34X'
+		
+		Password: rootpass
+		
+		=== Trying mail.cat.com:25...
+	\end{minted}
+	
+	Отримуємо результат:
+	
+	\image{3cm}{spamassassin-check-success}
+	
+	Фільтр працює, отримали помилку 550!
+	
+	\subsection*{Висновок}
+	
+	Під час виконання лабораторної роботи було успішно розгорнуто та налаштовано повноцінну інфраструктуру електронної пошти на базі двох віртуальних машин. Було налаштовано сервери передачі повідомлень Exim та агенти доставки Dovecot. Для забезпечення конфіденційності передачі даних створено локальний центр сертифікації та налаштовано шифрування за протоколом TLS. Було впроваджено сучасні механізми захисту від підробки відправника, такі як SPF та криптографічні підписи DKIM, які успішно пройшли перевірку. Крім того, налаштовано системи контентної фільтрації, зокрема антивірус ClamAV та спам-фільтр SpamAssassin, що гарантує захист від шкідливого програмного забезпечення та небажаної пошти. Працездатність усіх компонентів, включно з протоколами SMTP, IMAPS та POP3S, була успішно підтверджена за допомогою спеціалізованих мережевих утиліт.
+	
+	\section*{Контрольні запитання.}
+	
+	\begin{enumerate}
+		\item \textbf{Архітектура електронної пошти.} \\ Базова архітектура електронної пошти складається з клієнтської та серверної частин. Користувач взаємодіє з поштовим клієнтом (MUA -- Mail User Agent), який відправляє листи на поштовий сервер (MTA -- Mail Transfer Agent). MTA відповідає за маршрутизацію та передачу листа через інтернет до сервера отримувача. На стороні отримувача агент доставки (MDA -- Mail Delivery Agent) приймає лист і зберігає його в поштовій скриньці, звідки користувач може його завантажити або прочитати за допомогою свого клієнта (MRA -- Mail Retrieval Agent).
+		
+		\item \textbf{Призначення та принципи роботи протоколів SMTP, POP3 та IMAP.} \\ SMTP (Simple Mail Transfer Protocol) використовується виключно для відправлення листів від клієнта до сервера та для пересилки між самими серверами. POP3 (Post Office Protocol version 3) призначений для завантаження вхідних листів із сервера на локальний комп'ютер, при цьому листи зазвичай видаляються з сервера після завантаження. IMAP (Internet Message Access Protocol) дозволяє працювати з листами безпосередньо на сервері, синхронізуючи папки, статуси прочитання та зберігаючи всю пошту на сервері для доступу з різних пристроїв.
+		
+		\item \textbf{Формат поштового повідомлення.} \\ Поштове повідомлення складається з трьох основних частин: конверта, заголовків та тіла. Конверт містить інформацію про відправника та отримувача, яка використовується протоколом SMTP для маршрутизації між серверами. Заголовки містять метадані, такі як тема, дата, технічна інформація про маршрут, версія поштового клієнта та криптографічні підписи. Тіло містить безпосередньо текст листа та прикріплені файли, які зазвичай кодуються за стандартом MIME.
+		
+		\item \textbf{Маршрутизації повідомлень електронної пошти.} \\ Маршрутизація здійснюється переважно за допомогою системи доменних імен (DNS). Коли MTA потрібно відправити лист, він робить запит до DNS на отримання MX-записів (Mail Exchanger) для домену отримувача. Цей запис вказує на доменне ім'я та пріоритет поштового сервера, який обслуговує цей домен. Потім MTA дізнається IP-адресу цього сервера і встановлює з ним SMTP-з'єднання для передачі повідомлення.
+		
+		\item \textbf{Методи автентифікації поштових повідомлень DKIM та SPF.} \\ SPF (Sender Policy Framework) -- це TXT-запис у системі DNS, який містить точний список IP-адрес або серверів, яким дозволено відправляти пошту від імені цього домену. DKIM (DomainKeys Identified Mail) -- це метод, за якого сервер-відправник додає до листа криптографічний підпис, згенерований за допомогою закритого ключа. Сервер-отримувач перевіряє цей підпис за допомогою відкритого ключа, розміщеного в DNS відправника, що гарантує цілісність листа та підтверджує домен відправника.
+		
+		\item \textbf{Технологія DMARC.} \\ DMARC (Domain-based Message Authentication, Reporting, and Conformance) -- це політика, яка логічно об'єднує механізми SPF та DKIM. Вона вказує серверу-отримувачу, що саме робити з листами, які не пройшли перевірку автентичності (наприклад, пропустити, помістити в папку спаму або повністю відхилити). Крім того, DMARC дозволяє власникам доменів отримувати детальні звіти про результати перевірки їхніх листів на інших серверах.
+	\end{enumerate}
+\end{document}

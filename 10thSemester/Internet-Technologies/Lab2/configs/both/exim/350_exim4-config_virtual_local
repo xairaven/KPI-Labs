@@ -1,0 +1,5 @@
+virtual_local:
+	driver = accept
+	domains = +local_domains
+	local_parts = lsearch;/etc/exim4/passwd
+	transport = virtual_maildir

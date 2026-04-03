@@ -1,0 +1,36 @@
+# Authentication for passwd-file users. Included from auth.conf.
+#
+# passwd-like file with specified location.
+# <https://doc.dovecot.org/latest/core/config/auth/databases/passwd_file.html>
+
+#passdb passwd-file {
+#  default_password_scheme = crypt
+#  auth_username_format = %{user}
+#  passwd_file_path = /etc/dovecot/users
+#}
+
+#userdb passwd-file {
+#  auth_username_format = %{user}
+#  passwd_file_path = /etc/dovecot/users
+
+#  fields {
+#    quota_rule:default=*:storage=1G
+#    home=/home/virtual/%{user}
+#  }
+#}
+
+# Configure password database using 2.4 syntax
+passdb passwd-file {
+	default_password_scheme = CRYPT
+	auth_username_format = %{user | username}
+	passwd_file_path = /etc/exim4/passwd
+}
+		
+# Configure static user database wrapped in fields block
+userdb static {
+	fields {
+		uid = Debian-exim
+		gid = Debian-exim
+		home = /var/vmail/%{user | username}
+	}
+}
