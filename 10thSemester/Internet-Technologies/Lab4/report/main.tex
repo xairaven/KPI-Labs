@@ -1,0 +1,539 @@
+\documentclass[14pt, a4paper]{extreport}
+
+\usepackage{kpi-lab}
+\input{data}
+
+\begin{document}
+	\pagenumbering{gobble}
+	
+	\begin{titlepage}
+		\begin{center}
+			\normalsize
+			Національний технічний університет України\\
+			«Київський політехнічний інститут імені Ігоря Сікорського» \\[0.5em]
+			Факультет інформатики та обчислювальної техніки\\
+			Кафедра обчислювальної техніки
+			
+			\vfill
+			
+			{\large \textbf{ЗВІТ}\\[0.5em]}
+			{з лабораторної роботи №\LabNumber \\}
+			{з дисципліни <<\CourseTitle>>}
+			
+			\vspace{2em}
+			
+			{\textbf{Тема: <<\Topic>>}}
+			
+			\vspace{1em}
+			
+			{\textbf{Варіант №\Variant}}
+			
+			\vfill
+			
+			\begin{flushright}
+				Виконав: \\ студент \CourseNumber{} курсу, групи \StudentGroup \\
+				\StudentName \\[1em]
+				Перевірив: \\ \Teacher
+			\end{flushright}
+			
+			\vfill
+			
+			\begin{flushright}
+				Дата здачі: \DTMtoday
+			\end{flushright}
+			
+			\vspace{5em}
+			КИЇВ -- \ReportYear
+		\end{center}
+	\end{titlepage}
+	
+	\clearpage
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+	
+	\subsection*{Мета роботи} 
+	
+	Отримати практичні навички роботи з мережною файловою системою NFS.
+	
+	\subsection*{Завдання}
+	
+	Встановити та налаштувати файловий сервер, який реалізує мережну файлову систему NFS та відповідає наступним вимогам:
+	
+	\begin{itemize}
+		\item створені каталоги: \texttt{/nfs/public}, \texttt{/nfs/private}, \texttt{/nfs/incoming};
+		
+		\item каталог \texttt{/nfs/public} експортується в режимі тільки читання;
+		
+		\item каталог \texttt{/nfs/private} експортується в режимі читання та запису і тільки для вузла, на якому працює NFS-клієнт, запити від всіх користувачів на клієнті відображаються на заданого варіантом користувача на сервері, який має повні права в цьому каталозі;
+		
+		\item каталог \texttt{/nfs/incoming} експортується в режимі читання та запису для вузлів, які знаходяться в тій же мережі, що і NFS-клієнт, запити від користувача \texttt{root} на клієнті відображаються на заданого варіантом користувача на сервері, запити інших користувачів клієнта залишаються без змін на сервері, права на каталог встановлені відповідно варіанту завдання.
+	\end{itemize}
+	
+	Виконати аналіз протокольного обміну між клієнтом та сервером під час монтування файлової системи та пересилки файлів.
+	
+	Рекомендується використовувати наступне програмне забезпечення:
+	
+	\begin{itemize}
+		\item \textbf{NFS-сервер}: nfs-kernel-server;
+		
+		\item \textbf{NFS-клієнт}: nfs-common.
+	\end{itemize}
+	
+	Для перевірки роботи файлового серверу та аналізу протокольного обміну рекомендується використовувати утиліти: \texttt{nfsstat}, \texttt{showmount}, \texttt{mount}, \texttt{tcpdump}.
+	
+	Завдання за варіантом:
+	
+	\begin{itemize}
+		\item \textbf{Ім'я NFS-серверу}: \texttt{nfs.cat.com}.
+		
+		\item \textbf{Відображення користувачів}:
+		
+		\begin{itemize}
+			\item \texttt{/nfs/private}: \texttt{tiger};
+			
+			\item \texttt{/nfs/incoming}: \texttt{lion}.
+		\end{itemize}
+		
+		\item \textbf{Права на каталог \texttt{/nfs/incoming}}:
+		
+		\begin{itemize}
+			\item RWX: \texttt{lynx};
+			
+			\item -: \texttt{leopard};
+			
+			\item RX: \texttt{jaguar};
+			
+			\item RWX: \texttt{lion}.
+		\end{itemize}
+	\end{itemize}
+	
+	\section*{Хід роботи.}
+	
+	Для початку, додамо відповідні записи в налаштування зон DNS.
+	
+	Файл \texttt{/etc/bind/db.cat.com}: \sideat{[VM 1]}
+	
+	\begin{minted}{text}
+		nfs	IN	A	192.168.1.2
+	\end{minted}
+	
+	Зворотня зона -- \texttt{/etc/bind/db.1.168.192}: \sideat{[VM 1]}
+	
+	\begin{minted}{text}
+		2	IN	PTR	nfs.cat.com.
+	\end{minted}
+	
+	Звичайно ж, інкрементуємо серійний номер в обох файлах. Після цього, перезавантажимо сервіс.
+	
+	\image[width=18cm]{10.7cm}{bind9-restart}
+	
+	Встановимо необхідні пакети.
+	
+	Сервер: \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo apt install nfs-kernel-server acl
+	\end{minted}
+	
+	Клієнт: \sideat{[VM 2]}
+	
+	\begin{minted}{bash}
+		user2@mail:~$ sudo apt install nfs-common
+	\end{minted}
+	
+	Створимо відповідні каталоги. \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo mkdir -p /nfs/{public,private,incoming}
+	\end{minted}
+	
+	Так як треба зробити відображення користувачів на директорії, нам треба дізнатися їх ідентифікатори. \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ id tiger
+		uid=1002(tiger) gid=1002(tiger) groups=1002(tiger)
+		
+		user1@mail:~$ id lion
+		uid=1003(lion) gid=1003(lion) groups=1003(lion)
+	\end{minted}
+	
+	\pagebreak
+	
+	Тепер роздамо локальні права на папки.
+	
+	Папка \texttt{public} має бути доступна всім тільки для читання. За замовчуванням при створенні вона має права 755 (читати та заходити можуть усі), тому тут нічого не міняємо. \sideat{[VM 1]}
+
+	\begin{minted}{bash}
+		user1@mail:~$ ls -la /nfs/public/
+		total 8
+		drwxr-xr-x 2 root root 4096 Apr 17 02:34 .
+		drwxr-xr-x 5 root root 4096 Apr 17 02:34 ..
+	\end{minted}
+	
+	Папка \texttt{private} -- за варіантом туди мають проектуватися всі запити від імені \texttt{tiger} з повними правами. Отже, робимо його повноправним власником цієї папки: \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo chown tiger:tiger /nfs/private
+		
+		user1@mail:~$ sudo chmod 700 /nfs/private
+		
+		user1@mail:~$ sudo ls -la /nfs/private
+		total 8
+		drwx------ 2 tiger tiger 4096 Apr 17 02:34 .
+		drwxr-xr-x 5 root  root  4096 Apr 17 02:34 ..
+	\end{minted}
+	
+	Папка \texttt{incoming} -- тут запити від \texttt{root} мають ставати \texttt{lion}. Віддамо папку йому. \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo chown lion:lion /nfs/incoming
+		
+		user1@mail:~$ sudo ls -la /nfs/incoming
+		total 8
+		drwxr-xr-x 2 lion lion 4096 Apr 17 02:34 .
+		drwxr-xr-x 5 root root 4096 Apr 17 02:34 ..
+	\end{minted}
+	
+	За допомогою POSIX Access Control Lists видамо права на директорію \texttt{/nfs/incoming}. \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo setfacl -m u:lynx:rwx /nfs/incoming
+		
+		user1@mail:~$ sudo setfacl -m u:leopard:--- /nfs/incoming
+		
+		user1@mail:~$ sudo setfacl -m u:jaguar:r-x /nfs/incoming
+		
+		user1@mail:~$ sudo setfacl -m u:lion:rwx /nfs/incoming
+	\end{minted}
+	
+	Перевіримо: \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ getfacl /nfs/incoming
+		getfacl: Removing leading '/' from absolute path names
+		# file: nfs/incoming
+		# owner: lion
+		# group: lion
+		user::rwx
+		user:lion:rwx
+		user:lynx:rwx
+		user:leopard:---
+		user:jaguar:r-x
+		group::r-x
+		mask::rwx
+		other::r-x
+	\end{minted}
+	
+	Далі налаштуємо NFS. Повний зміст файлу \texttt{/etc/exports}: \sideat{[VM 1]}
+	
+	\begin{minted}{text}
+		# 1. Public: Reading for all users
+		/nfs/public  *(ro,sync,no_subtree_check)
+		
+		# 2. Private: export only for the client (192.168.1.3), RW.
+		# All users (all_squash) mapped as tiger (uid=1002)
+		/nfs/private  192.168.1.3/32(rw,sync,no_subtree_check,all_squash,anonuid=1002,anongid=1002)
+		
+		# 3. Incoming: export for whole subnet. RW.
+		# Root (root_squash) mapped as lion (uid=1003)
+		/nfs/incoming  192.168.1.0/24(rw,sync,no_subtree_check,root_squash,anonuid=1003,anongid=1003)
+	\end{minted}
+	
+	Застосуємо зміни. \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo exportfs -arv
+	\end{minted}
+	
+	Перезапустимо сервіс. \sideat{[VM 1]}
+	
+	\image{6cm}{nfs-restart}
+	
+	Переходимо до клієнту. Перевіримо, які каталоги видимі для нього. \sideat{[VM 2]}
+	
+	\begin{minted}{bash}
+		user2@mail:~$ /sbin/showmount -e nfs.cat.com
+		Export list for nfs.cat.com:
+		/nfs/public   *
+		/nfs/incoming 192.168.1.0/24
+		/nfs/private  192.168.1.3/32
+	\end{minted}
+	
+	Створимо папку, в яку будемо монтувати систему. \sideat{[VM 2]}
+	
+	\begin{minted}{bash}
+		user2@mail:~$ sudo mkdir -p /mnt/nfs
+	\end{minted}
+	
+	Змонтуємо систему. Але, звичайно ж, додамо все в файл \texttt{/etc/fstab}, щоб монтування відбувалося автоматично після перезапуску.
+	
+	Додаємо туди рядки: \sideat{[VM 2]}
+	
+	\begin{minted}{text}
+		nfs.cat.com:/nfs/public   /mnt/nfs/public   nfs defaults,_netdev 0 0
+		nfs.cat.com:/nfs/private  /mnt/nfs/private  nfs defaults,_netdev 0 0
+		nfs.cat.com:/nfs/incoming /mnt/nfs/incoming nfs defaults,_netdev 0 0
+	\end{minted}
+	
+	Хоча звичайно, можна змонтувати корінь за допомогою однієї команди яка наведена нижче, але все ж, підхід з \texttt{fstab} дозволить перезапускати віртуальні машини і не запускати дану команду кожного разу.
+	
+	\begin{minted}{bash}
+		sudo mount -t nfs nfs.cat.com:/ /mnt/nfs
+	\end{minted}
+	
+	Перевіримо, чи відбулося монтування. Краще перевірити після рестарту віртуальної машини.
+	
+	\image[width=18cm]{17cm}{mount}
+	
+	Проведемо тести. 
+	
+	Спочатку, створимо файл з правами адміністратора. Але, як бачимо, ідентифікатор транслюється в \texttt{user2}. Як бачимо нижче, в нього такий числовий ідентифікатор. Якщо перевіримо на першій машині, то побачимо саме користувача \texttt{tiger}.
+	
+	\begin{minted}{bash}
+		user2@mail:~$ sudo touch /mnt/nfs/private/test_private.txt
+		user2@mail:~$ ls -l /mnt/nfs/private/
+		total 0
+		-rw-r--r-- 1 user2 user2 0 Apr 17 04:30 test_private.txt
+		user2@mail:~$ ls -ln /mnt/nfs/private
+		total 0
+		-rw-r--r-- 1 1002 1002 0 Apr 17 04:30 test_private.txt
+		
+		user1@mail:~$ sudo ls -la /nfs/private
+		total 8
+		drwx------ 2 tiger tiger 4096 Apr 17 04:30 .
+		drwxr-xr-x 5 root  root  4096 Apr 17 02:34 ..
+		-rw-r--r-- 1 tiger tiger    0 Apr 17 04:30 test_private.txt
+	\end{minted}
+	
+	Перевіримо те саме з директорією \texttt{incoming}. Мапінг користувачів працює.
+	
+	\begin{minted}{bash}
+		user2@mail:~$ sudo touch /mnt/nfs/incoming/test_private.txt
+		user2@mail:~$ ls -la /mnt/nfs/incoming/
+		total 8
+		drwxrwxr-x+ 2 1003 1003 4096 Apr 17 04:40 .
+		drwxr-xr-x  5 root root 4096 Apr 17 04:25 ..
+		-rw-r--r--  1 1003 1003    0 Apr 17 04:40 test_private.txt
+		user2@mail:~$ ls -ln /mnt/nfs/incoming/
+		total 0
+		-rw-r--r-- 1 1003 1003 0 Apr 17 04:40 test_private.txt
+		
+		user1@mail:~$ sudo ls -la /nfs/incoming/
+		total 8
+		drwxrwxr-x+ 2 lion lion 4096 Apr 17 04:40 .
+		drwxr-xr-x  5 root root 4096 Apr 17 02:34 ..
+		-rw-r--r--  1 lion lion    0 Apr 17 04:40 test_private.txt
+	\end{minted}
+	
+	Протестуємо інші обмеження:
+	
+	\image[width=18cm]{8cm}{test-1}
+	
+	Перевіримо трафік через Wireshark.
+	
+	Відмонтуємо каталог, щоб потім його змонтувати: \sideat{[VM 2]}
+	
+	\begin{minted}{bash}
+		user2@mail:~$ sudo umount -l /mnt/nfs/public
+	\end{minted}
+	
+	Вмикаємо утиліту. \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ wireshark &
+		[1] 3894
+		user1@mail:~$  ** (wireshark:3894) 04:52:58.885754 [Capture MESSAGE] -- Capture Start ...
+		** (wireshark:3894) 04:52:58.949556 [Capture MESSAGE] -- Capture started
+		** (wireshark:3894) 04:52:58.949584 [Capture MESSAGE] -- File: "/tmp/wireshark_enp0s8E1NBO3.pcapng"
+	\end{minted}
+	
+	Виконуємо монтування. \sideat{[VM 2]}
+	
+	\begin{minted}{bash}
+		user2@mail:~$ sudo mount -t nfs nfs.cat.com:/nfs/public /mnt/nfs/public
+	\end{minted}
+	
+	Бачимо відповідні пакети.
+	
+	\image[width=18cm]{18cm}{wireshark}
+	
+	Далі, за допомогою команди nfsstat можна перевірити статистику.
+	
+	Сервер: \sideat{[VM 1]}
+	
+	\image{11.5cm}{stats-server}
+	
+	Клієнт: \sideat{[VM 2]}
+	
+	\image{11.5cm}{stats-client}
+	
+	\subsection*{Висновок}
+	
+	Під час виконання лабораторної роботи було успішно встановлено та налаштовано сервер мережевої файлової системи NFS. Було створено структуру каталогів та реалізовано гнучку політику розмежування прав доступу з використанням параметрів конфігураційного файлу \texttt{/etc/exports} (зокрема \texttt{ro}, \texttt{rw}, \texttt{root\_squash}, \texttt{all\_squash}). На практиці було успішно налаштовано трансляцію ідентифікаторів користувачів (UID/GID) між клієнтом та сервером (squashing) для забезпечення коректного доступу до приватних та вхідних каталогів. Додатково було застосовано класичні механізми UNIX-прав (через хитре налаштування власника, груп та специфічних дозволів. Було протестовано ручне монтування та автоматичне монтування через таблицю \texttt{/etc/fstab} із використанням параметра \texttt{\_netdev} для безпечного завантаження клієнта. В результаті аналізу мережевого трафіку за допомогою аналізатора Wireshark та утиліти \texttt{nfsstat} було досліджено механізм віддаленого виклику процедур (RPC), роботу служби MOUNT та процес безпосередньої передачі файлів протоколом NFS.
+	
+	\section*{Контрольні запитання.}
+	
+	\begin{enumerate}
+		\item \textbf{Відповідність NFS моделі ISO OSI.} \\ Протокол NFS працює на прикладному рівні (Рівень 7) моделі OSI. Для своєї роботи він тісно взаємодіє з механізмом RPC (Remote Procedure Call), який функціонує на сеансовому рівні (Рівень 5), та стандартом представлення даних XDR (eXternal Data Representation) на рівні представлення (Рівень 6). На транспортному рівні (Рівень 4) класичний NFS використовував UDP, але сучасні версії (NFSv3/NFSv4) за замовчуванням використовують більш надійний протокол TCP. На мережевому рівні (Рівень 3) використовується протокол IP.
+		
+		\item \textbf{Архітектура NFS.} \\ NFS побудована за класичною клієнт-серверною архітектурою. Сервер експортує (робить доступними) локальні каталоги через мережу, а клієнт монтує їх у свою локальну файлову систему так, ніби це фізично підключені жорсткі диски. Прозорість доступу забезпечується компонентом VFS (Virtual File System) в ядрі Linux. Коли користувач або програма звертається до примонтованого каталогу, VFS перехоплює системні виклики і, розпізнавши мережевий шлях, передає їх NFS-клієнту. Той, у свою чергу, формує RPC-запити до NFS-сервера для виконання файлових операцій.
+		
+		\pagebreak
+		
+		\item \textbf{Призначення та функції компонент NFS: \texttt{mountd}, \texttt{nfsd}, \texttt{rpcbind} (\texttt{portmapper}).} \\ \begin{itemize}
+			\item \textbf{\texttt{rpcbind} (або \texttt{portmapper}):} Служба, яка зіставляє номери програм RPC з відповідними мережевими портами (TCP/UDP). Оскільки служби NFS можуть запускатися на динамічних портах, клієнт спочатку звертається до \texttt{rpcbind} (порт 111), щоб дізнатися, на якому порту працює потрібна йому служба (наприклад, \texttt{mountd}).
+			\item \textbf{\texttt{mountd}:} Служба монтування. Вона приймає запити від клієнтів на підключення, перевіряє права доступу згідно з конфігураційним файлом \texttt{/etc/exports} і, у разі дозволу, генерує та передає клієнту початковий файловий дескриптор (File Handle) для запитуваного каталогу.
+			\item \textbf{\texttt{nfsd}:} Головний демон сервера (який працює на рівні ядра операційної системи). Він безпосередньо обробляє всі файлові операції (читання, запис, відкриття, закриття файлів) після того, як каталог був успішно змонтований клієнтом.
+		\end{itemize}
+		
+		\item \textbf{Процедура монтування файлової системи.} \\ Процедура монтування (у класичній архітектурі NFSv3) складається з наступних етапів. Спочатку клієнт відправляє RPC-запит до \texttt{rpcbind} на сервері, щоб дізнатися порт служби \texttt{mountd}. Отримавши порт, клієнт відправляє запит протоколу MOUNT до \texttt{mountd} із зазначенням шляху до каталогу. Сервер перевіряє файл \texttt{/etc/exports}, щоб з'ясувати, чи має право цей клієнт (за його IP-адресою) підключати каталог. Якщо доступ дозволено, \texttt{mountd} повертає клієнту унікальний ідентифікатор -- \textit{File Handle} кореня експортованого каталогу. Після цього клієнт прив'язує цей дескриптор до локальної точки монтування, і всі подальші звернення до файлів ідуть безпосередньо до демона \texttt{nfsd} за допомогою отриманого дескриптора. \textit{(Примітка: в NFSv4 архітектуру спрощено -- протокол MOUNT інтегровано в основний протокол, і всі запити обробляються виключно через єдиний порт 2049)}.
+	\end{enumerate}
+	
+	\pagebreak
+	
+	\section*{Лістинг.}
+	
+	\textbf{/etc/bind/db.cat.com}
+	
+	\begin{minted}{text} 
+		;
+		; BIND data file for local loopback interface
+		;
+		$TTL	604800
+		@	IN	SOA	ns1.cat.com. admin.cat.com. (
+		11	; Serial
+		604800	; Refresh (Slave - Refresh DB after ...)
+		86400	; Retry (Slave - Retry query after x if not succeed)
+		2419200	; Expire (Slave consider information non-valid)
+		604800	; Negative Cache TTL	
+		
+		);
+		
+		@	IN	NS	ns1.cat.com.
+		@	IN	NS	ns2.cat.com.
+		
+		@	IN	MX	10 mail.cat.com.
+		@	IN	TXT	"v=spf1 a mx -all"
+		mail	IN	A	192.168.1.2
+		
+		ftp	IN	A	192.168.1.2
+		nfs	IN	A	192.168.1.2
+		
+		ns1	IN	A	192.168.1.2
+		ns2	IN	A	192.168.1.3
+		
+		tiger	IN	A	192.168.1.11
+		lion	IN	A	192.168.1.12
+		lynx	IN	A	192.168.1.13
+		leopard	IN	A	192.168.1.14
+		jaguar	IN	A	192.168.1.15
+		
+		www 	IN	CNAME	tiger
+		; ftp	IN	CNAME	lion
+		ssh	IN	CNAME	lynx
+		pop3	IN	CNAME	leopard
+		imap	IN	CNAME	jaguar
+		
+		dkim._domainkey	IN	TXT	"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC871RfQaDUgbmOuJ1lOgvHiUXVIXYCvl9qyx8vuKCbK+G9vJ8PCY13P33+ldaMEdf8h3CiSmfVlolgPbsxJtca9GcvgAs8LjVN7kH6//PuAPYdT1cWiyiXS186nL4sVW7ndwTTuDjSiXfRCB6Pdu2xl+ZmgBl4hXso8yVjI96ZbwIDAQAB"
+	\end{minted}
+	
+	\textbf{/etc/bind/db.1.168.192}
+	
+	\begin{minted}{text} 
+		;
+		; BIND reverse data file for local loopback interface
+		;
+		$TTL    604800
+		@       IN      SOA     ns1.cat.com. admin.cat.com. (
+		6       ; Serial
+		604800  ; Refresh (Slave - Refresh DB after ...)
+		86400   ; Retry (Slave - Retry query after x if not succeed)
+		2419200 ; Expire (Slave consider information non-valid)
+		604800  ; Negative Cache TTL
+		
+		);
+		
+		@       IN      NS      ns1.cat.com.
+		@       IN      NS      ns2.cat.com.
+		@	IN	NS	ns1.zone03.net.
+		@	IN	NS	ns2.zone03.net.
+		
+		; NS RECORDS - cat.com
+		2     	IN      PTR     ns1.cat.com.
+		3     	IN      PTR     ns2.cat.com.
+		
+		2	IN	PTR	ftp.cat.com.
+		2	IN	PTR	nfs.cat.com.
+		
+		; NS RECORDS -  zone03.net 
+		2	IN	PTR	ns1.zone03.net.
+		3	IN	PTR	ns2.zone03.net.
+		
+		; RECORDS - cat.com
+		11	IN      PTR     tiger.cat.com.
+		12	IN      PTR     lion.cat.com.
+		13	IN      PTR     lynx.cat.com.
+		14	IN      PTR     leopard.cat.com.
+		15	IN      PTR     jaguar.cat.com.
+		
+		; RECORDS - zone03.net
+		11      IN      PTR     tiger.zone03.net.
+		12      IN      PTR     lion.zone03.net.
+		13      IN      PTR     lynx.zone03.net.
+		14      IN      PTR     leopard.zone03.net.
+		15      IN      PTR     jaguar.zone03.net.
+		
+		; MAIL RECORDS
+		2	IN	PTR	mail.cat.com.
+		3	IN	PTR	mail.zone03.net.
+	\end{minted}
+	
+	\textbf{/etc/exports}
+	
+	\begin{minted}{text} 
+		# /etc/exports: the access control list for filesystems which may be exported
+		#		to NFS clients.  See exports(5).
+		#
+		# Example for NFSv2 and NFSv3:
+		# /srv/homes       hostname1(rw,sync,no_subtree_check) hostname2(ro,sync,no_subtree_check)
+		#
+		# Example for NFSv4:
+		# /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
+		# /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
+		
+		# 1. Public: Reading for all users
+		/nfs/public  *(ro,sync,no_subtree_check)
+		
+		# 2. Private: export only for the client (192.168.1.3), RW.
+		# All users (all_squash) mapped as tiger (uid=1002)
+		/nfs/private  192.168.1.3/32(rw,sync,no_subtree_check,all_squash,anonuid=1002,anongid=1002)
+		
+		# 3. Incoming: export for whole subnet. RW.
+		# Root (root_squash) mapped as lion (uid=1003)
+		/nfs/incoming  192.168.1.0/24(rw,sync,no_subtree_check,root_squash,anonuid=1003,anongid=1003)
+	\end{minted}
+	
+	\textbf{/etc/fstab}
+	
+	\begin{minted}{text} 
+		# /etc/fstab: static file system information.
+		#
+		# Use 'blkid' to print the universally unique identifier for a
+		# device; this may be used with UUID= as a more robust way to name devices
+		# that works even if disks are added and removed. See fstab(5).
+		#
+		# systemd generates mount units based on this file, see systemd.mount(5).
+		# Please run 'systemctl daemon-reload' after making changes here.
+		#
+		# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+		# / was on /dev/sda1 during installation
+		UUID=65d8e00a-5264-4714-a0f4-04f7ffeed279 /               ext4    errors=remount-ro 0       1
+		# swap was on /dev/sda5 during installation
+		UUID=d05482c7-e956-48fd-98ae-47f74623e643 none            swap    sw              0       0
+		/dev/sr0        /media/cdrom0   udf,iso9660 user,noauto     0       0
+		
+		nfs.cat.com:/nfs/public   /mnt/nfs/public   nfs defaults,_netdev 0 0
+		nfs.cat.com:/nfs/private  /mnt/nfs/private  nfs defaults,_netdev 0 0
+		nfs.cat.com:/nfs/incoming /mnt/nfs/incoming nfs defaults,_netdev 0 0
+	\end{minted}
+\end{document}
