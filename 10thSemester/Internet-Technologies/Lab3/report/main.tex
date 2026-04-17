@@ -1,0 +1,1101 @@
+\documentclass[14pt, a4paper]{extreport}
+
+\usepackage{kpi-lab}
+\input{data}
+
+\begin{document}
+	\pagenumbering{gobble}
+	
+	\begin{titlepage}
+		\begin{center}
+			\normalsize
+			Національний технічний університет України\\
+			«Київський політехнічний інститут імені Ігоря Сікорського» \\[0.5em]
+			Факультет інформатики та обчислювальної техніки\\
+			Кафедра обчислювальної техніки
+			
+			\vfill
+			
+			{\large \textbf{ЗВІТ}\\[0.5em]}
+			{з лабораторної роботи №\LabNumber \\}
+			{з дисципліни <<\CourseTitle>>}
+			
+			\vspace{2em}
+			
+			{\textbf{Тема: <<\Topic>>}}
+			
+			\vspace{1em}
+			
+			{\textbf{Варіант №\Variant}}
+			
+			\vfill
+			
+			\begin{flushright}
+				Виконав: \\ студент \CourseNumber{} курсу, групи \StudentGroup \\
+				\StudentName \\[1em]
+				Перевірив: \\ \Teacher
+			\end{flushright}
+			
+			\vfill
+			
+			\begin{flushright}
+				Дата здачі: \DTMtoday
+			\end{flushright}
+			
+			\vspace{5em}
+			КИЇВ -- \ReportYear
+		\end{center}
+	\end{titlepage}
+	
+	\clearpage
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+	
+	\subsection*{Мета роботи} 
+	Опанувати навички роботи з сервісом передачі файлів FTP.
+	
+	\subsection*{Завдання}
+	
+	Створити закритий ключ та запит на сертифікат для доменного імені, яке відповідає варіанту завдання. Підписати запит на сертифікат, використовуючи сертифікат і закритий ключ центру сертифікації (CA), створеного в лабораторній роботі №2.
+	
+	Встановити та налаштувати файловий сервер, який реалізує протоколи FTP, FTPS та SFTP та відповідає наступним вимогам:
+	
+	\begin{itemize}
+		\item анонімний доступ (користувач ftp або anonymous);
+		
+		\item в домашньому каталозі анонімного користувача створені 2 каталоги: \texttt{pub} та \texttt{incoming}, каталог \texttt{pub} має права тільки читання, каталог \texttt{incoming} має права на читання та запис;
+		
+		\item створені користувачі з іменами, доступом та правами, які відповідають варіанту завдання;
+		
+		\item для створених користувачів забезпечується доступ по протоколам, які відповідають варіанту завдання.
+	\end{itemize}
+	
+	Виконати аналіз протокольного обміну між клієнтом та сервером під час автентифікації та пересилки файлів.
+	
+	Рекомендується використовувати наступне програмне забезпечення:
+	
+	\begin{itemize}
+		\item \textbf{FTP-сервер}: vsftpd + openssh або proftpd;
+		
+		\item \textbf{FTP-клієнт}: lftp.
+	\end{itemize}
+	
+	Для перевірки роботи файлового серверу та аналізу протокольного обміну рекомендується використовувати утиліти: \texttt{ftp}, \texttt{telnet}, \texttt{netcat}, \texttt{openssl}, \texttt{lftp}.
+	
+	Додати запис типу A для доменного імені файлового серверу в DNS. Додати сертифікат власного СА у список довірених на вузлі, де запускається FTP-клієнт.
+	
+	Завдання за варіантом:
+	
+	\textbf{Ім'я FTP-серверу}: \texttt{ftp.cat.com};
+	
+	\begin{itemize}
+		\item \begin{itemize}
+			\item \textbf{Користувач}: \texttt{tiger};
+			
+			\item \textbf{Протоколи}: \texttt{FTP}, \texttt{FTPS};
+			
+			\item \textbf{Доступ}: до всього дерева каталогів;
+			
+			\item \textbf{Права}: \texttt{R}.
+		\end{itemize}
+		
+		\item \begin{itemize}
+			\item \textbf{Користувач}: \texttt{lion};
+			
+			\item \textbf{Протоколи}: \texttt{SFTP};
+			
+			\item \textbf{Доступ}: тільки домашній каталог;
+			
+			\item \textbf{Права}: \texttt{RW}.
+		\end{itemize}
+		
+		\pagebreak
+		
+		\item \begin{itemize}
+			\item \textbf{Користувач}: \texttt{lynx};
+			
+			\item \textbf{Протоколи}: \texttt{FTP}, \texttt{FTPS}, \texttt{SFTP};
+			
+			\item \textbf{Доступ}: тільки домашній каталог;
+			
+			\item \textbf{Права}: \texttt{RW}.
+		\end{itemize}
+		
+		\item \begin{itemize}
+			\item \textbf{Користувач}: \texttt{leopard};
+			
+			\item \textbf{Протоколи}: \texttt{SFTP};
+			
+			\item \textbf{Доступ}: до всього дерева каталогів;
+			
+			\item \textbf{Права}: \texttt{RW}.
+		\end{itemize}
+		
+		\item \begin{itemize}
+			\item \textbf{Користувач}: \texttt{jaguar};
+			
+			\item \textbf{Протоколи}: \texttt{FTP}, \texttt{FTPS};
+			
+			\item \textbf{Доступ}: тільки домашній каталог;
+			
+			\item \textbf{Права}: \texttt{R}.
+		\end{itemize}
+	\end{itemize}
+	
+	\section*{Хід роботи.}
+	
+	Спочатку, додамо потрібне налаштування в конфігураційний файл BIND9. Додаємо в файл \texttt{/etc/bind/db.cat.com} рядок: \sideat{[VM 1]}
+	
+	\begin{minted}{text}
+		ftp	IN	A	192.168.1.2
+	\end{minted}
+	
+	Також, треба закоментувати канонічне ім'я, бо воно посилається не на ту адресу.
+	
+	\begin{minted}{text}
+		; ftp	IN	CNAME	lion
+	\end{minted}
+	
+	Звичайно ж, додаємо запис у зворотню зону (\texttt{/etc/bind/db.1.168.192}):
+	
+	\begin{minted}{text}
+		2	IN	PTR	ftp.cat.com.
+	\end{minted}
+	
+	Інкрементуємо серійний номер в обох файлах. Перезапускаємо сервіс:
+	
+	\image{7cm}{dns-restart}
+	
+	Перевіряємо, чи все працює. \sideat{[VM 2]}
+	
+	\image{7cm}{dns-check}
+	
+	Далі, згенеруємо сертифікат для FTPS. Послідовність команд, які треба виконати: \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		# Згенеруємо ключ
+		user1@mail:~/Lab3$ openssl genrsa -out ftp.cat.com.key 2048
+		
+		# Генеруємо запит на підпис
+		user1@mail:~/Lab3$ openssl req -new -key ftp.cat.com.key -out ftp.cat.com.csr -subj "/C=UA/ST=Ukraine/L=Kyiv/O=KPI/OU=OT/CN=ftp.cat.com"
+		
+		# Підписуємо запит сертифікатом
+		user1@mail:~/Lab3$ sudo openssl x509 -req -in ftp.cat.com.csr -CA /usr/local/share/ca-certificates/ca.crt -CAkey /root/ca/ca.key -CAcreateserial -out ftp.cat.com.crt -days 365
+		Certificate request self-signature ok
+		subject=C=UA, ST=Ukraine, L=Kyiv, O=KPI, OU=OT, CN=ftp.cat.com
+		
+		user1@mail:~/Lab3$ ls
+		ftp.cat.com.crt  ftp.cat.com.csr  ftp.cat.com.key
+	\end{minted}
+	
+	Перемістимо файли у відповідні системні директорії.
+	
+	\begin{minted}{bash}
+		user1@mail:~/Lab3$ sudo mv ftp.cat.com.key /etc/ssl/private/
+		user1@mail:~/Lab3$ sudo mv ftp.cat.com.crt /etc/ssl/certs/
+		user1@mail:~/Lab3$ sudo chmod 600 /etc/ssl/private/ftp.cat.com.key
+		user1@mail:~/Lab3$ rm ftp.cat.com.csr 
+	\end{minted}
+	
+	Встановимо необхідні пакети для роботи.
+	
+	\begin{minted}{bash}
+		user1@mail:~/Lab3$ sudo apt install vsftpd lftp telnet
+			vsftpd is already the newest version (3.0.5-0.2).
+			lftp is already the newest version (4.9.2-3+b1).
+			telnet is already the newest version (0.17+2.6-3+deb13u2).
+			
+			Summary:
+			Upgrading: 0, Installing: 0, Removing: 0, Not Upgrading: 0
+	\end{minted}
+	
+	\pagebreak
+	
+	Налаштуємо анонімний доступ до серверу.
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo mkdir -p /srv/ftp/pub
+		user1@mail:~$ sudo mkdir -p /srv/ftp/incoming 
+		user1@mail:~$ sudo chown root:root /srv/ftp
+		user1@mail:~$ sudo chmod 555 /srv/ftp
+		user1@mail:~$ sudo chmod 555 /srv/ftp/pub
+		user1@mail:~$ sudo chown ftp:ftp /srv/ftp/incoming
+		user1@mail:~$ sudo chmod 777 /srv/ftp/incoming
+	\end{minted}
+	
+	Далі, змінимо налаштування FTP серверу. Перед цим -- робимо резервну копію.
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo cp /etc/vsftpd.conf /etc/vsftpd.conf.bak
+		
+		user1@mail:~$ sudo vim /etc/vsftpd.conf
+	\end{minted}
+	
+	Налаштування:
+	
+	\begin{minted}{text}
+		# Example config file /etc/vsftpd.conf
+		#
+		# The default compiled in settings are fairly paranoid. This sample file
+		# loosens things up a bit, to make the ftp daemon more usable.
+		# Please see vsftpd.conf.5 for all compiled in defaults.
+		#
+		# READ THIS: This example file is NOT an exhaustive list of vsftpd options.
+		# Please read the vsftpd.conf.5 manual page to get a full idea of vsftpd's
+		# capabilities.
+		#
+		#
+		# Run standalone?  vsftpd can run either from an inetd or as a standalone
+		# daemon started from an initscript.
+		listen=YES
+		#
+		# This directive enables listening on IPv6 sockets. By default, listening
+		# on the IPv6 "any" address (::) will accept connections from both IPv6
+		# and IPv4 clients. It is not necessary to listen on *both* IPv4 and IPv6
+		# sockets. If you want that (perhaps because you want to listen on specific
+		# addresses) then you must run two copies of vsftpd with two configuration
+		# files.
+		listen_ipv6=NO
+		#
+		# Allow anonymous FTP? (Disabled by default).
+		anonymous_enable=YES
+		#
+		# Uncomment this to allow local users to log in.
+		local_enable=YES
+		#
+		# Uncomment this to enable any form of FTP write command.
+		write_enable=YES
+		#
+		# Default umask for local users is 077. You may wish to change this to 022,
+		# if your users expect that (022 is used by most other ftpd's)
+		#local_umask=022
+		#
+		# Uncomment this to allow the anonymous FTP user to upload files. This only
+		# has an effect if the above global write enable is activated. Also, you will
+		# obviously need to create a directory writable by the FTP user.
+		anon_upload_enable=YES
+		#
+		# Uncomment this if you want the anonymous FTP user to be able to create
+		# new directories.
+		anon_mkdir_write_enable=YES
+		#
+		# Activate directory messages - messages given to remote users when they
+		# go into a certain directory.
+		dirmessage_enable=YES
+		#
+		# If enabled, vsftpd will display directory listings with the time
+		# in  your  local  time  zone.  The default is to display GMT. The
+		# times returned by the MDTM FTP command are also affected by this
+		# option.
+		use_localtime=YES
+		#
+		# Activate logging of uploads/downloads.
+		xferlog_enable=YES
+		#
+		# Make sure PORT transfer connections originate from port 20 (ftp-data).
+		connect_from_port_20=YES
+		#
+		# If you want, you can arrange for uploaded anonymous files to be owned by
+		# a different user. Note! Using "root" for uploaded files is not
+		# recommended!
+		#chown_uploads=YES
+		#chown_username=whoever
+		#
+		# You may override where the log file goes if you like. The default is shown
+		# below.
+		#xferlog_file=/var/log/vsftpd.log
+		#
+		# If you want, you can have your log file in standard ftpd xferlog format.
+		# Note that the default log file location is /var/log/xferlog in this case.
+		#xferlog_std_format=YES
+		#
+		# You may change the default value for timing out an idle session.
+		#idle_session_timeout=600
+		#
+		# You may change the default value for timing out a data connection.
+		#data_connection_timeout=120
+		#
+		# It is recommended that you define on your system a unique user which the
+		# ftp server can use as a totally isolated and unprivileged user.
+		#nopriv_user=ftpsecure
+		#
+		# Enable this and the server will recognise asynchronous ABOR requests. Not
+		# recommended for security (the code is non-trivial). Not enabling it,
+		# however, may confuse older FTP clients.
+		#async_abor_enable=YES
+		#
+		# By default the server will pretend to allow ASCII mode but in fact ignore
+		# the request. Turn on the below options to have the server actually do ASCII
+		# mangling on files when in ASCII mode.
+		# Beware that on some FTP servers, ASCII support allows a denial of service
+		# attack (DoS) via the command "SIZE /big/file" in ASCII mode. vsftpd
+		# predicted this attack and has always been safe, reporting the size of the
+		# raw file.
+		# ASCII mangling is a horrible feature of the protocol.
+		#ascii_upload_enable=YES
+		#ascii_download_enable=YES
+		#
+		# You may fully customise the login banner string:
+		#ftpd_banner=Welcome to blah FTP service.
+		#
+		# You may specify a file of disallowed anonymous e-mail addresses. Apparently
+		# useful for combatting certain DoS attacks.
+		#deny_email_enable=YES
+		# (default follows)
+		#banned_email_file=/etc/vsftpd.banned_emails
+		#
+		# You may restrict local users to their home directories.  See the FAQ for
+		# the possible risks in this before using chroot_local_user or
+		# chroot_list_enable below.
+		chroot_local_user=YES
+		#
+		# You may specify an explicit list of local users to chroot() to their home
+		# directory. If chroot_local_user is YES, then this list becomes a list of
+		# users to NOT chroot().
+		# (Warning! chroot'ing can be very dangerous. If using chroot, make sure that
+		# the user does not have write access to the top level directory within the
+		# chroot)
+		#chroot_local_user=YES
+		# chroot_list_enable=NO
+		# (default follows)
+		# chroot_list_file=/etc/vsftpd.chroot_list
+		allow_writeable_chroot=YES
+		#
+		# You may activate the "-R" option to the builtin ls. This is disabled by
+		# default to avoid remote users being able to cause excessive I/O on large
+		# sites. However, some broken FTP clients such as "ncftp" and "mirror" assume
+		# the presence of the "-R" option, so there is a strong case for enabling it.
+		#ls_recurse_enable=YES
+		#
+		# Customization
+		#
+		# Some of vsftpd's settings don't fit the filesystem layout by
+		# default.
+		#
+		# This option should be the name of a directory which is empty.  Also, the
+		# directory should not be writable by the ftp user. This directory is used
+		# as a secure chroot() jail at times vsftpd does not require filesystem
+		# access.
+		secure_chroot_dir=/var/run/vsftpd/empty
+		#
+		# This string is the name of the PAM service vsftpd will use.
+		pam_service_name=vsftpd
+		#
+		# This option specifies the location of the RSA certificate to use for SSL
+		# encrypted connections.
+		rsa_cert_file=/etc/ssl/certs/ftp.cat.com.crt
+		rsa_private_key_file=/etc/ssl/private/ftp.cat.com.key
+		ssl_enable=YES
+		
+		#
+		# Uncomment this to indicate that vsftpd use a utf8 filesystem.
+		#utf8_filesystem=YES
+		
+		# --- Individual user settings ---
+		user_config_dir=/etc/vsftpd/user_conf
+		
+		# --- Access for anonymous user ---
+		anon_root=/srv/ftp
+		anon_other_write_enable=YES
+		
+		# --- Detailed FTPS settings ---
+		allow_anon_ssl=NO
+		force_local_data_ssl=NO
+		force_local_logins_ssl=NO
+		ssl_tlsv1=YES
+		ssl_sslv2=NO
+		ssl_sslv3=NO
+		require_ssl_reuse=NO
+		seccomp_sandbox=NO
+	\end{minted}
+	
+	Після цього, звичайно ж, перезавантажуємо сервіс.
+	
+	\image[width=18cm]{9.7cm}{ftpd-restart}
+	
+	Створимо користувачів. Важливо дати їм оболонку \texttt{/sbin/nologin}, щоб вони не могли зайти по звичайному SSH.
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo useradd -m -s /sbin/nologin tiger
+		user1@mail:~$ sudo useradd -m -s /sbin/nologin lion
+		user1@mail:~$ sudo useradd -m -s /sbin/nologin lynx
+		user1@mail:~$ sudo useradd -m -s /sbin/nologin leopard
+		user1@mail:~$ sudo useradd -m -s /sbin/nologin jaguar
+	\end{minted}
+	
+	Також, треба встановити паролі. Загалом, не важливо які -- але, для простоти, усім був встановлений <<1>>.
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo passwd tiger
+		New password: 
+		Retype new password: 
+		passwd: password updated successfully
+		user1@mail:~$ sudo passwd lion
+		New password: 
+		...
+	\end{minted}
+	
+	Після цього, треба створити індивідуальні конфігурації. Спочатку, треба створити каталог для них, за допомогою команди \texttt{sudo mkdir -p /etc/vsftpd/user\_conf/}.
+	
+	Зміст відповідних файлів:
+	
+	\begin{itemize}
+		\item \texttt{/etc/vsftpd/user\_conf/tiger}
+		
+		\begin{minted}{text}
+			local_root=/
+			write_enable=NO
+		\end{minted}
+		
+		\item \texttt{/etc/vsftpd/user\_conf/jaguar}
+		
+		\begin{minted}{text}
+			local_root=/home/jaguar
+			chroot_local_user=YES
+			write_enable=NO
+			allow_writeable_chroot=YES
+		\end{minted}
+		
+		\item \texttt{/etc/vsftpd/user\_conf/lynx}
+		
+		\begin{minted}{text}
+			local_root=/home/lynx
+			chroot_local_user=YES
+			write_enable=YES
+			allow_writeable_chroot=YES
+		\end{minted}
+	\end{itemize}
+	
+	Користувачі \texttt{lion} та \texttt{leopard} мають доступ тільки по SFTP, тому для них файли в \texttt{vsftpd} не створюємо. Це частина сервісу SSH, а не \texttt{vsftpd}. Налаштування для них прописуються в \texttt{/etc/ssh/sshd\_config}, і вони ігнорують усе, що написано в папці \texttt{user\_conf} для FTP.
+	
+	Додаємо в файл \texttt{/etc/ssh/sshd\_config} таку опцію:
+	
+	\begin{minted}{text}
+		# override default of no subsystems
+		#Subsystem	sftp	/usr/lib/openssh/sftp-server
+		Subsystem	sftp	internal-sftp
+	\end{minted}
+	
+	Також, треба додати налаштування відносно вказаних у завданні користувачів.
+	
+	\begin{minted}{text}
+		# SFTP Settings
+		
+		# lynx (SFTP | Home Directory | RW)
+		Match User lynx
+			ForceCommand internal-sftp
+			ChrootDirectory %h
+			AllowTcpForwarding no
+			X11Forwarding no
+			PasswordAuthentication yes
+		
+		# lion (SFTP | Home Directory | RW)
+		Match User lion
+		ForceCommand internal-sftp
+			ChrootDirectory %h
+			AllowTcpForwarding no
+			X11Forwarding no
+			PasswordAuthentication yes
+		
+		# leopard (SFTP | Full Tree | RW)
+		Match User leopard
+			ForceCommand internal-sftp
+			AllowTcpForwarding no
+			X11Forwarding no
+			PasswordAuthentication yes
+	\end{minted}
+	
+	Важливий нюанс OpenSSH: щоб \texttt{ChrootDirectory \%h} працювало, домашні директорії \texttt{/home/lynx} та \texttt{/home/lion} повинні належати \texttt{root} і мати права \texttt{755}. Змінимо власника: \texttt{sudo chown root:root /home/lynx /home/lion}.
+	
+	Також, додамо права права:
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo chmod 755 /home/lynx
+		user1@mail:~$ sudo chmod 755 /home/jaguar
+		user1@mail:~$ sudo chmod 755 /home/lion
+	\end{minted}
+	
+	Перезапустимо сервіс.
+	
+	\image{9cm}{sshd-restart}
+	
+	Переходимо на клієнтську машину. Встановлюємо потрібні пакети. \sideat{[VM 2]}
+	
+	\begin{minted}{bash}
+		user2@mail:~$ sudo apt install lftp telnet
+		Installing:                     
+			lftp  telnet
+		
+		Summary:
+			Upgrading: 0, Installing: 2, Removing: 0, Not Upgrading: 0
+			Download size: 812 kB
+			Space needed: 2,490 kB / 16.7 GB available
+		
+		Get:1 http://deb.debian.org/debian trixie/main amd64 lftp amd64 4.9.2-3+b1 [768 kB]
+		Get:2 http://deb.debian.org/debian trixie/main amd64 telnet all 0.17+2.6-3+deb13u2 [43.6 kB]
+		Fetched 812 kB in 1s (1,136 kB/s) 
+		Selecting previously unselected package lftp.
+		(Reading database ... 73301 files and directories currently installed.)
+		Preparing to unpack .../lftp_4.9.2-3+b1_amd64.deb ...
+		Unpacking lftp (4.9.2-3+b1) ...
+		Selecting previously unselected package telnet.
+		Preparing to unpack .../telnet_0.17+2.6-3+deb13u2_all.deb ...
+		Unpacking telnet (0.17+2.6-3+deb13u2) ...
+		Setting up telnet (0.17+2.6-3+deb13u2) ...
+		Setting up lftp (4.9.2-3+b1) ...
+		Processing triggers for man-db (2.13.1-1) ...
+	\end{minted}
+	
+	Перед тестуванням, створимо файл, який будемо пробувати завантажити.
+	
+	\begin{minted}{bash}
+		user2@mail:~$ echo "Hello from user2" > test_file.txt
+	\end{minted}
+	
+	Тестування анонімного користувача:
+	
+	\image{8cm}{test-1}
+	
+	Перед другим тестом, додамо оболонку <<nologin>> в список дозволе- \sideat{[VM 1]} \\ них.
+	
+	\begin{minted}{bash}
+		user1@mail:~$ echo "/sbin/nologin" | sudo tee -a /etc/shells
+		/sbin/nologin
+	\end{minted}
+	
+	Другий тест (користувач \texttt{tiger}, протокол -- \texttt{ftp}):
+	
+	\image[width=18cm]{10cm}{test-2}
+	
+	Третій тест (користувач \texttt{tiger}, протокол -- \texttt{ftps}):
+	
+	\image{12cm}{test-3}
+	
+	Четвертий тест. При роботі з користувачем \texttt{jaguar} можемо побачити, що домашній каталог -- слеш. Але, насправді, це домашній каталог користувача -- \texttt{/home/jaguar}. 
+	
+	\image[width=18cm]{10cm}{test-4}
+	
+	Тест 5. Користувач -- lynx. Протоколи -- FTP, FTPS, SFTP. Доступ повинен бути лише до домашнього каталогу з правами RW. 
+	
+	\image{5cm}{test-5}
+	
+	Як можна бачити, прав на запис немає, тому що SFTP вимагає ізоляцію кореня. Розробники OpenSSH застосовують заходи безпеки щодо механізму ізоляції ChrootDirectory. Їхнє правило на рівні вихідного коду вимагає, щоб директорія, яка є точкою ізоляції, належала виключно адміністратору системи (root), і жоден інший користувач не мав права в неї писати. Тому -- створимо в каталогах користувачів які працюють з SFTP і <<зачинені>> в своїй домашній директорії новий каталог <<upload>>. Після цього тест запрацює. \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo mkdir -p /home/lynx/upload
+		user1@mail:~$ sudo chown lynx:lynx /home/lynx/upload
+		user1@mail:~$ sudo mkdir -p /home/lion/upload
+		user1@mail:~$ sudo chown lion:lion /home/lion/upload
+	\end{minted}
+	
+	Відповідно, тест 6 -- SFTP:
+	
+	\image{10cm}{test-6}
+	
+	Тест 7. Користувач \texttt{leopard}. Протокол -- SFTP. Доступ до всього дерева каталогів з правами \texttt{RW}.
+	
+	\image{8cm}{test-7}
+	
+	Далі, виконаємо тести з іншими утилітами, і першими будуть Wireshark та telnet. Встановимо їх на сервері: \sideat{[VM 1]} 
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo apt update
+		
+		user1@mail:~$ sudo apt install wireshark -y
+		
+		user1@mail:~$ sudo usermod -aG wireshark $USER
+		
+		user1@mail:~$ wireshark &
+	\end{minted}
+		
+	Можемо побачити, що використовуючи FTP, дані передаються у відкритому вигляді. За допомогою Wireshark можна чітко відслідкувати пакет.
+	
+	\image[width=18cm]{8cm}{test-8}
+	
+	Якщо ж під'єднатися за допомогою команди \texttt{openssl s\_client -connect ftp.cat.com:21 -starttls ftp}, то побачимо лише зашифрований трафік. \sideat{[VM 2]}
+	
+	\image[width=18cm]{12cm}{test-9}
+	
+	Також, можемо протестувати роботу з двома каналами. Для демонстрації пасивного режиму роботи FTP було відкрито дві сесії. У керуючій сесії надіслано команду \texttt{PASV}, у відповідь сервер відкрив порт для даних. З іншого терміналу за допомогою \texttt{netcat} було здійснено підключення до цього порту для отримання результату команди \texttt{LIST}. Це наочно демонструє двоканальну архітектуру протоколу FTP. \sideat{[VM 2]}
+	
+	\image[width=18cm]{7cm}{test-10}
+	
+	Про всяк випадок, на наступному скріншоті продемонстровано як закрити background job програми Wireshark. Якщо ж він не запустився ще на етапі виконання \texttt{wireshark \&}, то треба переглянути налаштування SSH, а саме дозволити передачу протоколом Х11 та під'єднатися безпосередньо до віртуальної машини з флагом \texttt{-Х} або \texttt{-Y}. \sideat{[VM 1]}
+	
+	\image[width=18cm]{10cm}{close-wireshark}
+	
+	\subsection*{Висновок}
+	
+	Під час виконання лабораторної роботи було успішно налаштовано файловий сервер, що підтримує протоколи передачі даних FTP, FTPS та SFTP. Було створено та підписано сертифікат для захищеного з'єднання, а також налаштовано систему доменних імен для зручного доступу до сервера. За допомогою служби vsftpd реалізовано детальний розподіл прав доступу: налаштовано анонімний вхід із розділенням прав на читання та запис, а також створено п'ятьох локальних користувачів із різними рівнями доступу, включаючи ізоляцію в домашніх каталогах за допомогою механізму chroot. Для забезпечення роботи SFTP було інтегровано підсистему internal-sftp служби OpenSSH та вирішено архітектурні конфлікти прав доступу ізольованих каталогів шляхом створення вкладених директорій. Додатково було проведено глибокий аналіз мережевого трафіку за допомогою утиліт telnet, netcat, openssl та Wireshark. Практично доведено вразливість відкритого протоколу FTP, який передає автентифікаційні дані в незашифрованому вигляді, та наочно продемонстровано надійність протоколів FTPS і SFTP, що повністю інкапсулюють керуючі команди та дані в захищений криптографічний тунель.
+	
+	\section*{Контрольні запитання.}
+	
+	\begin{enumerate}
+		\item \textbf{Протокол FTP призначення та особливості роботи.} \\ Протокол FTP (File Transfer Protocol) призначений для передачі файлів у комп'ютерних мережах на базі TCP/IP. Його головною архітектурною особливістю є використання двох окремих каналів з'єднання: керуючого каналу для передачі команд та відповідей, який зазвичай працює на порту 21, та каналу даних для безпосередньої передачі файлів. Класичний FTP не використовує шифрування, тому всі дані, включаючи логіни та паролі, передаються у відкритому текстовому вигляді.
+		
+		\item \textbf{Пасивний та активний режими роботи FTP-сервера.} \\ В активному режимі клієнт відкриває випадковий порт для отримання даних і повідомляє його серверу через команду PORT, після чого сервер ініціює з'єднання зі свого 20-го порту на вказаний порт клієнта. Цей режим часто блокується клієнтськими фаєрволами. У пасивному режимі клієнт надсилає команду PASV, у відповідь на яку сервер відкриває випадковий непривілейований порт і повідомляє його клієнту. Після цього клієнт сам ініціює з'єднання з цим портом сервера для передачі даних, що є більш безпечним та сумісним із сучасними NAT-маршрутизаторами.
+		
+		\item \textbf{Команди протоколу FTP.} \\ Команди FTP -- це текстові рядки, які клієнт надсилає серверу через керуючий канал для виконання певних дій. До основних команд належать USER та PASS для автентифікації користувача, LIST для отримання списку файлів і каталогів, CWD для зміни поточної робочої директорії, PWD для відображення поточного шляху. Для передачі файлів використовуються команди RETR для завантаження файлу з сервера на клієнт та STOR для збереження файлу на сервері. Для керування режимами з'єднання застосовуються команди PORT та PASV.
+		
+		\item \textbf{Протокол FTPS (FTP зверху SSL/TLS).} \\ Протокол FTPS є розширенням класичного протоколу FTP, яке додає підтримку криптографічних протоколів SSL та TLS для захисту переданих даних. Існує два методи ініціалізації захищеного з'єднання: неявний (Implicit), при якому з'єднання одразу встановлюється через захищений порт 990, та явний (Explicit), при якому клієнт підключається до стандартного порту 21 і надсилає команду AUTH TLS для переходу в зашифрований режим. FTPS дозволяє шифрувати як керуючий канал, так і канал даних, забезпечуючи конфіденційність автентифікаційних даних та цілісність файлів, що передаються.
+		
+		\item \textbf{Протокол SFTP.} \\ Протокол SFTP (SSH File Transfer Protocol) не має нічого спільного з класичним FTP, окрім схожої назви та призначення. Він є незалежним протоколом, який працює поверх безпечного каналу зв'язку, найчастіше як підсистема протоколу SSH на порту 22. SFTP з самого початку проектувався як безпечний протокол: він забезпечує повне шифрування всіх даних та команд, використовує єдине з'єднання для керування і передачі інформації, а також надає ширші можливості для управління файловою системою, включаючи зміну прав доступу та власників файлів.
+	\end{enumerate}
+	
+	\pagebreak
+	
+	\section*{Лістинг.}
+	
+	\textbf{/etc/bind/db.1.168.192}
+	
+	\begin{minted}{text} 
+		;
+		; BIND reverse data file for local loopback interface
+		;
+		$TTL    604800
+		@       IN      SOA     ns1.cat.com. admin.cat.com. (
+		4       ; Serial
+		604800  ; Refresh (Slave - Refresh DB after ...)
+		86400   ; Retry (Slave - Retry query after x if not succeed)
+		2419200 ; Expire (Slave consider information non-valid)
+		604800  ; Negative Cache TTL
+		
+		);
+		
+		@       IN      NS      ns1.cat.com.
+		@       IN      NS      ns2.cat.com.
+		@	IN	NS	ns1.zone03.net.
+		@	IN	NS	ns2.zone03.net.
+		
+		; NS RECORDS - cat.com
+		2     	IN      PTR     ns1.cat.com.
+		3     	IN      PTR     ns2.cat.com.
+		
+		2	IN	PTR	ftp.cat.com.
+		
+		; NS RECORDS -  zone03.net 
+		2	IN	PTR	ns1.zone03.net.
+		3	IN	PTR	ns2.zone03.net.
+		
+		; RECORDS - cat.com
+		11	IN      PTR     tiger.cat.com.
+		12	IN      PTR     lion.cat.com.
+		13	IN      PTR     lynx.cat.com.
+		14	IN      PTR     leopard.cat.com.
+		15	IN      PTR     jaguar.cat.com.
+		
+		; RECORDS - zone03.net
+		11      IN      PTR     tiger.zone03.net.
+		12      IN      PTR     lion.zone03.net.
+		13      IN      PTR     lynx.zone03.net.
+		14      IN      PTR     leopard.zone03.net.
+		15      IN      PTR     jaguar.zone03.net.
+		
+		; MAIL RECORDS
+		2	IN	PTR	mail.cat.com.
+		3	IN	PTR	mail.zone03.net.
+	\end{minted}
+	
+	\textbf{/etc/bind/db.cat.com}
+	
+	\begin{minted}{text} 
+		;
+		; BIND data file for local loopback interface
+		;
+		$TTL	604800
+		@	IN	SOA	ns1.cat.com. admin.cat.com. (
+		10	; Serial
+		604800	; Refresh (Slave - Refresh DB after ...)
+		86400	; Retry (Slave - Retry query after x if not succeed)
+		2419200	; Expire (Slave consider information non-valid)
+		604800	; Negative Cache TTL	
+		
+		);
+		
+		@	IN	NS	ns1.cat.com.
+		@	IN	NS	ns2.cat.com.
+		
+		@	IN	MX	10 mail.cat.com.
+		@	IN	TXT	"v=spf1 a mx -all"
+		mail	IN	A	192.168.1.2
+		
+		ftp	IN	A	192.168.1.2
+		
+		ns1	IN	A	192.168.1.2
+		ns2	IN	A	192.168.1.3
+		
+		tiger	IN	A	192.168.1.11
+		lion	IN	A	192.168.1.12
+		lynx	IN	A	192.168.1.13
+		leopard	IN	A	192.168.1.14
+		jaguar	IN	A	192.168.1.15
+		
+		www 	IN	CNAME	tiger
+		; ftp	IN	CNAME	lion
+		ssh	IN	CNAME	lynx
+		pop3	IN	CNAME	leopard
+		imap	IN	CNAME	jaguar
+		
+		dkim._domainkey	IN	TXT	"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC871RfQaDUgbmOuJ1lOgvHiUXVIXYCvl9qyx8vuKCbK+G9vJ8PCY13P33+ldaMEdf8h3CiSmfVlolgPbsxJtca9GcvgAs8LjVN7kH6//PuAPYdT1cWiyiXS186nL4sVW7ndwTTuDjSiXfRCB6Pdu2xl+ZmgBl4hXso8yVjI96ZbwIDAQAB"
+	\end{minted}
+	
+	\textbf{/etc/vsftpd.conf}
+	
+	\begin{minted}{text} 
+		# Example config file /etc/vsftpd.conf
+		#
+		# The default compiled in settings are fairly paranoid. This sample file
+		# loosens things up a bit, to make the ftp daemon more usable.
+		# Please see vsftpd.conf.5 for all compiled in defaults.
+		#
+		# READ THIS: This example file is NOT an exhaustive list of vsftpd options.
+		# Please read the vsftpd.conf.5 manual page to get a full idea of vsftpd's
+		# capabilities.
+		#
+		#
+		# Run standalone?  vsftpd can run either from an inetd or as a standalone
+		# daemon started from an initscript.
+		listen=YES
+		#
+		# This directive enables listening on IPv6 sockets. By default, listening
+		# on the IPv6 "any" address (::) will accept connections from both IPv6
+		# and IPv4 clients. It is not necessary to listen on *both* IPv4 and IPv6
+		# sockets. If you want that (perhaps because you want to listen on specific
+		# addresses) then you must run two copies of vsftpd with two configuration
+		# files.
+		listen_ipv6=NO
+		#
+		# Allow anonymous FTP? (Disabled by default).
+		anonymous_enable=YES
+		#
+		# Uncomment this to allow local users to log in.
+		local_enable=YES
+		#
+		# Uncomment this to enable any form of FTP write command.
+		write_enable=YES
+		#
+		# Default umask for local users is 077. You may wish to change this to 022,
+		# if your users expect that (022 is used by most other ftpd's)
+		#local_umask=022
+		#
+		# Uncomment this to allow the anonymous FTP user to upload files. This only
+		# has an effect if the above global write enable is activated. Also, you will
+		# obviously need to create a directory writable by the FTP user.
+		anon_upload_enable=YES
+		#
+		# Uncomment this if you want the anonymous FTP user to be able to create
+		# new directories.
+		anon_mkdir_write_enable=YES
+		#
+		# Activate directory messages - messages given to remote users when they
+		# go into a certain directory.
+		dirmessage_enable=YES
+		#
+		# If enabled, vsftpd will display directory listings with the time
+		# in  your  local  time  zone.  The default is to display GMT. The
+		# times returned by the MDTM FTP command are also affected by this
+		# option.
+		use_localtime=YES
+		#
+		# Activate logging of uploads/downloads.
+		xferlog_enable=YES
+		#
+		# Make sure PORT transfer connections originate from port 20 (ftp-data).
+		connect_from_port_20=YES
+		#
+		# If you want, you can arrange for uploaded anonymous files to be owned by
+		# a different user. Note! Using "root" for uploaded files is not
+		# recommended!
+		#chown_uploads=YES
+		#chown_username=whoever
+		#
+		# You may override where the log file goes if you like. The default is shown
+		# below.
+		#xferlog_file=/var/log/vsftpd.log
+		#
+		# If you want, you can have your log file in standard ftpd xferlog format.
+		# Note that the default log file location is /var/log/xferlog in this case.
+		#xferlog_std_format=YES
+		#
+		# You may change the default value for timing out an idle session.
+		#idle_session_timeout=600
+		#
+		# You may change the default value for timing out a data connection.
+		#data_connection_timeout=120
+		#
+		# It is recommended that you define on your system a unique user which the
+		# ftp server can use as a totally isolated and unprivileged user.
+		#nopriv_user=ftpsecure
+		#
+		# Enable this and the server will recognise asynchronous ABOR requests. Not
+		# recommended for security (the code is non-trivial). Not enabling it,
+		# however, may confuse older FTP clients.
+		#async_abor_enable=YES
+		#
+		# By default the server will pretend to allow ASCII mode but in fact ignore
+		# the request. Turn on the below options to have the server actually do ASCII
+		# mangling on files when in ASCII mode.
+		# Beware that on some FTP servers, ASCII support allows a denial of service
+		# attack (DoS) via the command "SIZE /big/file" in ASCII mode. vsftpd
+		# predicted this attack and has always been safe, reporting the size of the
+		# raw file.
+		# ASCII mangling is a horrible feature of the protocol.
+		#ascii_upload_enable=YES
+		#ascii_download_enable=YES
+		#
+		# You may fully customise the login banner string:
+		#ftpd_banner=Welcome to blah FTP service.
+		#
+		# You may specify a file of disallowed anonymous e-mail addresses. Apparently
+		# useful for combatting certain DoS attacks.
+		#deny_email_enable=YES
+		# (default follows)
+		#banned_email_file=/etc/vsftpd.banned_emails
+		#
+		# You may restrict local users to their home directories.  See the FAQ for
+		# the possible risks in this before using chroot_local_user or
+		# chroot_list_enable below.
+		chroot_local_user=YES
+		#
+		# You may specify an explicit list of local users to chroot() to their home
+		# directory. If chroot_local_user is YES, then this list becomes a list of
+		# users to NOT chroot().
+		# (Warning! chroot'ing can be very dangerous. If using chroot, make sure that
+		# the user does not have write access to the top level directory within the
+		# chroot)
+		#chroot_local_user=YES
+		# chroot_list_enable=NO
+		# (default follows)
+		# chroot_list_file=/etc/vsftpd.chroot_list
+		allow_writeable_chroot=YES
+		#
+		# You may activate the "-R" option to the builtin ls. This is disabled by
+		# default to avoid remote users being able to cause excessive I/O on large
+		# sites. However, some broken FTP clients such as "ncftp" and "mirror" assume
+		# the presence of the "-R" option, so there is a strong case for enabling it.
+		#ls_recurse_enable=YES
+		#
+		# Customization
+		#
+		# Some of vsftpd's settings don't fit the filesystem layout by
+		# default.
+		#
+		# This option should be the name of a directory which is empty.  Also, the
+		# directory should not be writable by the ftp user. This directory is used
+		# as a secure chroot() jail at times vsftpd does not require filesystem
+		# access.
+		secure_chroot_dir=/var/run/vsftpd/empty
+		#
+		# This string is the name of the PAM service vsftpd will use.
+		pam_service_name=vsftpd
+		#
+		# This option specifies the location of the RSA certificate to use for SSL
+		# encrypted connections.
+		rsa_cert_file=/etc/ssl/certs/ftp.cat.com.crt
+		rsa_private_key_file=/etc/ssl/private/ftp.cat.com.key
+		ssl_enable=YES
+		
+		#
+		# Uncomment this to indicate that vsftpd use a utf8 filesystem.
+		#utf8_filesystem=YES
+		
+		# --- Individual user settings ---
+		user_config_dir=/etc/vsftpd/user_conf
+		
+		# --- Access for anonymous user ---
+		anon_root=/srv/ftp
+		anon_other_write_enable=YES
+		
+		# --- Detailed FTPS settings ---
+		allow_anon_ssl=NO
+		force_local_data_ssl=NO
+		force_local_logins_ssl=NO
+		ssl_tlsv1=YES
+		ssl_sslv2=NO
+		ssl_sslv3=NO
+		require_ssl_reuse=NO
+		seccomp_sandbox=NO
+		
+	\end{minted}
+	
+	\textbf{/etc/ssh/sshd\_config}
+	
+	\begin{minted}{text} 
+		
+		# This is the sshd server system-wide configuration file.  See
+		# sshd_config(5) for more information.
+		
+		# This sshd was compiled with PATH=/usr/local/bin:/usr/bin:/bin:/usr/games
+		
+		# The strategy used for options in the default sshd_config shipped with
+		# OpenSSH is to specify options with their default value where
+		# possible, but leave them commented.  Uncommented options override the
+		# default value.
+		
+		Include /etc/ssh/sshd_config.d/*.conf
+		
+		Port 22
+		#AddressFamily any
+		#ListenAddress 0.0.0.0
+		#ListenAddress ::
+		
+		#HostKey /etc/ssh/ssh_host_rsa_key
+		#HostKey /etc/ssh/ssh_host_ecdsa_key
+		#HostKey /etc/ssh/ssh_host_ed25519_key
+		
+		# Ciphers and keying
+		#RekeyLimit default none
+		
+		# Logging
+		#SyslogFacility AUTH
+		#LogLevel INFO
+		
+		# Authentication:
+		
+		#LoginGraceTime 2m
+		#PermitRootLogin prohibit-password
+		#StrictModes yes
+		#MaxAuthTries 6
+		#MaxSessions 10
+		
+		PubkeyAuthentication yes
+		
+		# Expect .ssh/authorized_keys2 to be disregarded by default in future.
+		AuthorizedKeysFile .ssh/authorized_keys
+		
+		#AuthorizedPrincipalsFile none
+		
+		#AuthorizedKeysCommand none
+		#AuthorizedKeysCommandUser nobody
+		
+		# For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
+		#HostbasedAuthentication no
+		# Change to yes if you don't trust ~/.ssh/known_hosts for
+		# HostbasedAuthentication
+		#IgnoreUserKnownHosts no
+		# Don't read the user's ~/.rhosts and ~/.shosts files
+		#IgnoreRhosts yes
+		
+		# To disable tunneled clear text passwords, change to "no" here!
+		PasswordAuthentication no
+		X11Forwarding yes
+		#PermitEmptyPasswords no
+		
+		# Change to "yes" to enable keyboard-interactive authentication.  Depending on
+		# the system's configuration, this may involve passwords, challenge-response,
+		# one-time passwords or some combination of these and other methods.
+		# Beware issues with some PAM modules and threads.
+		KbdInteractiveAuthentication no
+		
+		# Kerberos options
+		#KerberosAuthentication no
+		#KerberosOrLocalPasswd yes
+		#KerberosTicketCleanup yes
+		#KerberosGetAFSToken no
+		
+		# GSSAPI options
+		#GSSAPIAuthentication no
+		#GSSAPICleanupCredentials yes
+		#GSSAPIStrictAcceptorCheck yes
+		#GSSAPIKeyExchange no
+		
+		# Set this to 'yes' to enable PAM authentication, account processing,
+		# and session processing. If this is enabled, PAM authentication will
+		# be allowed through the KbdInteractiveAuthentication and
+		# PasswordAuthentication.  Depending on your PAM configuration,
+		# PAM authentication via KbdInteractiveAuthentication may bypass
+		# the setting of "PermitRootLogin prohibit-password".
+		# If you just want the PAM account and session checks to run without
+		# PAM authentication, then enable this but set PasswordAuthentication
+		# and KbdInteractiveAuthentication to 'no'.
+		UsePAM yes
+		
+		#AllowAgentForwarding yes
+		#AllowTcpForwarding yes
+		#GatewayPorts no
+		X11Forwarding yes
+		#X11DisplayOffset 10
+		#X11UseLocalhost yes
+		#PermitTTY yes
+		PrintMotd no
+		#PrintLastLog yes
+		#TCPKeepAlive yes
+		#PermitUserEnvironment no
+		#Compression delayed
+		#ClientAliveInterval 0
+		#ClientAliveCountMax 3
+		#UseDNS no
+		#PidFile /run/sshd.pid
+		#MaxStartups 10:30:100
+		#PermitTunnel no
+		#ChrootDirectory none
+		#VersionAddendum none
+		
+		# no default banner path
+		#Banner none
+		
+		# Allow client to pass locale and color environment variables
+		AcceptEnv LANG LC_* COLORTERM NO_COLOR
+		
+		# override default of no subsystems
+		#Subsystem	sftp	/usr/lib/openssh/sftp-server
+		Subsystem	sftp	internal-sftp
+		
+		# Example of overriding settings on a per-user basis
+		#Match User anoncvs
+		#	X11Forwarding no
+		#	AllowTcpForwarding no
+		#	PermitTTY no
+		#	ForceCommand cvs server
+		
+		# SFTP Settings
+		
+		# lynx (SFTP | Home Directory | RW)
+		Match User lynx
+			ForceCommand internal-sftp
+			ChrootDirectory %h
+			AllowTcpForwarding no
+			X11Forwarding no
+			PasswordAuthentication yes
+		
+		# lion (SFTP | Home Directory | RW)
+		Match User lion
+			ForceCommand internal-sftp
+			ChrootDirectory %h
+			AllowTcpForwarding no
+			X11Forwarding no
+			PasswordAuthentication yes
+		
+		# leopard (SFTP | Full Tree | RW)
+		Match User leopard
+			ForceCommand internal-sftp
+			AllowTcpForwarding no
+			X11Forwarding no
+			PasswordAuthentication yes
+	\end{minted}
+	
+	\textbf{/etc/vsftpd/user\_conf/tiger}
+	
+	\begin{minted}{text} 
+		local_root=/
+		write_enable=NO
+	\end{minted}
+	
+	\textbf{/etc/vsftpd/user\_conf/jaguar}
+	
+	\begin{minted}{text} 
+		local_root=/home/jaguar
+		chroot_local_user=YES
+		write_enable=NO
+		allow_writeable_chroot=YES
+	\end{minted}
+	
+	\textbf{/etc/vsftpd/user\_conf/lynx}
+	
+	\begin{minted}{text} 
+		local_root=/home/lynx
+		chroot_local_user=YES
+		write_enable=YES
+		allow_writeable_chroot=YES
+	\end{minted}
+\end{document}

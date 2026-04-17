@@ -1,0 +1,4 @@
+local_root=/home/lynx
+chroot_local_user=YES
+write_enable=YES
+allow_writeable_chroot=YES

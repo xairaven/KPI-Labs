@@ -1,0 +1,4 @@
+local_root=/home/jaguar
+chroot_local_user=YES
+write_enable=NO
+allow_writeable_chroot=YES
