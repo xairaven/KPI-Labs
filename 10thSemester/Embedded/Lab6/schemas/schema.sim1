@@ -1,0 +1,43 @@
+<circuit version="1.1.0-SR1" rev="2005" stepSize="1000000" stepsPS="1000000" NLsteps="100000" reaStep="1000000" animate="0" >
+
+<item itemtype="MCU" CircId="mega32-1" mainComp="false" Show_id="true" Show_Val="false" Pos="84,-84" rotation="0" hflip="-1" vflip="1" label="mega32" idLabPos="6.21238,-14.3524" labelrot="0" valLabPos="-16,20" valLabRot="0" Frequency="8 MHz" Program="../code/build_main/main.hex" Auto_Load="false" saveEepr="true" Logic_Symbol="false" Wdt_enabled="false" MainMcu="true" SerialMon="-1" />
+
+<item itemtype="Hd44780" CircId="Hd44780-2" mainComp="false" Show_id="true" Show_Val="false" Pos="-212,-88" rotation="0" hflip="1" vflip="1" label="HD44780" idLabPos="70,-82" labelrot="0" valLabPos="-16,20" valLabRot="0" Rows="2" Cols="16" />
+
+<item itemtype="Ground" CircId="Ground-3" mainComp="false" Show_id="false" Show_Val="false" Pos="-188,-52" rotation="0" hflip="1" vflip="1" label="Ground-3" idLabPos="-16,8" labelrot="0" valLabPos="-16,20" valLabRot="0" />
+
+<item itemtype="DS18B20" CircId="DS18B20-4" mainComp="false" Show_id="false" Show_Val="false" Pos="-20,-52" rotation="0" hflip="1" vflip="1" label="DS18B20" idLabPos="-24,-28" labelrot="0" valLabPos="-16,20" valLabRot="0" ROM="28 AA A9 37 59 00 00 76 " Temp="-1.5 °C" TempInc="0.5 °C" />
+
+<item itemtype="Voltage Source" CircId="Voltage Source-5" mainComp="false" ShowProp="MaxValue" Show_id="false" Show_Val="true" Pos="-40,-196" rotation="0" hflip="1" vflip="1" label="Voltage Source-5" idLabPos="-32,-48" labelrot="0" valLabPos="-8,30" valLabRot="0" Running="true" Value_Volt="5 V" MaxValue="5 V" MinValue="0 V" />
+
+<item itemtype="Resistor" CircId="Resistor-6" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="16,-136" rotation="-630" hflip="1" vflip="1" label="Resistor-6" idLabPos="-16,-24" labelrot="0" valLabPos="-12.0467,5.43524" valLabRot="0" Resistance="4.7 kΩ" />
+
+<item itemtype="Voltage Source" CircId="Voltage Source-9" mainComp="false" ShowProp="MaxValue" Show_id="false" Show_Val="true" Pos="60,-140" rotation="0" hflip="1" vflip="1" label="Voltage Source-9" idLabPos="-32,-48" labelrot="0" valLabPos="-6.87048,30" valLabRot="0" Running="true" Value_Volt="5 V" MaxValue="5 V" MinValue="0 V" />
+
+<item itemtype="Node" CircId="Node-8" mainComp="false" Pos="16,-76" />
+
+<item itemtype="Connector" uid="Connector-1" startpinid="Hd44780-2-PinRS" endpinid="mega32-1-PORTC0" pointList="-196,-80,-196,68,28,68" />
+
+<item itemtype="Connector" uid="Connector-2" startpinid="Hd44780-2-PinEn" endpinid="mega32-1-PORTC1" pointList="-180,-80,-180,60,28,60" />
+
+<item itemtype="Connector" uid="Connector-3" startpinid="Hd44780-2-PinRW" endpinid="Ground-3-Gnd" pointList="-188,-80,-188,-68" />
+
+<item itemtype="Connector" uid="Connector-4" startpinid="Hd44780-2-dataPin4" endpinid="mega32-1-PORTC4" pointList="-140,-80,-140,36,28,36" />
+
+<item itemtype="Connector" uid="Connector-5" startpinid="Hd44780-2-dataPin5" endpinid="mega32-1-PORTC5" pointList="-132,-80,-132,28,28,28" />
+
+<item itemtype="Connector" uid="Connector-6" startpinid="Hd44780-2-dataPin6" endpinid="mega32-1-PORTC6" pointList="-124,-80,-124,20,28,20" />
+
+<item itemtype="Connector" uid="Connector-7" startpinid="Hd44780-2-dataPin7" endpinid="mega32-1-PORTC7" pointList="-116,-80,-116,12,28,12" />
+
+<item itemtype="Connector" uid="Connector-14" startpinid="Voltage Source-5-outPin" endpinid="Resistor-6-lPin" pointList="-12,-180,16,-180,16,-152" />
+
+<item itemtype="Connector" uid="Connector-15" startpinid="Resistor-6-rPin" endpinid="Node-8-1" pointList="16,-120,16,-76" />
+
+<item itemtype="Connector" uid="Connector-16" startpinid="DS18B20-4-inPin" endpinid="Node-8-0" pointList="-56,-44,-56,-76,16,-76" />
+
+<item itemtype="Connector" uid="Connector-17" startpinid="Node-8-2" endpinid="mega32-1-PORTA0" pointList="16,-76,28,-76" />
+
+<item itemtype="Connector" uid="Connector-18" startpinid="mega32-1-RST" endpinid="Voltage Source-9-outPin" pointList="92,-12,108,-12,108,-124,88,-124" />
+
+</circuit>
