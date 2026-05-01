@@ -1,0 +1,487 @@
+\documentclass[14pt, a4paper]{extreport}
+
+\usepackage{kpi-lab}
+\input{data}
+
+\begin{document}
+	\pagenumbering{gobble}
+	
+	\begin{titlepage}
+		\begin{center}
+			\normalsize
+			Національний технічний університет України\\
+			«Київський політехнічний інститут імені Ігоря Сікорського» \\[0.5em]
+			Факультет інформатики та обчислювальної техніки\\
+			Кафедра обчислювальної техніки
+			
+			\vfill
+			
+			{\large \textbf{ЗВІТ}\\[0.5em]}
+			{з лабораторної роботи №\LabNumber \\}
+			{з дисципліни <<\CourseTitle>>}
+			
+			\vspace{2em}
+			
+			{\textbf{Тема: <<\Topic>>}}
+			
+			\vspace{1em}
+			
+			{\textbf{Варіант №\Variant}}
+			
+			\vfill
+			
+			\begin{flushright}
+				Виконав: \\ студент \CourseNumber{} курсу, групи \StudentGroup \\
+				\StudentName \\[1em]
+				Перевірив: \\ \Teacher
+			\end{flushright}
+			
+			\vfill
+			
+			\begin{flushright}
+				Дата здачі: \DTMtoday
+			\end{flushright}
+			
+			\vspace{5em}
+			КИЇВ -- \ReportYear
+		\end{center}
+	\end{titlepage}
+	
+	\clearpage
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+	
+	\subsection*{Мета роботи} 
+	
+	Здобути навички роботи з протоколами SMB/CIFS.
+	
+	\subsection*{Завдання}
+	
+	Встановити та налаштувати файловий сервер, який реалізує протоколи SMB/CIFS та відповідає наступним вимогам:
+	
+	\begin{itemize}
+		\item створені користувачі з іменами, доступом та правами, які відповідають варіанту завдання;
+		
+		\item гостьовий доступ (без проходження автентифікації) до каталогів з правами, які відповідають варіанту завдання;
+		
+		\item доступ до домашнього каталогу для автентифікованого користувача з правами, які відповідають варіанту завдання;
+		
+		\item доступ до прихованого каталогу (невидимий при перегляді списку спільних ресурсів штатними засобами) з правами, які відповідають варіанту завдання.
+	\end{itemize}
+	
+	Виконати аналіз протокольного обміну між клієнтом та сервером під час автентифікації та пересилки файлів.
+	
+	Рекомендується використовувати наступне програмне забезпечення:
+	
+	\begin{itemize}
+		\item \textbf{SMB-сервер}: samba;
+		\item \textbf{SMB-клієнт}: smbclient.
+	\end{itemize}
+	
+	Для перевірки роботи файлового серверу та аналізу протокольного обміну рекомендується використовувати утиліти: \texttt{nbtscan}, \texttt{nmblookup}, \texttt{smbtree}, \texttt{nmap}.
+	
+	\textbf{Завдання за варіантом:}
+	
+	Права доступу користувача \texttt{tiger} до каталогів:
+	
+	\begin{itemize}
+		\item \textbf{Прихований}: RW
+		
+		\item \textbf{Домашній}: RW
+		
+		\item \textbf{public}: R
+		
+		\item \textbf{incoming}: RW
+	\end{itemize}
+	
+	Права доступу користувача \texttt{lion} до каталогів:
+	
+	\begin{itemize}
+		\item \textbf{Прихований}: -
+		
+		\item \textbf{Домашній}: RW
+		
+		\item \textbf{public}: -
+		
+		\item \textbf{incoming}: RW
+	\end{itemize}
+	
+	Права доступу користувача \texttt{lynx} до каталогів:
+	
+	\begin{itemize}
+		\item \textbf{Прихований}: R
+		
+		\item \textbf{Домашній}: -
+		
+		\item \textbf{public}: R
+		
+		\item \textbf{incoming}: -
+	\end{itemize}
+	
+	Права доступу користувача \texttt{гість} до каталогів:
+	
+	\begin{itemize}
+		\item \textbf{Прихований}: -
+		
+		\item \textbf{Домашній}: -
+		
+		\item \textbf{public}: R
+		
+		\item \textbf{incoming}: -
+	\end{itemize}
+	
+	\section*{Хід роботи.}
+	
+	Спочатку, на обох машинах треба оновити пакети. Це можна зробити за допомогою вказаних команд: \sideat{[VM 1, 2]}
+	
+	\begin{minted}{bash}
+		sudo apt update
+		
+		sudo apt upgrade
+	\end{minted}
+	
+	На першій машині треба встановити сервер SMB/CIFS. \sideat{[VM 1]}
+	
+	\image{8cm}{samba-install}
+	
+	Про всяк випадок, зробимо резервну копію конфігураційного файлу перед налаштуванням. \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+	\end{minted}
+	
+	Видалимо зайвий текст (коментарі) з конфігураційного файлу. \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ grep -v -E "^#|^;" /etc/samba/smb.conf.bak | grep . | sudo tee /etc/samba/smb.conf
+	\end{minted}
+	
+	Переходимо до безпосереднього налаштування конфігураційного файлу \texttt{/etc/samba/smb.conf}. Спочатку, видаляємо секції \texttt{print\$} та \texttt{printers}, оскільки у нас немає принтерів. Проставимо відповідні права в кожній із зазначених секцій.
+	
+	\pagebreak
+	
+	Отримуємо такий файл: \sideat{[VM 1]}
+	
+	\begin{minted}{text}
+		[global]
+			workgroup = WORKGROUP
+			log file = /var/log/samba/log.%m
+			max log size = 1000
+			logging = file
+			panic action = /usr/share/samba/panic-action %d
+			server role = standalone server
+			obey pam restrictions = yes
+			unix password sync = yes
+			passwd program = /usr/bin/passwd %u
+			passwd chat = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\spassword:* %n\n *password\supdated\ssuccessfully* .
+			pam password change = yes
+			map to guest = bad user
+			usershare allow guests = yes
+		[homes]
+			comment = Home Directories
+			browseable = yes
+			writable = yes
+			create mask = 0666
+			directory mask = 0777
+			valid users = %S
+			invalid users = lynx
+			guest ok = no
+		[hidden]
+			path = /smb/hidden
+			comment = Hidden Directory
+			browseable = no
+			force user = root
+			force group = root
+			create mask = 0664
+			directory mask = 0775
+			valid users = tiger, lynx
+			write list = tiger
+			guest ok = no
+		[pub]
+			path = /smb/pub
+			comment = Public Directory (Read Only)
+			browseable = yes
+			read only = yes
+			guest ok = yes
+			invalid users = lion
+		[incoming]
+			path = /smb/incoming
+			comment = Incoming Directory (Writeable)
+			browseable = yes
+			writable = yes
+			valid users = tiger, lion
+			create mask = 0666
+			directory mask = 0777
+			guest ok = no
+	\end{minted}
+	
+	\pagebreak
+	
+	Перезапустимо сервіс. \sideat{[VM 1]}
+	
+	\image{8cm}{samba-daemon}
+	
+	Створимо директорії, надамо права. \sideat{[VM 1]}
+	
+	\image{8cm}{directories-rights}
+	
+	Додаємо в SMB нових користувачів. \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo smbpasswd -a tiger
+			New SMB password:
+			Retype new SMB password:
+			Added user tiger.
+		user1@mail:~$ sudo smbpasswd -a lion
+			New SMB password:
+			Retype new SMB password:
+			Added user lion.
+		user1@mail:~$ sudo smbpasswd -a lynx
+			New SMB password:
+			Retype new SMB password:
+			Added user lynx.
+	\end{minted}
+	
+	Перевіримо, що користувачі вже існують як системні з минулих лабораторних робіт: \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ cat /etc/passwd
+			....
+			tiger:x:1002:1002::/home/tiger:/sbin/nologin
+			lion:x:1003:1003::/home/lion:/sbin/nologin
+			lynx:x:1004:1004::/home/lynx:/sbin/nologin
+			leopard:x:1005:1005::/home/leopard:/sbin/nologin
+			jaguar:x:1006:1006::/home/jaguar:/sbin/nologin
+	\end{minted}
+	
+	Про всяк випадок, налаштуємо права на домашні директорії. \sideat{[VM 1]}
+	
+	\begin{minted}{bash}
+		user1@mail:~$ sudo chown -R tiger:tiger /home/tiger
+		user1@mail:~$ sudo chown -R lion:lion /home/lion
+		user1@mail:~$ sudo chown -R lynx:lynx /home/lynx
+		user1@mail:~$ sudo chown -R leopard:leopard /home/leopard
+		user1@mail:~$ sudo chown -R jaguar:jaguar /home/jaguar
+		user1@mail:~$ sudo chmod 0700 /home/tiger /home/lion /home/lynx /home/leopard /home/jaguar
+	\end{minted}
+	
+	Переходимо на другу машину. Встановлюємо клієнт та додаткові інструменти. \sideat{[VM 2]}
+	
+	\begin{minted}{bash}
+		user2@mail:~$ sudo apt install smbclient nbtscan
+			Installing:                     
+			smbclient nbtscan
+		
+			...
+	\end{minted}
+	
+	Проскануємо мережу. \sideat{[VM 2]}
+	
+	\begin{minted}{bash}
+		user2@mail:~$ nbtscan 192.168.1.0/24
+		Doing NBT name scan for addresses from 192.168.1.0/24
+		
+		IP address       NetBIOS Name     Server    User             MAC address      
+		------------------------------------------------------------------------------
+		192.168.1.2      MAIL             <server>  MAIL             00:00:00:00:00:00
+		192.168.1.255   Sendto failed: Permission denied
+	\end{minted}
+	
+	Перевіримо, які ресурси є в мережі. \sideat{[VM 2]}
+	
+	\begin{minted}{bash}
+		user2@mail:~$ nmblookup -d4 workgroup
+		lp_load_ex: refreshing parameters
+		Initialising global parameters
+		rlimit_max: increasing rlimit_max (1024) to minimum Windows limit (16384)
+		Processing section "[global]"
+		doing parameter workgroup = WORKGROUP
+		doing parameter log file = /var/log/samba/log.%m
+		doing parameter max log size = 1000
+		doing parameter logging = file
+		doing parameter panic action = /usr/share/samba/panic-action %d
+		doing parameter server role = standalone server
+		doing parameter obey pam restrictions = yes
+		doing parameter unix password sync = yes
+		doing parameter passwd program = /usr/bin/passwd %u
+		doing parameter passwd chat = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\spassword:* %n\n *password\supdated\ssuccessfully* .
+		doing parameter pam password change = yes
+		doing parameter map to guest = bad user
+		doing parameter usershare allow guests = yes
+		pm_process() returned Yes
+		added interface enp0s3 ip=fd17:625c:f037:2:a00:27ff:fe64:69ef bcast= netmask=ffff:ffff:ffff:ffff::
+		added interface enp0s3 ip=fd17:625c:f037:2:7f58:3ade:e91d:e139 bcast= netmask=ffff:ffff:ffff:ffff::
+		added interface enp0s3 ip=10.0.2.15 bcast=10.0.2.255 netmask=255.255.255.0
+		added interface enp0s8 ip=192.168.1.3 bcast=192.168.1.255 netmask=255.255.255.0
+		Socket opened.
+		name_resolve_bcast: Attempting broadcast lookup for name workgroup<0x0>
+		nmb packet from 192.168.1.2(35072) header: id=6714 opcode=Query(0) response=Yes
+		header: flags: bcast=No rec_avail=Yes rec_des=Yes trunc=No auth=Yes
+		header: rcode=0 qdcount=0 ancount=1 nscount=0 arcount=0
+		answers: nmb_name=WORKGROUP<00> rr_type=32 rr_class=1 ttl=259200
+		answers   0 char ......   hex 8000C0A80102
+		Got a positive name query response from 192.168.1.2 ( 192.168.1.2 )
+		nmb packet from 192.168.1.2(35072) header: id=6714 opcode=Query(0) response=Yes
+		header: flags: bcast=No rec_avail=Yes rec_des=Yes trunc=No auth=Yes
+		header: rcode=0 qdcount=0 ancount=1 nscount=0 arcount=0
+		answers: nmb_name=WORKGROUP<00> rr_type=32 rr_class=1 ttl=259200
+		answers   0 char ......   hex 8000C0A80102
+		Got a positive name query response from 192.168.1.2 ( )
+		192.168.1.2 workgroup<00>
+	\end{minted}
+	
+	Перевіримо, які каталоги доступні від певних користувачів: \sideat{[VM 2]}
+	
+	\begin{minted}{bash}
+		user2@mail:~$ smbclient -U guest -N -L 192.168.1.2
+		
+		Sharename       Type      Comment
+		---------       ----      -------
+		homes           Disk      Home Directories
+		pub             Disk      Public Directory (Read Only)
+		incoming        Disk      Incoming Directory (Writeable)
+		IPC$            IPC       IPC Service (Samba 4.22.8-Debian-4.22.8+dfsg-0+deb13u1)
+		nobody          Disk      Home Directories
+		SMB1 disabled -- no workgroup available
+		user2@mail:~$ smbclient -U tiger -L 192.168.1.2
+		Password for [WORKGROUP\tiger]:
+		
+		Sharename       Type      Comment
+		---------       ----      -------
+		homes           Disk      Home Directories
+		pub             Disk      Public Directory (Read Only)
+		incoming        Disk      Incoming Directory (Writeable)
+		IPC$            IPC       IPC Service (Samba 4.22.8-Debian-4.22.8+dfsg-0+deb13u1)
+		tiger           Disk      Home Directories
+		SMB1 disabled -- no workgroup available
+	\end{minted}
+	
+	Все готово. Залишилося лише протестувати права доступу користувачів. Почнемо з гостя: \sideat{[VM 2]}
+	
+	\begin{minted}{bash}
+		user2@mail:~$ smbclient -U guest //192.168.1.2/hidden
+			Password for [WORKGROUP\guest]:
+			tree connect failed: NT_STATUS_ACCESS_DENIED
+		user2@mail:~$ smbclient -U guest //192.168.1.2/pub
+			Password for [WORKGROUP\guest]:
+			smb: \> mkdir smth
+			NT_STATUS_ACCESS_DENIED making remote directory \smth
+			smb: \> exit
+		user2@mail:~$ smbclient -U guest //192.168.1.2/incoming
+			Password for [WORKGROUP\guest]:
+			tree connect failed: NT_STATUS_ACCESS_DENIED
+	\end{minted}
+	
+	Далі пробуємо щось зробити від користувача \texttt{tiger}. \sideat{[VM 2]}
+	
+	\begin{minted}{bash}
+		user2@mail:~$ smbclient -U tiger //192.168.1.2/hidden
+			Password for [WORKGROUP\tiger]:
+			Try "help" to get a list of possible commands.
+			smb: \> mkdir test1
+			smb: \> ls
+			.                                   D        0  Fri May  1 03:33:56 2026
+			..                                  D        0  Fri May  1 03:33:56 2026
+			test1                               D        0  Fri May  1 03:33:56 2026
+		
+			20137176 blocks of size 1024. 15478304 blocks available
+			smb: \> exit
+		user2@mail:~$ smbclient -U tiger //192.168.1.2/tiger
+			Password for [WORKGROUP\tiger]:
+			Try "help" to get a list of possible commands.
+			smb: \> mkdir test1
+			smb: \> exit
+		user2@mail:~$ smbclient -U tiger //192.168.1.2/pub
+			Password for [WORKGROUP\tiger]:
+			Try "help" to get a list of possible commands.
+			smb: \> mkdir test1
+			NT_STATUS_ACCESS_DENIED making remote directory \test1
+			smb: \> exit
+		user2@mail:~$ smbclient -U tiger //192.168.1.2/incoming
+			Password for [WORKGROUP\tiger]:
+			Try "help" to get a list of possible commands.
+			smb: \> mkdir test1
+			smb: \> exit
+	\end{minted}
+	
+	Також, за допомогою утиліти Wireshark, можна продивитися як побудована протокольна взаємодія.
+	
+	\image[width=18cm]{12cm}{wireshark}
+	
+	\subsection*{Висновок}
+	
+	Під час виконання лабораторної роботи було успішно здобуто практичні навички роботи з протоколом SMB/CIFS у середовищі Linux. Було встановлено та налаштовано файловий сервер Samba, який забезпечує мережевий доступ до файлової системи відповідно до заданих вимог безпеки. У процесі роботи було створено системних користувачів та налаштовано різнорівневі права доступу до спільних ресурсів, включаючи гостьовий вхід, домашні каталоги та прихований мережевий ресурс. Шляхом використання утиліти \texttt{smbclient} на клієнтській машині було перевірено та підтверджено коректність застосування налаштувань розмежування прав, зокрема дозволи на читання та запис для різних облікових записів на рівні як сервісу Samba, так і файлової системи. Додатково було проведено аналіз мережевого трафіку, що дозволило дослідити структуру протокольного обміну під час автентифікації клієнта та базових операцій передачі даних.
+	
+	\section*{Контрольні запитання.}
+	
+	\begin{enumerate}
+		\item \textbf{Стек NetBIOS/SMB.} \\ Стек протоколів NetBIOS over TCP/IP та Server Message Block забезпечує механізм для спільного використання файлів, принтерів та інших ресурсів у локальній мережі. NetBIOS виконує роль сесійного рівня за моделлю OSI, надаючи інтерфейс програмування додатків для ідентифікації пристроїв за іменами та встановлення з'єднань між ними. SMB працює на прикладному рівні та безпосередньо відповідає за операції читання і запису файлів, авторизацію доступу та обмін повідомленнями між клієнтом і сервером, спираючись на транспортні можливості протоколу TCP або засобів NetBIOS.
+		
+		\item \textbf{NetBIOS імена та типи ресурсів.} \\ Простір імен NetBIOS є плоским, де кожне ім'я складається рівно з шістнадцяти байтів, причому перші п'ятнадцять символів відводяться під унікальну текстову назву пристрою або сервісу, а шістнадцятий байт є суфіксом, що визначає тип ресурсу. Цей суфікс дозволяє одному комп'ютеру реєструвати декілька імен для різних служб, наприклад, 0x00 вказує на ім'я робочої станції, 0x20 ідентифікує файловий сервер, а 0x1D позначає головного переглядача мережі. Імена можуть бути як унікальними для конкретного вузла, так і груповими для широкомовного розсилання повідомлень у межах робочої групи чи домену.
+		
+		\item \textbf{Сервіс імен NetBIOS. Реєстрація та перегляд імен NetBIOS. Типи комп'ютерів NetBIOS.} \\ Сервіс імен NetBIOS Name Service відповідає за розв'язання NetBIOS-імен у відповідні їм IP-адреси. Процес реєстрації імені відбувається під час завантаження пристрою в мережу шляхом надсилання широкомовних запитів для перевірки унікальності бажаного імені, і якщо конфліктів не виявлено, вузол привласнює його собі. Залежно від механізму розв'язання імен виділяють кілька типів вузлів: b-вузли використовують виключно широкомовні запити, p-вузли звертаються безпосередньо до сервера імен, m-вузли спочатку роблять широкомовний запит і потім звертаються до сервера, а h-вузли працюють у зворотному порядку, віддаючи перевагу серверу перед широкомовним запитом.
+		
+		\item \textbf{Вибори головного переглядача.} \\ Процес виборів головного переглядача ініціюється автоматично, коли вузол не може знайти поточного головного переглядача або під час запуску певних типів серверів у мережі. Комп'ютер, що ініціює вибори, надсилає широкомовний пакет обрання зі своїми критеріями, які включають версію операційної системи, її роль та додаткові налаштування реєстру. Інші пристрої у мережі порівнюють ці критерії з власними параметрами, і вузол із найвищим пріоритетом стає головним переглядачем, перебираючи на себе відповідальність за ведення та розповсюдження централізованого списку доступних мережевих ресурсів.
+		
+		\item \textbf{Служби датаграм та сесій.} \\ Служба датаграм NetBIOS забезпечує доставку повідомлень без встановлення логічного з'єднання та без гарантії доставки через порт 138 UDP, що робить її ефективною для розсилання широкомовних сповіщень та обміну короткими системними повідомленнями. Натомість служба сесій NetBIOS функціонує на базі порту 139 TCP і орієнтована на встановлення надійного віртуального каналу між двома вузлами перед початком передачі даних. Сесійний рівень гарантує цілісність, послідовність доставки та можливість передачі великих обсягів інформації, що є критично важливим для надійної роботи протоколу SMB під час пересилки файлів.
+	\end{enumerate}
+	
+	\pagebreak
+	
+	\section*{Лістинг.}
+	
+	\textbf{/etc/samba/smb.conf}
+	
+	\begin{minted}{text} 
+		[global]
+			workgroup = WORKGROUP
+			log file = /var/log/samba/log.%m
+			max log size = 1000
+			logging = file
+			panic action = /usr/share/samba/panic-action %d
+			server role = standalone server
+			obey pam restrictions = yes
+			unix password sync = yes
+			passwd program = /usr/bin/passwd %u
+			passwd chat = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\spassword:* %n\n *password\supdated\ssuccessfully* .
+			pam password change = yes
+			map to guest = bad user
+			usershare allow guests = yes
+		[homes]
+			comment = Home Directories
+			browseable = yes
+			writable = yes
+			create mask = 0666
+			directory mask = 0777
+			valid users = %S
+			invalid users = lynx
+			guest ok = no
+		[hidden]
+			path = /smb/hidden
+			comment = Hidden Directory
+			browseable = no
+			force user = root
+			force group = root
+			create mask = 0664
+			directory mask = 0775
+			valid users = tiger, lynx
+			write list = tiger
+			guest ok = no
+		[pub]
+			path = /smb/pub
+			comment = Public Directory (Read Only)
+			browseable = yes
+			read only = yes
+			guest ok = yes
+			invalid users = lion
+		[incoming]
+			path = /smb/incoming
+			comment = Incoming Directory (Writeable)
+			browseable = yes
+			writable = yes
+			valid users = tiger, lion
+			create mask = 0666
+			directory mask = 0777
+			guest ok = no
+	\end{minted}
+\end{document}
