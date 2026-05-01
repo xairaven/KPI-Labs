@@ -1,0 +1,39 @@
+[package]
+name = "Project1"
+version = "0.0.1"
+authors = ["Oleksandr Kovalov <kovalov.o.o.-im51mn@edu.kpi.ua>"]
+
+edition = "2024"
+rust-version = "1.95.0"
+
+categories = ["science"]
+
+readme = "../README.md"
+license = "MIT"
+repository = "https://github.com/xairaven/KPI-MTPP"
+
+[lints]
+workspace = true
+
+[dependencies]
+chrono = "0.4.44"
+crossbeam = "0.8.4"
+derive_more = { version = "2.1.1", features = ["full"] }
+egui = "0.34.1"
+eframe = { version = "0.34.1", default-features = false, features = [
+    "default_fonts",
+    "glow",
+    "persistence",
+    "wayland",
+    "x11",
+] }
+fern = "0.7.1"
+log = "0.4.29"
+o2o = "0.5.4"
+rand = "0.10.1"
+rayon = "1.12.0"
+rfd = "0.17.2"
+serde = { version = "1.0.228", features = ["derive"] }
+sysinfo = "0.38.4"
+thiserror = "2.0.18"
+toml = "1.1.2"
