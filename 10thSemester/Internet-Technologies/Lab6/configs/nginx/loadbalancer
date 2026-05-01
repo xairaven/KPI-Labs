@@ -1,0 +1,42 @@
+# Group of servers
+upstream backend {
+    hash $remote_addr;
+    server 127.0.0.1:8001;
+    server 192.168.1.3:80;
+}
+
+# Local Backend #1
+server {
+    listen 127.0.0.1:8001;
+    root /var/www/html;
+    index index.html;
+}
+
+# Fronted on 8083
+server {
+    listen 8083;
+    server_name www.cat.com;
+
+    auth_basic "Restricted Access";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+
+    location / {
+        proxy_pass http://backend;
+    }
+}
+
+# SSL Frontend
+server {
+    listen 8446 ssl;
+    server_name www.cat.com;
+
+    ssl_certificate /etc/ssl/certs/www.cat.com.crt;
+    ssl_certificate_key /etc/ssl/private/www.cat.com.key;
+
+    auth_basic "Restricted Access";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+
+    location / {
+        proxy_pass http://backend;
+    }
+}
