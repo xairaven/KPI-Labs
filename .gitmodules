@@ -16,3 +16,6 @@
 [submodule "BachelorDiploma/Project"]
     path = BachelorDiploma/Project
     url = https://github.com/xairaven/xailyser
+[submodule "10thSemester/Parallel-Programming/Project2/project"]
+	path = 10thSemester/Parallel-Programming/Project2/project
+	url = https://github.com/xairaven/xaichat
