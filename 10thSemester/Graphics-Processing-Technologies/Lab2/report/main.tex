@@ -1,0 +1,423 @@
+\documentclass{report}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% Загальна інформація %%%%%%%%%%%%%%%%%%%%%%%%%%
+\Subject {Технології графічного процесінгу}
+\LabTitle{Керування пам’яттю в CUDA}
+\LabReport{Практична робота \#2}
+
+
+%----------------------------------------------------
+%	  Персональна інформація виконавця завдання
+%----------------------------------------------------
+\Done{Виконав(ла):}  % Поставте правильне закінчення
+
+
+\Surname{Ковальов}  % Вкажіть своє прізвище
+\Name{Олександр}			% та ім'я
+\Group {ІМ-51мн}     % група в якій навчаєтесь
+\YearOfStudying {1} % курс навчання
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%	 ПОЧАТОК ЗВІТУ	 %%%%%%%%%%%%%%%%%%%%%%%%
+\startDocument
+
+
+\section{Порівняльний аналіз підходів до управління пам'яттю в CUDA}
+
+\subsection{Результати експериментів}
+Експерименти проводилися на апаратному забезпеченні, що включає процесор Intel Core i5-1235U та графічний прискорювач NVIDIA GeForce RTX 2050 з 4 ГБ відеопам'яті. 
+
+\begin{figure}[!htb]
+	\center
+	\includegraphics[height=8cm]{pc-specs}
+	\caption{Інформація про апаратне забезпечення.}
+	\label{im:pc-specs}
+\end{figure}
+
+Відеокарта побудована на архітектурі Ampere та має обчислювальну здатність 8.6. Для збору метрик продуктивності застосовувався профілювальник NVIDIA Nsight Systems у середовищі CUDA 13.0. 
+
+\begin{figure}[!htb]
+	\center
+	\includegraphics[height=9cm]{compiler-gpu}
+	\caption{Версія компілятору, CUDA.}
+	\label{im:compiler-gpu}
+\end{figure}
+
+Так як остання версія компілятору з репозиторію Fedora розрахована під CUDA 13.2, а поточний драйвер підтримує лише CUDA 13.0, при компіляції використовувався параметр \texttt{-arch=sm\_86}, який точно встановлює архітектуру для компіляції.
+
+\begin{figure}[!htb]
+	\center
+	\includegraphics[height=8cm]{compiled}
+	\caption{Компіляція коду та запуск відповідних бінарних файлів.}
+	\label{im:compiled}
+\end{figure}
+
+Додавалися два вектори розміром понад 33 мільйони елементів, кожен з яких займав близько 134 МБ пам'яті.
+
+У таблиці~\ref{tab:perf_results} наведено порівняння часу виконання обчислювального ядра та часу передачі результуючих даних з відеокарти на центральний процесор для трьох досліджуваних підходів. Результати були отримані за допомогою команди \texttt{nsys profile --stats=true <binary-file>}
+
+\begin{table}[H]
+	\caption{Порівняння продуктивності різних підходів до управління пам'яттю.}
+	\label{tab:perf_results}
+	\begin{center}
+		\begin{tabular}{ |c|c|c|p{4cm}| }
+			\hline
+			\rowcolor{lightgray} Підхід & Час виконання ядра (мс) & Час копіювання D2H (мс) & Характер копіювання \tabularnewline
+			\hline
+			Явне виділення пам'яті & 4.47 & 47.0 & Один монолітний блок \tabularnewline
+			\hline
+			Уніфікована пам'ять & 4.45 & 20.5 & 64 блоки по 2 МБ \tabularnewline
+			\hline
+			Спільна пам'ять & 4.43 & 46.1 & Один монолітний блок \tabularnewline
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+Час виконання самого обчислювального ядра залишається практично незмінним (в межах 4.43 - 4.47 мс) незалежно від обраного підходу до управління пам'яттю. Цей результат є цілком очікуваним, оскільки алгоритм додавання векторів відноситься до класу задач, що обмежуються пропускною здатністю пам'яті. Арифметична інтенсивність такої операції є вкрай низькою: на одну математичну операцію додавання припадає аж три звернення до глобальної пам'яті (зчитування елементів з масивів A та B, а також запис результату в масив C). За таких умов обчислювальні блоки мультипроцесорів більшу частину часу простоюють в очікуванні даних, тому зміна підходу до виділення пам'яті не може прискорити самі обчислення. Використання спільної пам'яті як проміжного кешу не дало жодного приросту продуктивності. Це пояснюється тим, що кожен потік звертається до свого елемента даних лише один раз. Відсутність повторного використання даних повністю нівелює головну перевагу спільної пам'яті. Більше того, завантаження даних у спільну пам'ять вимагає додаткових машинних інструкцій та обов'язкової синхронізації потоків всередині блоку за допомогою бар'єру, що додає накладних витрат.
+
+Найбільш цікавим результатом експерименту є суттєва різниця у часі копіювання масиву результатів з відеопам'яті на центральний процесор. Традиційне явне копіювання та підхід зі спільною пам'яттю продемонстрували час близько 46-47 мілісекунд, передаючи весь масив обсягом 134.2 МБ одним монолітним блоком. Натомість використання уніфікованої пам'яті з механізмом асинхронної попередньої вибірки дозволило скоротити цей час більш ніж удвічі — до 20.5 мілісекунд. Драйвер NVIDIA автоматично розбив загальний обсяг даних на 64 окремі сторінки по 2 мегабайти. Таке фрагментоване пересилання дозволяє значно ефективніше утилізувати шину PCI Express, забезпечуючи краще конвеєризування операцій введення-виведення та уникаючи тривалих блокувань шини великими порціями даних.
+
+\subsection{Допомога}
+За основу для виконання роботи було взято базовий код з відкритого репозиторію \url{https://github.com/lintenn/cudaAddVectors-explicit-vs-unified-memory}. Також у групі з одногрупниками обговорювалася ідея використання Distributed Shared Memory для оптимізації. Ця концепція виявилася незастосовною для поточного обладнання, оскільки технологія Thread Block Clusters підтримується лише в архітектурі Hopper, тоді як наявна відеокарта RTX 2050 побудована на архітектурі Ampere. Це зумовило необхідність використання класичної спільної пам'яті на рівні окремого блоку.
+
+\subsection{Висновки}
+У ході виконання лабораторної роботи було проведено детальне порівняння трьох методів управління пам'яттю в технології CUDA на прикладі класичної задачі додавання векторів великої розмірності. Результати дослідження підтверджують, що швидкість виконання такого обчислювального ядра визначається виключно фізичною межею пропускної здатності пам'яті відеокарти, а не обраним програмним інтерфейсом виділення ресурсів. Обчислювальні потоки лінійно опрацьовують масиви, що не залишає простору для оптимізації самої арифметики.
+
+Експеримент зі спільною пам'яттю наочно продемонстрував важливе архітектурне правило роботи з графічними прискорювачами. Застосування програмно керованого кешу першого рівня виправдане лише для тих алгоритмів, де наявне багаторазове використання одних і тих самих даних різними потоками в межах одного блоку (наприклад, при множенні матриць або згортці зображень). У потокових алгоритмах, де кожен елемент зчитується лише раз, перенесення даних у спільну пам'ять не зменшує навантаження на глобальну шину пам'яті, а лише додає накладні витрати на синхронізацію потоків, не приносячи жодного корисного ефекту.
+
+Найвагомішим спостереженням став аналіз операцій передачі даних між пристроями. Порівняння часу копіювання продемонструвало беззаперечну перевагу уніфікованої пам'яті. Завдяки механізмам розбиття на сторінки за запитом та асинхронної вибірки, драйвер оптимізує транзакції через шину PCIe, розбиваючи монолітний запит на серію менших пересилань по 2 МБ. Це забезпечує понад двократне зменшення часу копіювання результатів порівняно з явним синхронним пересиланням функцією копіювання. Отримані результати дозволяють зробити висновок, що сучасна підсистема уніфікованої пам'яті NVIDIA не лише спрощує написання коду за рахунок єдиного адресного простору, але й здатна забезпечувати значно вищу продуктивність пересилання даних завдяки прихованим внутрішнім оптимізаціям драйвера.
+
+\newpage
+
+\section{Лістинг.}
+
+\begin{lstlisting}[language=C++, caption={Додавання векторів з явним управлінням пам'яттю.}] 
+	#include <stdio.h>
+	
+	__global__
+	void initWith(float num, float *a, int N)
+	{
+		
+		int index = threadIdx.x + blockIdx.x * blockDim.x;
+		int stride = blockDim.x * gridDim.x;
+		
+		for(int i = index; i < N; i += stride)
+		{
+			a[i] = num;
+		}
+	}
+	
+	__global__
+	void addVectorsInto(float *result, float *a, float *b, int N)
+	{
+		int index = threadIdx.x + blockIdx.x * blockDim.x;
+		int stride = blockDim.x * gridDim.x;
+		
+		for(int i = index; i < N; i += stride)
+		{
+			result[i] = a[i] + b[i];
+		}
+	}
+	
+	void checkElementsAre(float target, float *vector, int N)
+	{
+		for(int i = 0; i < N; i++)
+		{
+			if(vector[i] != target)
+			{
+				printf("FAIL: vector[%d] - %0.0f does not equal %0.0f\n", i, vector[i], target);
+				exit(1);
+			}
+		}
+		printf("Success! All values calculated correctly.\n");
+	}
+	
+	int main()
+	{
+		int deviceId;
+		int numberOfSMs;
+		
+		cudaGetDevice(&deviceId);
+		cudaDeviceGetAttribute(&numberOfSMs, cudaDevAttrMultiProcessorCount, deviceId);
+		
+		const int N = 2<<24;
+		size_t size = N * sizeof(float);
+		
+		//float *a;
+		//float *b;
+		float *c;
+		
+		//a = (float *) malloc(size);
+		//b = (float *) malloc(size);
+		c = (float *) malloc(size);
+		
+		float *da;
+		float *db;
+		float *dc;
+		
+		cudaMalloc(&da, size);
+		cudaMalloc(&db, size);
+		cudaMalloc(&dc, size);
+		
+		size_t threadsPerBlock;
+		size_t numberOfBlocks;
+		
+		threadsPerBlock = 256;
+		numberOfBlocks = 32 * numberOfSMs;
+		
+		cudaError_t addVectorsErr;
+		cudaError_t asyncErr;
+		
+		initWith<<<numberOfBlocks, threadsPerBlock>>>(3, da, N);
+		initWith<<<numberOfBlocks, threadsPerBlock>>>(4, db, N);
+		initWith<<<numberOfBlocks, threadsPerBlock>>>(0, dc, N);
+		
+		addVectorsInto<<<numberOfBlocks, threadsPerBlock>>>(dc, da, db, N);
+		// Les pasamos los punteros de device (da,db,dc) y no de host (a,b,c)
+		
+		addVectorsErr = cudaGetLastError();
+		if(addVectorsErr != cudaSuccess) printf("Error: %s\n", cudaGetErrorString(addVectorsErr));
+		
+		asyncErr = cudaDeviceSynchronize();
+		if(asyncErr != cudaSuccess) printf("Error: %s\n", cudaGetErrorString(asyncErr));
+		
+		//cudaMemcpy(a, da, size, cudaMemcpyDeviceToHost);
+		//cudaMemcpy(b, db, size, cudaMemcpyDeviceToHost);
+		cudaMemcpy(c, dc, size, cudaMemcpyDeviceToHost);
+		
+		checkElementsAre(7, c, N);
+		
+		cudaFree(da);
+		cudaFree(db);
+		cudaFree(dc);
+		
+		//free(a);
+		//free(b);
+		free(c);
+	}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption={Додавання векторів з використанням уніфікованої пам'яті.}] 
+	#include <stdio.h>
+	
+	__global__
+	void initWith(float num, float *a, int N)
+	{
+		
+		int index = threadIdx.x + blockIdx.x * blockDim.x;
+		int stride = blockDim.x * gridDim.x;
+		
+		for(int i = index; i < N; i += stride)
+		{
+			a[i] = num;
+		}
+	}
+	
+	__global__
+	void addVectorsInto(float *result, float *a, float *b, int N)
+	{
+		int index = threadIdx.x + blockIdx.x * blockDim.x;
+		int stride = blockDim.x * gridDim.x;
+		
+		for(int i = index; i < N; i += stride)
+		{
+			result[i] = a[i] + b[i];
+		}
+	}
+	
+	void checkElementsAre(float target, float *vector, int N)
+	{
+		for(int i = 0; i < N; i++)
+		{
+			if(vector[i] != target)
+			{
+				printf("FAIL: vector[%d] - %0.0f does not equal %0.0f\n", i, vector[i], target);
+				exit(1);
+			}
+		}
+		printf("Success! All values calculated correctly.\n");
+	}
+	
+	int main()
+	{
+		int deviceId;
+		int numberOfSMs;
+		
+		cudaGetDevice(&deviceId);
+		cudaDeviceGetAttribute(&numberOfSMs, cudaDevAttrMultiProcessorCount, deviceId);
+		
+		const int N = 2<<24;
+		size_t size = N * sizeof(float);
+		
+		float *a;
+		float *b;
+		float *c;
+		
+		cudaMallocManaged(&a, size);
+		cudaMallocManaged(&b, size);
+		cudaMallocManaged(&c, size);
+		
+		cudaMemLocation devLoc;
+		devLoc.type = cudaMemLocationTypeDevice;
+		devLoc.id = deviceId;
+		
+		cudaMemPrefetchAsync(a, size, devLoc, 0);
+		cudaMemPrefetchAsync(b, size, devLoc, 0);
+		cudaMemPrefetchAsync(c, size, devLoc, 0);
+		
+		size_t threadsPerBlock;
+		size_t numberOfBlocks;
+		
+		threadsPerBlock = 256;
+		numberOfBlocks = 32 * numberOfSMs;
+		
+		cudaError_t addVectorsErr;
+		cudaError_t asyncErr;
+		
+		initWith<<<numberOfBlocks, threadsPerBlock>>>(3, a, N);
+		initWith<<<numberOfBlocks, threadsPerBlock>>>(4, b, N);
+		initWith<<<numberOfBlocks, threadsPerBlock>>>(0, c, N);
+		
+		addVectorsInto<<<numberOfBlocks, threadsPerBlock>>>(c, a, b, N);
+		
+		addVectorsErr = cudaGetLastError();
+		if(addVectorsErr != cudaSuccess) printf("Error: %s\n", cudaGetErrorString(addVectorsErr));
+		
+		asyncErr = cudaDeviceSynchronize();
+		if(asyncErr != cudaSuccess) printf("Error: %s\n", cudaGetErrorString(asyncErr));
+		
+		// Define the memory location for the CPU
+		cudaMemLocation hostLoc;
+		hostLoc.type = cudaMemLocationTypeHost;
+		hostLoc.id = 0;
+		
+		// Prefetch result to CPU on the default stream (0)
+		cudaMemPrefetchAsync(c, size, hostLoc, 0);
+		
+		checkElementsAre(7, c, N);
+		
+		cudaFree(a);
+		cudaFree(b);
+		cudaFree(c);
+	}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption={Додавання векторів з використанням спільної пам'яті.}]
+	#include <stdio.h>
+	
+	// Kernel to initialize array elements
+	__global__
+	void initWith(float num, float *a, int N)
+	{
+		int index = threadIdx.x + blockIdx.x * blockDim.x;
+		int stride = blockDim.x * gridDim.x;
+		
+		for(int i = index; i < N; i += stride)
+		{
+			a[i] = num;
+		}
+	}
+	
+	// Kernel that uses shared memory as a tile cache
+	__global__
+	void addVectorsIntoShared(float *result, float *a, float *b, int N)
+	{
+		// Allocate dynamic shared memory for the current block
+		extern __shared__ float shared_mem[];
+		
+		// Split shared memory into two logical arrays for inputs
+		float* s_a = shared_mem;
+		float* s_b = &shared_mem[blockDim.x];
+		
+		int index = threadIdx.x + blockIdx.x * blockDim.x;
+		int stride = blockDim.x * gridDim.x;
+		int tid = threadIdx.x;
+		
+		for(int i = index; i < N; i += stride)
+		{
+			// Load elements from global memory to shared memory cache
+			s_a[tid] = a[i];
+			s_b[tid] = b[i];
+			
+			// Synchronize to ensure all elements are loaded
+			__syncthreads();
+			
+			// Compute the sum using cached data
+			float temp_sum = s_a[tid] + s_b[tid];
+			
+			// Synchronize before writing and moving to the next iteration
+			__syncthreads();
+			
+			// Write the computed sum back to global memory
+			result[i] = temp_sum;
+		}
+	}
+	
+	// Function to verify the results
+	void checkElementsAre(float target, float *vector, int N)
+	{
+		for(int i = 0; i < N; i++)
+		{
+			if(vector[i] != target)
+			{
+				printf("FAIL: vector[%d] - %0.0f does not equal %0.0f\n", i, vector[i], target);
+				exit(1);
+			}
+		}
+		printf("Success! All values calculated correctly.\n");
+	}
+	
+	int main()
+	{
+		int deviceId;
+		int numberOfSMs;
+		
+		cudaGetDevice(&deviceId);
+		cudaDeviceGetAttribute(&numberOfSMs, cudaDevAttrMultiProcessorCount, deviceId);
+		
+		const int N = 2<<24;
+		size_t size = N * sizeof(float);
+		
+		float *c = (float *) malloc(size);
+		
+		float *da;
+		float *db;
+		float *dc;
+		
+		cudaMalloc(&da, size);
+		cudaMalloc(&db, size);
+		cudaMalloc(&dc, size);
+		
+		size_t threadsPerBlock = 256;
+		size_t numberOfBlocks = 32 * numberOfSMs;
+		
+		initWith<<<numberOfBlocks, threadsPerBlock>>>(3, da, N);
+		initWith<<<numberOfBlocks, threadsPerBlock>>>(4, db, N);
+		initWith<<<numberOfBlocks, threadsPerBlock>>>(0, dc, N);
+		
+		// Calculate required shared memory size for two arrays per block
+		size_t sharedMemSize = 2 * threadsPerBlock * sizeof(float);
+		
+		addVectorsIntoShared<<<numberOfBlocks, threadsPerBlock, sharedMemSize>>>(dc, da, db, N);
+		
+		cudaError_t addVectorsErr = cudaGetLastError();
+		if(addVectorsErr != cudaSuccess) printf("Error: %s\n", cudaGetErrorString(addVectorsErr));
+		
+		cudaError_t asyncErr = cudaDeviceSynchronize();
+		if(asyncErr != cudaSuccess) printf("Error: %s\n", cudaGetErrorString(asyncErr));
+		
+		cudaMemcpy(c, dc, size, cudaMemcpyDeviceToHost);
+		
+		checkElementsAre(7, c, N);
+		
+		cudaFree(da);
+		cudaFree(db);
+		cudaFree(dc);
+		
+		free(c);
+		return 0;
+	}
+\end{lstlisting}
+
+\end{document}
