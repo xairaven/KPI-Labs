@@ -23,7 +23,7 @@
 **Роки навчання**: 09.2025 <i>- 06.2027</i>. <br>
 
 > [!NOTE]
-> В процесі: 2 *(10)* семестр.
+> 2 *(10)* семестр завершений. Залишилося ще 2 :)
 
 [![Rust](https://img.shields.io/badge/Rust-fde7d5?style=for-the-badge&logo=rust&logoColor=black)](#)
 [![C#](https://img.shields.io/badge/c%23-purple?style=for-the-badge&logo=dotnet&logoColor=white)](#)
