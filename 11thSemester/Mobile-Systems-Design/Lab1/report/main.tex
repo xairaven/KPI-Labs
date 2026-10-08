@@ -1,0 +1,906 @@
+\documentclass[14pt, a4paper]{extreport}
+
+\usepackage{kpi-lab}
+\input{data}
+
+\begin{document}
+	\pagenumbering{gobble}
+	
+	\begin{titlepage}
+		\begin{center}
+			\normalsize
+			Національний технічний університет України\\
+			«Київський політехнічний інститут імені Ігоря Сікорського» \\[0.5em]
+			Факультет інформатики та обчислювальної техніки\\
+			Кафедра обчислювальної техніки
+			
+			\vfill
+			
+			{\large \textbf{ЗВІТ}\\[0.5em]}
+			{з лабораторної роботи №\LabNumber \\}
+			{з дисципліни <<\CourseTitle>>}
+			
+			\vspace{2em}
+			
+			{\textbf{<<\Topic>>}}
+			
+			\vspace{1em}
+			
+			{\textbf{Варіант №\Variant}}
+			
+			\vfill
+			
+			\begin{flushright}
+				Виконав: \\ студент \CourseNumber{} курсу, групи \StudentGroup \\
+				\StudentName \\[1em]
+				Перевірив: \\ \Teacher
+			\end{flushright}
+			
+			\vfill
+			
+			\begin{flushright}
+				Дата здачі: \DTMtoday
+			\end{flushright}
+			
+			\vspace{5em}
+			КИЇВ -- \ReportYear
+		\end{center}
+	\end{titlepage}
+	
+	\clearpage
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+	
+	\subsection*{Мета} 
+	Ознайомитися з основними поняттями та особливостями розробки web-додатків для мобільних пристроїв.
+	
+	\subsection*{Завдання}
+	Розробити Android-додаток згідно з варіантом. Запустити програму на емуляторі. Виділити ключові особливості синтаксису мови.
+	
+	\subsection*{Завдання за варіантом}
+	Доменна область: Абітурієнт. 
+	
+	Поля:  ID, Прізвище, Ім'я, По-батькові, Адреса, Телефон, Оцінки. 
+	
+	Створити масив об'єктів. 
+	Вивести:
+	\begin{itemize}
+		\item список абітурієнтів, які мають незадовільні оцінки;
+		
+		\item список абітурієнтів, середній бал у яких вище заданого;
+		
+		\item вибрати задане число \texttt{N} абітурієнтів, що мають найбільш високій середній бал (вивести також повний список абітурієнтів, які мають напівпрохідний бал).
+	\end{itemize}
+	
+	\section*{Хід роботи.}
+	
+	Для розробки додатку була обрана мова програмування Rust. Так як застосунок повинен бути веб-орієнтованим, був обраний фреймворк Tauri -- аналог Electron, але написаний повністю на Rust, через що швидкодія та використання ресурсів набагато кращі. Звичайно, перевага не лише в мові програмування -- на відміну від Electron, Tauri не пакує двигун Chromium, а перевикористовує системний WebView. 
+	
+	Так як я використовую операційну систему Linux Fedora 44, налаштування оточення для програмування не буде занадто важким. В якості IDE будуть використовуватися RustRover та Android Studio. Після встановлення IDE треба встановити Rust -- а саме утиліту \texttt{rustup}, менеджер тулчейнів. Вона завантажить і компілятор \texttt{rustc}, і менеджер пакетів \texttt{Cargo}.
+	
+	Для роботи Tauri треба мати встановлені системні залежності. Їх можна встановити командою:
+	
+	\begin{minted}{bash}
+		sudo dnf install webkit2gtk4.1-devel openssl-devel curl wget file libappindicator-gtk3-devel librsvg2-devel
+	\end{minted}
+	
+	Також, треба встановити рантайм двигун для Javascript. Є кілька варіантів -- Node.js, Deno, Bun. 
+	
+	Node.js є класикою -- це стандартний двигун, має найбільшу сумісність з Tauri. Розробники гарантують, що всі шаблони, плагіни Vite та пакети npm будуть працювати з коробки без проблем. Недоліками є повільніша інсталяція залежностей, великий каталог \texttt{node\_modules}, тощо.
+	
+	Bun, в свою чергу, є найновішим варіантом, найкращим для локальної розробки -- мова йде саме про швидкість за бенчмарками. Також, має Hot-Reload для TypeScript. Але -- повну сумісність з Tauri ніхто не обіцяє.
+	
+	Щодо Deno, то в нього велика купа плюсів, таких як наявність пісочниці, внутрішнього тулінгу який дозволяє не засмічувати репозиторій, тощо. Але, знову ж, повної сумісності немає.
+	
+	Оскільки я обираю інструменти в першу чергу розраховуючи на роботу з Rust та Tauri, обрав стандартний варіант -- Node.js. Треба його встановити. Для цього використовується дві утиліти -- \texttt{nvm} та \texttt{fnm}. Вибір пав на останній, оскільки він не вбудовується в shell, а поширюється як повноцінний бінарник. Тож, він був завантажений за інструкцією з \href{https://github.com/schniz/fnm#using-a-script-macoslinux}{GitHub}.
+	
+	Встановлюємо LTS версію Node.js:
+	
+	\begin{minted}{bash}
+		fnm install 24
+	\end{minted}
+	
+	Наступним кроком є вибір менеджеру пакетів для Node.js. Їх на вибір теж декілька, у кожного свої переваги та недоліки. Серед \texttt{npm}, \texttt{yarn}, та \texttt{pnpm} вибір знову пав на останній -- оскільки пакети перевикористовуються глобально, тож немає відомої проблеми з вагою \texttt{node\_modules} (хоч і локально, але не архітектурно), та й загалом за бенчмарками він працює швидше. Тож, встановлюємо:
+	
+	\image{9cm}{node-install}
+	
+	Далі, встановлюємо Tauri.
+	
+	\begin{minted}{bash}
+		cargo install tauri-cli --version "\^2" --locked
+	\end{minted}
+	
+	Створюємо каталог \texttt{Lab1}, а в ній проект, за допомогою команди, вказаної на скріншоті. В якості мови фронтенду був обраний TypeScript, а бібліотеки для UI -- React.
+	
+	\image{7cm}{pnpm-project-create}
+	
+	Виконуємо дві команди -- встановлення всіх залежностей, та тестовий запуск десктопного застосунку в режимі розробника.
+	
+	\begin{minted}{bash}
+		pnpm install
+		pnpm tauri dev
+	\end{minted}
+	
+	Бачимо вікно додатку, створеного з шаблону. Перший етап перевірки пройшов успішно.
+	
+	\image{10cm}{test-window}
+	
+	Другий етап налаштування передбачає підготовку середовища для розробки Android застосунку. Встановлюємо Android Studio. Першим кроком є завантаження Android SDK.  Обираємо базовий варіант -- Android 7.0 <<Nougat>>, API Level 24, який є найпоширенішим.
+	
+	\image{9cm}{android-sdk}
+	
+	Далі, завантажуємо NDK (Native-development Kit) і SDK CLI Tools. Перший потрібен щоб писати частини застосунку на нативних мовах програмування як С чи С++ -- тобто саме те, що буде робити Tauri під капотом. Друге потрібно для роботи з компонентами набору розробки через консоль, без використання Android Studio.
+	
+	\image{9cm}{sdk-tools}
+	
+	Встановлюємо змінні оточення в оболонку, щоб можна було звертатися до утиліт не за абсолютним шляхом, а лише за назвою.
+	
+	\image{2cm}{shell-variables}
+	
+	Далі треба створити емулятор -- віртуальний пристрій. На привітальній сторінці Android Studio обираємо <<More Actions>> та <<Virtual Device Manager>>:
+	
+	\image{7cm}{welcome-device-manager}
+	
+	У вікні натискаємо на плюсик, і потім імпортуємо заздалегідь збережений файл з описом пристрою, який залишився з минулої вибіркової дисципліни -- <<Сучасні мобільні операційні системи>>, і наразі знаходиться в каталозі \texttt{resources} проекту.
+	
+	\image{8.8cm}{import-emulator}
+	
+	Далі, в проекті запускаємо команду, яка додасть відповідні налаштування для розробки під Android. Після цього запускаємо тестовий проект на емуляторі.
+	
+	\begin{minted}{bash}
+		pnpm tauri android init
+		pnpm tauri android dev
+	\end{minted}
+	
+	В процесі виникає декілька помилок. По-перше, на системі встановлена JDK 25, що є занадто високою версією для деяких зі встановлених раніше утиліт. Проблема вирішилась встановленням JDK 21. Також, виникла помилка при генерації Kotlin скриптів -- Tauri вказує викликаючу утиліту як pnpm-native, хоча викликатися повинен саме pnpm. Через це остання вказана команда не відпрацьовує. Наразі, щоб виправити цю помилку, в скрипті треба вказати просто pnpm. Це треба робити кожного разу, коли відбувається ініціалізація Android проекту, що відбувається нечасто. Я розробив виправлення проблеми та надіслав \href{https://github.com/tauri-apps/tauri/pull/16078}{Pull Request} розробникам. Зміни були прийняті, тож скоро такої проблеми виникати не буде.
+	
+	\image[width=18cm]{12.5cm}{pnpm-native-tauri-error}
+	
+	Також, виникли ще деякі помилки. Спочатку процес \texttt{adb} (Android Debug Bridge) падав через відому помилку в mDNS. Це можна виправити, якщо встановити environmental variable:
+	
+	\begin{minted}{bash}
+		export ADB_MDNS=0
+	\end{minted}
+	
+	Шаблон застосунку для Android готовий.
+	
+	\image{12cm}{template-done}
+	
+	Нарешті, переходимо безпосередньо до розробки застосунку за доменною областю.
+	
+	На скріншоті продемонстрована файлова структура готового додатку:
+	
+	\image{10cm}{project-structure}
+	
+	Код на Rust виступає основним обробником даних. Були створені відповідні структури та методи до них. Код написаний на TypeScript та CSS відповідає за оформлення та функціональність інтерфейсу. Додаток має дві сторінки: загальна інформація та звіт.
+	
+	Сторінка з інформацією:
+	
+	\image{8cm}{page-info}
+	
+	Сторінка зі звітом:
+	
+	\image{13cm}{page-report}
+	
+	Аналізуючи програмний код розробленого застосунку, можна виділити кілька ключових синтаксичних особливостей використаних мов. У частині бекенду, написаній на Rust, яскраво виражена строга статична типізація та використання системи власності з позичанням за допомогою посилань, що гарантує безпеку пам'яті. Широко застосовуються макроси, зокрема для автоматичної генерації реалізацій трейтів серіалізації та клонування, а також функціональний підхід з використанням замикань та ітераторів для фільтрації масивів даних. Фронтенд частина, написана на TypeScript, демонструє розширення класичного JavaScript строгою типізацією через використання інтерфейсів. Також застосовується синтаксис TSX, який дозволяє декларативно описувати структуру користувацького інтерфейсу безпосередньо в коді разом з логікою управління станом компонентів.
+	
+	\subsection*{Висновок}
+	
+	Під час виконання лабораторної роботи було успішно розроблено мобільний додаток для ОС Android з використанням фреймворку Tauri. Було налаштовано середовище розробки, зокрема Node.js, pnpm, Rust, Android SDK та NDK. Програмна частина реалізована за допомогою Rust для обробки даних та TypeScript з React для побудови користувацького інтерфейсу. Додаток успішно компілюється та запускається на емуляторі Android, реалізуючи весь необхідний функціонал для обробки даних абітурієнтів, включаючи фільтрацію за оцінками та сортування.
+	
+	\section*{Контрольні запитання.}
+	
+	\begin{enumerate}
+		\item \textbf{Дайте визначення поняття web-додатку.} \\ Web-додаток є програмним застосунком, де клієнтом виступає браузер або вбудований WebView, а логіка та інтерфейс реалізовані веб-технологіями, такими як HTML, CSS та JavaScript.
+		
+		\item \textbf{Назвіть основні відмінності між мобільними і desktop додатками.} \\ Головні відмінності між мобільними та десктопними додатками полягають в адаптації інтерфейсу під невеликі сенсорні екрани, жорсткішій оптимізації споживання енергії та ресурсів пам'яті, а також у тіснішій взаємодії з апаратними датчиками пристрою.
+		
+		\item \textbf{Наведіть види мобільних web-додатків та охарактеризуйте їх.} \\ Мобільні веб-додатки здебільшого поділяються на прогресивні застосунки (PWA), які виконуються в браузері з можливістю офлайн-роботи, та гібридні додатки, де веб-технології запаковані в нативний контейнер із системним доступом до API смартфона.
+		
+		\item \textbf{Перелічіть сучасні об'єктно-орієнтовані мови програмування.} \\ Серед популярних сучасних об'єктно-орієнтованих мов програмування можна виділити Java, C\#, C++, Python, TypeScript, Swift, Ruby та Kotlin.
+	\end{enumerate}
+	
+	\pagebreak
+	
+	\section*{Лістинг.}
+	
+	\textbf{main.rs}
+	
+	\begin{minted}{rust} 
+		// Prevents additional console window on Windows in release, DO NOT REMOVE!!
+		#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+		
+		fn main() {
+			lab1_lib::run();
+		}
+	\end{minted}
+	
+	\textbf{lib.rs}
+	
+	\begin{minted}{rust}
+		#[cfg_attr(mobile, tauri::mobile_entry_point)]
+		pub fn run() {
+			if let Err(err) = tauri::Builder::default()
+			.plugin(tauri_plugin_opener::init())
+			.invoke_handler(tauri::generate_handler![crate::report::build_report])
+			.run(tauri::generate_context!())
+			{
+				eprintln!("Error occurred while running Tauri application: {err}");
+				std::process::exit(1);
+			}
+		}
+		
+		mod applicant;
+		mod report;
+		mod sample;
+	\end{minted}
+	
+	\textbf{applicant.rs}
+	
+	\begin{minted}{rust}
+		use serde::Serialize;
+		
+		#[derive(Debug, Clone, Serialize)]
+		pub struct Applicant {
+			pub id: u32,
+			pub last_name: String,
+			pub first_name: String,
+			pub patronymic: String,
+			pub address: String,
+			pub phone: String,
+			pub grades: Vec<u8>,
+		}
+		
+		pub const PASSING_GRADE: u8 = 4;
+		pub const BORDERLINE_RANGE: std::ops::Range<f64> = 4.0..6.0;
+		
+		impl Applicant {
+			pub fn average_grade(&self) -> f64 {
+				if self.grades.is_empty() {
+					return 0.0;
+				}
+				let sum = f64::from(self.grades.iter().sum::<u8>());
+				#[allow(clippy::cast_precision_loss)]
+				let avg = sum / self.grades.len() as f64;
+				
+				(avg * 100.0).round() / 100.0
+			}
+			
+			pub fn has_failing_grade(&self) -> bool {
+				self.grades.iter().any(|&g| g < PASSING_GRADE)
+			}
+			
+			pub fn is_above_average(&self, threshold: f64) -> bool {
+				self.average_grade() > threshold
+			}
+			
+			pub fn is_borderline(&self) -> bool {
+				BORDERLINE_RANGE.contains(&self.average_grade())
+			}
+		}
+		
+		#[derive(Debug, Clone, Serialize)]
+		pub struct ApplicantView {
+			#[serde(flatten)]
+			pub applicant: Applicant,
+			pub average: f64,
+		}
+		
+		impl From<&Applicant> for ApplicantView {
+			fn from(a: &Applicant) -> Self {
+				Self {
+					applicant: a.clone(),
+					average: a.average_grade(),
+				}
+			}
+		}
+		
+		#[cfg(test)]
+		mod tests {
+			use super::Applicant;
+			use super::BORDERLINE_RANGE;
+			use crate::sample;
+			
+			fn applicant(grades: Vec<u8>) -> Applicant {
+				Applicant {
+					id: 0,
+					last_name: "Kovalov".into(),
+					first_name: "Alex".into(),
+					patronymic: "Oleksiyovuch".into(),
+					address: "Somewhere".into(),
+					phone: "Idk?".into(),
+					grades,
+				}
+			}
+			
+			#[test]
+			fn average_grade_rounds_to_two_decimals() {
+				assert_eq!(applicant(vec![7, 8, 9]).average_grade(), 8.0);
+				assert_eq!(applicant(vec![5, 6]).average_grade(), 5.5);
+			}
+			
+			#[test]
+			fn detects_failing_grades() {
+				assert!(applicant(vec![3, 10, 10]).has_failing_grade());
+				assert!(!applicant(vec![4, 10, 10]).has_failing_grade());
+			}
+			
+			#[test]
+			fn filters_above_threshold() {
+				let applicants = sample::get_applicants();
+				let threshold = 9.0;
+				
+				let result: Vec<Applicant> = applicants
+				.into_iter()
+				.filter(|a| a.is_above_average(threshold))
+				.collect();
+				
+				assert!(result.iter().all(|a| a.average_grade() > 9.0));
+			}
+			
+			#[test]
+			fn top_n_is_sorted_descending_and_limited() {
+				let mut applicants = sample::get_applicants();
+				let top_n = 3;
+				
+				applicants.sort_by(|a, b| {
+					let a = a.average_grade();
+					let b = b.average_grade();
+					b.total_cmp(&a)
+				});
+				let result: Vec<Applicant> = applicants.into_iter().take(top_n).collect();
+				
+				assert_eq!(result.len(), top_n);
+				assert!(result[0].average_grade() >= result[1].average_grade());
+				assert!(result[1].average_grade() >= result[2].average_grade());
+			}
+			
+			#[test]
+			fn borderline_stays_within_range() {
+				let applicants = sample::get_applicants();
+				
+				let result: Vec<Applicant> = applicants
+				.into_iter()
+				.filter(|a| a.is_borderline())
+				.collect();
+				
+				assert!(
+				result
+				.iter()
+				.all(|a| BORDERLINE_RANGE.contains(&a.average_grade()))
+				);
+			}
+		}
+	\end{minted}
+	
+	\textbf{report.rs}
+	
+	\begin{minted}{rust}
+		use crate::applicant::ApplicantView;
+		use crate::sample;
+		use serde::Serialize;
+		
+		#[derive(Debug, Clone, Serialize)]
+		pub struct Report {
+			pub all: Vec<ApplicantView>,
+			pub failing: Vec<ApplicantView>,
+			pub above_threshold: Vec<ApplicantView>,
+			pub top_n: Vec<ApplicantView>,
+			pub borderline: Vec<ApplicantView>,
+		}
+		
+		#[tauri::command]
+		pub fn build_report(threshold: f64, top_count: usize) -> Report {
+			let mut applicants = sample::get_applicants();
+			
+			applicants.sort_by(|a, b| {
+				let a = a.average_grade();
+				let b = b.average_grade();
+				b.total_cmp(&a)
+			});
+			
+			Report {
+				all: applicants.iter().map(ApplicantView::from).collect(),
+				failing: applicants
+				.iter()
+				.filter(|a| a.has_failing_grade())
+				.map(ApplicantView::from)
+				.collect(),
+				above_threshold: applicants
+				.iter()
+				.filter(|a| a.is_above_average(threshold))
+				.map(ApplicantView::from)
+				.collect(),
+				top_n: applicants
+				.iter()
+				.take(top_count)
+				.map(ApplicantView::from)
+				.collect(),
+				borderline: applicants
+				.iter()
+				.filter(|a| a.is_borderline())
+				.map(ApplicantView::from)
+				.collect(),
+			}
+		}
+	\end{minted}
+	
+	\textbf{sample.rs}
+	
+	\begin{minted}{rust}
+		use crate::applicant::Applicant;
+		
+		pub fn get_applicants() -> Vec<Applicant> {
+			vec![
+			Applicant {
+				id: 1,
+				last_name: "Бондаренко".into(),
+				first_name: "Олена".into(),
+				patronymic: "Іванівна".into(),
+				address: "м. Київ, вул. Хрещатик, 10".into(),
+				phone: "+380501112233".into(),
+				grades: vec![10, 11, 9, 12],
+			},
+			Applicant {
+				id: 2,
+				last_name: "Шевченко".into(),
+				first_name: "Тарас".into(),
+				patronymic: "Григорович".into(),
+				address: "м. Львів, вул. Франка, 5".into(),
+				phone: "+380671234567".into(),
+				grades: vec![3, 5, 4, 6],
+			},
+			Applicant {
+				id: 3,
+				last_name: "Мельник".into(),
+				first_name: "Ірина".into(),
+				patronymic: "Олексіївна".into(),
+				address: "м. Одеса, вул. Дерибасівська, 22".into(),
+				phone: "+380931112244".into(),
+				grades: vec![6, 7, 5, 8],
+			},
+			Applicant {
+				id: 4,
+				last_name: "Ткаченко".into(),
+				first_name: "Андрій".into(),
+				patronymic: "Петрович".into(),
+				address: "м. Харків, вул. Сумська, 15".into(),
+				phone: "+380661234455".into(),
+				grades: vec![2, 3, 4, 5],
+			},
+			Applicant {
+				id: 5,
+				last_name: "Коваль".into(),
+				first_name: "Марія".into(),
+				patronymic: "Сергіївна".into(),
+				address: "м. Дніпро, пр. Яворницького, 30".into(),
+				phone: "+380501239988".into(),
+				grades: vec![12, 12, 11, 12],
+			},
+			Applicant {
+				id: 6,
+				last_name: "Кравець".into(),
+				first_name: "Віктор".into(),
+				patronymic: "Миколайович".into(),
+				address: "м. Запоріжжя, вул. Соборна, 8".into(),
+				phone: "+380671239900".into(),
+				grades: vec![7, 6, 7, 6],
+			},
+			Applicant {
+				id: 7,
+				last_name: "Романюк".into(),
+				first_name: "Софія".into(),
+				patronymic: "Богданівна".into(),
+				address: "м. Івано-Франківськ, вул. Незалежності, 3".into(),
+				phone: "+380931238877".into(),
+				grades: vec![9, 10, 8, 9],
+			},
+			Applicant {
+				id: 8,
+				last_name: "Гончар".into(),
+				first_name: "Олег".into(),
+				patronymic: "Васильович".into(),
+				address: "м. Полтава, вул. Соборності, 12".into(),
+				phone: "+380661237766".into(),
+				grades: vec![4, 3, 5, 4],
+			},
+			Applicant {
+				id: 9,
+				last_name: "Лисенко".into(),
+				first_name: "Наталія".into(),
+				patronymic: "Ігорівна".into(),
+				address: "м. Чернігів, вул. Шевченка, 7".into(),
+				phone: "+380501236655".into(),
+				grades: vec![8, 7, 9, 7],
+			},
+			Applicant {
+				id: 10,
+				last_name: "Захарчук".into(),
+				first_name: "Дмитро".into(),
+				patronymic: "Олександрович".into(),
+				address: "м. Вінниця, вул. Соборна, 20".into(),
+				phone: "+380671235544".into(),
+				grades: vec![5, 6, 5, 6],
+			},
+			]
+		}
+	\end{minted}
+	
+	\textbf{main.tsx}
+	
+	\begin{minted}{tsx}
+		import React from "react";
+		import ReactDOM from "react-dom/client";
+		import App from "./App";
+		
+		ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+		<React.StrictMode>
+		<App />
+		</React.StrictMode>,
+		);
+		
+	\end{minted}
+	
+	\textbf{App.tsx}
+	
+	\begin{minted}{tsx}
+		import { useEffect, useState } from "react";
+		import { invoke } from "@tauri-apps/api/core";
+		import type { Applicant, Report } from "./types";
+		import "./App.css";
+		
+		function ApplicantTable({ title, rows }: { title: string; rows: Applicant[] }) {
+			return (
+			<section className="panel">
+			<h2>
+			{title} <span className="count">({rows.length})</span>
+			</h2>
+			{rows.length === 0 ? (
+				<p className="empty">— немає —</p>
+				) : (
+				<table>
+				<thead>
+				<tr>
+				<th>ID</th>
+				<th>ПІБ</th>
+				<th>Оцінки</th>
+				<th>Сер. бал</th>
+				</tr>
+				</thead>
+				<tbody>
+				{rows.map((a) => (
+					<tr key={a.id}>
+					<td>{a.id}</td>
+					<td>
+					{a.last_name} {a.first_name} {a.patronymic}
+					</td>
+					<td>{a.grades.join(", ")}</td>
+					<td>{a.average}</td>
+					</tr>
+					))}
+				</tbody>
+				</table>
+				)}
+			</section>
+			);
+		}
+		
+		function StudentsPage({ rows }: { rows: Applicant[] }) {
+			return (
+			<section className="panel">
+			<h2>
+			Абітурієнти <span className="count">({rows.length})</span>
+			</h2>
+			<table>
+			<thead>
+			<tr>
+			<th>ID</th>
+			<th>ПІБ</th>
+			<th>Адреса</th>
+			<th>Телефон</th>
+			<th>Оцінки</th>
+			<th>Сер. бал</th>
+			</tr>
+			</thead>
+			<tbody>
+			{rows.map((a) => (
+				<tr key={a.id}>
+				<td>{a.id}</td>
+				<td>
+				{a.last_name} {a.first_name} {a.patronymic}
+				</td>
+				<td>{a.address}</td>
+				<td>{a.phone}</td>
+				<td>{a.grades.join(", ")}</td>
+				<td>{a.average}</td>
+				</tr>
+				))}
+			</tbody>
+			</table>
+			</section>
+			);
+		}
+		
+		function ReportPage({ report }: { report: Report | null }) {
+			// Kept as plain strings (not numbers) so the input always shows exactly
+			// what was typed.
+			const [thresholdInput, setThresholdInput] = useState("7");
+			const [topCountInput, setTopCountInput] = useState("3");
+			const [computed, setComputed] = useState<Report | null>(null);
+			
+			async function compute() {
+				const threshold = Number(thresholdInput) || 0;
+				const topCount = Number(topCountInput) || 0;
+				setComputed(await invoke<Report>("build_report", { threshold, topCount }));
+			}
+			
+			useEffect(() => {
+				if (report) setComputed(report);
+			}, [report]);
+			
+			return (
+			<>
+			<form
+			className="controls"
+			onSubmit={(e) => {
+					e.preventDefault();
+					compute();
+			}}
+			>
+			<label>
+			Поріг серед. балу
+			<input
+			type="number"
+			step="0.1"
+			value={thresholdInput}
+			onChange={(e) => setThresholdInput(e.currentTarget.value)}
+			/>
+			</label>
+			<label>
+			N (топ)
+			<input
+			type="number"
+			min={1}
+			value={topCountInput}
+			onChange={(e) => setTopCountInput(e.currentTarget.value)}
+			/>
+			</label>
+			<button type="submit">Обчислити</button>
+			</form>
+			
+			{computed && (
+				<>
+				<ApplicantTable title="Незадовільні оцінки" rows={computed.failing} />
+				<ApplicantTable
+				title={`Середній бал вище ${thresholdInput}`}
+				rows={computed.above_threshold}
+				/>
+				<ApplicantTable
+				title={`Топ-${topCountInput} за середнім балом`}
+				rows={computed.top_n}
+				/>
+				<ApplicantTable title="Напівпрохідний бал" rows={computed.borderline} />
+				</>
+				)}
+			</>
+			);
+		}
+		
+		function App() {
+			const [page, setPage] = useState<"report" | "students">("report");
+			const [report, setReport] = useState<Report | null>(null);
+			
+			useEffect(() => {
+				invoke<Report>("build_report", { threshold: 7, topCount: 3 }).then(setReport);
+			}, []);
+			
+			return (
+			<main className="container">
+			<h1>Лаб. 1 — Абітурієнт</h1>
+			
+			<nav className="nav">
+			<button
+			className={page === "report" ? "active" : ""}
+			onClick={() => setPage("report")}
+			>
+			Звіт
+			</button>
+			<button
+			className={page === "students" ? "active" : ""}
+			onClick={() => setPage("students")}
+			>
+			Абітурієнти
+			</button>
+			</nav>
+			
+			{page === "report" ? (
+				<ReportPage report={report} />
+				) : (
+				<StudentsPage rows={report?.all ?? []} />
+				)}
+			</main>
+			);
+		}
+		
+		export default App;
+	\end{minted}
+	
+	\textbf{App.css}
+	
+	\begin{minted}{css}
+		:root {
+			font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+			font-size: 16px;
+			line-height: 24px;
+			font-weight: 400;
+			
+			color: #0f0f0f;
+			background-color: #f6f6f6;
+			
+			font-synthesis: none;
+			text-rendering: optimizeLegibility;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			-webkit-text-size-adjust: 100%;
+		}
+		
+		.container {
+			margin: 0 auto;
+			max-width: 720px;
+			padding: 2rem 1rem 4rem;
+		}
+		
+		h1 {
+			text-align: center;
+		}
+		
+		.nav {
+			display: flex;
+			justify-content: center;
+			gap: 0.5rem;
+			margin-bottom: 1.5rem;
+		}
+		
+		.nav button.active {
+			border-color: #396cd8;
+			background-color: #396cd8;
+			color: #ffffff;
+		}
+		
+		.controls {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: end;
+			gap: 1rem;
+			justify-content: center;
+			margin-bottom: 2rem;
+		}
+		
+		.controls label {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+			font-size: 0.85em;
+		}
+		
+		input,
+		button {
+			border-radius: 8px;
+			border: 1px solid transparent;
+			padding: 0.6em 1.2em;
+			font-size: 1em;
+			font-weight: 500;
+			font-family: inherit;
+			color: #0f0f0f;
+			background-color: #ffffff;
+			transition: border-color 0.25s;
+			box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+			outline: none;
+		}
+		
+		input {
+			width: 6em;
+		}
+		
+		button {
+			cursor: pointer;
+		}
+		
+		button:hover {
+			border-color: #396cd8;
+		}
+		button:active {
+			border-color: #396cd8;
+			background-color: #e8e8e8;
+		}
+		
+		.panel {
+			border: 1px solid #dcdcdc;
+			border-radius: 10px;
+			padding: 0.75rem 1rem 1rem;
+			margin-bottom: 1rem;
+			overflow-x: auto;
+		}
+		
+		.panel h2 {
+			font-size: 1em;
+			margin: 0 0 0.6rem;
+		}
+		
+		.count {
+			color: #8a8a8a;
+			font-weight: 400;
+		}
+		
+		.empty {
+			color: #8a8a8a;
+			margin: 0;
+		}
+		
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 0.9em;
+		}
+		
+		th,
+		td {
+			text-align: left;
+			padding: 0.3em 0.5em;
+			border-bottom: 1px solid #eaeaea;
+		}
+		
+		th {
+			color: #8a8a8a;
+			font-weight: 500;
+		}
+		
+		@media (prefers-color-scheme: dark) {
+			:root {
+				color: #f6f6f6;
+				background-color: #2f2f2f;
+			}
+			
+			input,
+			button {
+				color: #ffffff;
+				background-color: #0f0f0f98;
+			}
+			button:active {
+				background-color: #0f0f0f69;
+			}
+			
+			.panel {
+				border-color: #4a4a4a;
+			}
+			
+			th,
+			td {
+				border-bottom-color: #3f3f3f;
+			}
+		}
+	\end{minted}
+	
+	\textbf{types.ts}
+	
+	\begin{minted}{typescript}
+		export interface Applicant {
+			id: number;
+			last_name: string;
+			first_name: string;
+			patronymic: string;
+			address: string;
+			phone: string;
+			grades: number[];
+			average: number;
+		}
+		
+		export interface Report {
+			all: Applicant[];
+			failing: Applicant[];
+			above_threshold: Applicant[];
+			top_n: Applicant[];
+			borderline: Applicant[];
+		}
+	\end{minted}
+\end{document}
