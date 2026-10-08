@@ -88,3 +88,5 @@ X | Rust | [Методи та технології паралельного пр
 X | Kotlin | [Сучасні мобільні операційні системи](./10thSemester/Modern-Mobile-OS/)
 X | CUDA | [Технології графічного процесінгу](./10thSemester/Graphics-Processing-Technologies/)
 X | C, AVR Assembly | [Технології та методика програмування вбудованих систем](./10thSemester/Embedded/)
+XI | Rust, TypeScript | [Проектування програмних систем для мобільних пристроїв](./11thSemester/Mobile-Systems-Design/)
+
