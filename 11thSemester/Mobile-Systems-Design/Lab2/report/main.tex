@@ -1,0 +1,1385 @@
+\documentclass[14pt, a4paper]{extreport}
+
+\usepackage{kpi-lab}
+\input{data}
+
+\begin{document}
+	\pagenumbering{gobble}
+	
+	\begin{titlepage}
+		\begin{center}
+			\normalsize
+			Національний технічний університет України\\
+			«Київський політехнічний інститут імені Ігоря Сікорського» \\[0.5em]
+			Факультет інформатики та обчислювальної техніки\\
+			Кафедра обчислювальної техніки
+			
+			\vfill
+			
+			{\large \textbf{ЗВІТ}\\[0.5em]}
+			{з лабораторної роботи №\LabNumber \\}
+			{з дисципліни <<\CourseTitle>>}
+			
+			\vspace{2em}
+			
+			{\textbf{<<\Topic>>}}
+			
+			\vspace{1em}
+			
+			{\textbf{Варіант №\Variant}}
+			
+			\vfill
+			
+			\begin{flushright}
+				Виконав: \\ студент \CourseNumber{} курсу, групи \StudentGroup \\
+				\StudentName \\[1em]
+				Перевірив: \\ \Teacher
+			\end{flushright}
+			
+			\vfill
+			
+			\begin{flushright}
+				Дата здачі: \DTMtoday
+			\end{flushright}
+			
+			\vspace{5em}
+			КИЇВ -- \ReportYear
+		\end{center}
+	\end{titlepage}
+	
+	\clearpage
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+	
+	\subsection*{Мета} 
+	Вивчити основні шаблони проектування і розглянути відносини та взаємодії між класами або об'єктами в них.
+	
+	\subsection*{Завдання}
+	Розробити Android додаток з використанням архітектури MVC, що виконує введення, виведення та редагування даних відповідно  до завдання за варіантом. 
+	Для виконання кожного пункту завдання \texttt{(a-в)} використовувати окрему Activity та модель. 
+	Запустити програму на емуляторі.
+	
+	\subsection*{Завдання за варіантом}
+	Доменна область: Абітурієнт. 
+	
+	Поля:  ID, Прізвище, Ім'я, По-батькові, Адреса, Телефон, Оцінки. 
+	
+	Створити масив об'єктів. 
+	
+	Вивести:
+	
+	\begin{enumerate}[label=\alph*.]
+		\item список абітурієнтів, які мають незадовільні оцінки;
+		
+		\item список абітурієнтів, середній бал у яких вище заданого;
+		
+		\item вибрати задане число \texttt{N} абітурієнтів, що мають найбільш високій середній бал (вивести також повний список абітурієнтів, які мають напівпрохідний бал).
+	\end{enumerate}
+	
+	\section*{Хід роботи.}
+	
+	Для виконання роботи було повторно використано базовий стек з першого завдання -- Rust, Tauri, React з TypeScript. Проєкт \texttt{Lab2} створено копіюванням структури \texttt{Lab1} з подальшою заміною всіх ідентифікаторів: назви пакету в \texttt{Cargo.toml} та \texttt{package.json}, \texttt{productName} та \texttt{identifier} (\texttt{com.xairaven.lab2}) у \texttt{tauri.conf.json}, а також простору імен Android-пакету.
+	
+	Головна складність завдання полягала в поєднанні двох вимог: архітектури MVC та використання окремої Activity і моделі для кожного пункту завдання. Проблема в тому, що \texttt{Activity} -- це конкретний клас платформи Android, а застосунок на Tauri технічно складається з однієї-єдиної Activity, яка монтує системний WebView. Кількох справжніх Activity в межах одного Tauri-застосунку одночасно не існує. Було прийнято рішення не імітувати це лише назвою (називаючи React-компоненти <<Activity>>, хоча вони нею не є), а відтворити ті механізми, які Activity реально виконує: окремий, адресований власним URL екран із власним стеком навігації та власну пару Controller+Model, яка не ділиться даними з іншими екранами напряму.
+
+	Реалізована архітектура:
+
+	\begin{itemize}
+		\item \textbf{Model} -- \texttt{applicant.rs} (сутність \texttt{Applicant} та чисті функції бізнес-логіки: \texttt{average\_grade}, \texttt{has\_failing\_grade}, \texttt{is\_above\_average}, \texttt{is\_borderline}) та новий, порівняно з першою роботою, файл \texttt{repository.rs} -- спільне мутабельне сховище під \texttt{Mutex}, зареєстроване як керований стан Tauri (\texttt{tauri::State}). Якщо в Лаб.1 було достатньо щоразу генерувати свіжий масив даних (оскільки він лише читався), то Лаб.2 вимагає редагування, тож дані повинні зберігати стан між викликами різних екранів.
+
+		\item \textbf{Controller} -- модуль \texttt{screen}, що містить чотири підмодулі: \texttt{failing}, \texttt{threshold}, \texttt{top} та \texttt{students}. Кожен підмодуль -- це одна чи декілька функцій \texttt{\#[tauri::command]}, яка отримує запит від View, звертається до Model і повертає дані у форматі, призначеному саме для свого екрану (наприклад, \texttt{TopNResult \{ top, borderline \}} -- структура, про яку Model нічого не знає).
+
+		\item \textbf{View} -- компоненти \texttt{src/screens/*.tsx}: \texttt{Home.tsx} (головний екран-меню, аналог лаунчера застосунку), \texttt{Failing.tsx}, \texttt{Threshold.tsx}, \texttt{TopN.tsx} -- по одному на кожен пункт \texttt{(a-в)}, та \texttt{Students.tsx} -- екран введення, виведення й редагування. Компоненти не містять жодної бізнес-логіки, лише відображення та виклик свого Controller через \texttt{invoke()}.
+	\end{itemize}
+
+	Для навігації між екранами використано бібліотеку \texttt{react-router-dom} у режимі \texttt{HashRouter}. Це надає кожному екрану справжню URL-адресу та додає його до історії браузера -- найближчий доступний у межах одного WebView аналог стеку викликів \texttt{startActivity()}/\texttt{finish()} в Android.
+
+	Введення та редагування реалізовано через команди \texttt{add\_applicant} і \texttt{update\_applicant}, що приймають DTO \texttt{ApplicantInput} (без поля \texttt{id} -- його призначає сховище). Команда редагування повертає \texttt{Result<ApplicantView, String>}: якщо абітурієнта з вказаним ID не існує, помилка передається через IPC та потрапляє у відхилений Promise на фронтенді, де відображається користувачу.
+	
+	\image{8.5cm}{screen-main}
+
+	Повторно застосовано суворий набір лінтів Clippy, налаштований у \texttt{Cargo.toml} ще в Лаб.1 (\texttt{pedantic} та \texttt{nursery} на рівні попередження, а \texttt{unwrap\_used}, \texttt{expect\_used}, \texttt{panic}, \texttt{indexing\_slicing} та \texttt{unsafe\_code} -- заборонено повністю). Це змусило, наприклад, реалізувати блокування \texttt{Mutex} через \texttt{unwrap\_or\_else(PoisonError::into\_inner)} замість \texttt{unwrap()}.
+
+	Під час ініціалізації Android-проєкту для Лаб.2 довелося знову зіткнутися з помилкою \texttt{pnpm-native}, описаною в звіті з Лаб.1. Цього разу, однак, виявилось, що вона вже виправлена розробниками Tauri в релізі \texttt{@tauri-apps/cli} версії 2.12.0 (мій Pull Request, згаданий у звіті з Лаб.1, був прийнятий саме в цьому релізі) -- тож після оновлення залежності ручний патч згенерованого файлу \texttt{BuildTask.kt} більше не знадобився.
+
+	\image{18cm}{screen-applicants}
+
+	Під час перевірки застосунку на емуляторі виявлено й виправлено дві проблеми.
+
+	По-перше, таблиця зі списком абітурієнтів не вміщувалась у ширину екрану, але й не прокручувалась горизонтально. Причиною виявилось правило CSS \texttt{table \{ width: 100\%; \}} -- воно змушувало браузер стискати вміст комірок (переносити текст на новий рядок), а не виходити за межі контейнера, тому контейнеру з \texttt{overflow-x: auto} просто не було що прокручувати. Виправлення: заміна \texttt{width} на \texttt{min-width: 100\%} та додавання \texttt{white-space: nowrap} для комірок -- тепер таблиця на вузькому екрані справді виходить за межі контейнера, і цей контейнер стає прокручуваним.
+	
+	\image{5cm}{screen-bad-grades}
+
+	По-друге, кирилицю не вдавалось ввести з фізичної клавіатури хоста. Причина в тому, що емулятор пересилає натискання клавіш як натискання \textit{апаратної} клавіатури, яку Android інтерпретує через власну внутрішню розкладку, а не через системну IME (на кшталт Gboard) -- і ця апаратна емуляція переважно розрахована на латиницю. Крім того, коли Android вважає, що підключена апаратна клавіатура, він автоматично приховує програмну клавіатуру. Проблему вирішено вимкненням пересилання апаратної клавіатури в налаштуваннях емулятора (Extended Controls -- Settings -- General), після чого при фокусі на полі вводу з'являється Gboard, якому достатньо додати українську розкладку.
+	
+	\image{6cm}{screen-average}
+
+	Отже, принцип MVC у роботі реалізовано так: Model (\texttt{applicant.rs} + \texttt{repository.rs}) не має жодного уявлення про Tauri, IPC чи React -- її можна покрити модульними тестами (\texttt{cargo test}) без жодної участі інтерфейсу. Controller (модуль \texttt{screen}) -- єдина ланка, яка знає і про Model, і про формат, потрібний конкретному View; саме тут відбувається <<переклад>> внутрішніх даних у структуру, зручну для відображення. View (компоненти \texttt{src/screens}) не містить обчислень -- лише розмітку та виклик Controller. Пункти завдання \texttt{(a-в)} отримали кожен свою пару Controller+Model-представлення (\texttt{screen::failing}, \texttt{screen::threshold} та \texttt{screen::top} із власною структурою \texttt{TopNResult}), що є функціональним еквівалентом вимоги <<окрема Activity і модель на кожен пункт>> у межах однієї WebView-Activity, властивої Tauri.
+	
+	\image{8cm}{screen-top}
+
+	\subsection*{Висновок}
+
+	Під час виконання лабораторної роботи розроблено Android-додаток за доменною областю <<Абітурієнт>> з використанням архітектурного шаблону MVC. Оскільки обраний стек (Tauri) не передбачає кількох справжніх Activity в межах одного застосунку, вимогу <<окрема Activity і модель на кожен пункт завдання>> реалізовано функціонально: кожен пункт \texttt{(a-в)} отримав власний маршрут (екран) з власним стеком навігації, власну Controller-команду на боці Rust та власну модель-представлення даних. Реалізовано повний цикл введення, виведення та редагування даних абітурієнтів через окремий екран зі спільним мутабельним станом (\texttt{Repository}), захищеним \texttt{Mutex}. Застосунок успішно скомпільовано та перевірено на емуляторі Android; у процесі перевірки виявлено й виправлено помилку стилів, через яку таблиця не прокручувалась горизонтально на вузьких екранах.
+
+	\section*{Контрольні запитання.}
+
+	\begin{enumerate}
+		\item \textbf{Дайте визначення поняття <<патерн>>} \\ Патерн (шаблон проєктування) -- це узагальнений, перевірений практикою опис типового рішення задачі, яка регулярно виникає в певному контексті розробки програмного забезпечення. Патерн не є готовим фрагментом коду -- це опис структури класів чи об'єктів та їхньої взаємодії, який адаптується під конкретну мову програмування та конкретну задачу. Патерни фіксують накопичений досвід спільноти розробників і дозволяють використовувати перевірені рішення замість винаходу власних щоразу заново.
+
+		\item \textbf{Дайте характеристику шаблону Model -- View -- Controller (MVC)} \\ MVC -- архітектурний шаблон, що розділяє застосунок на три взаємопов'язані компоненти. Model відповідає за дані та бізнес-логіку, не маючи жодного уявлення про інтерфейс користувача. View відповідає лише за відображення даних. Controller приймає дії користувача (через View), перетворює їх на звернення до Model і за потреби оновлює View відповідно до нового стану Model. Класична схема MVC допускає, що View може напряму спостерігати за змінами Model (патерн <<Спостерігач>>), через що межа між View та Controller на практиці часто розмивається -- особливо в Android, де роль Controller і частково View традиційно виконує один і той самий клас \texttt{Activity}.
+
+		\item \textbf{Дайте характеристику шаблону Model -- View -- Presenter (MVP)} \\ MVP -- варіація MVC, у якій View повністю пасивний і ніколи не звертається до Model напряму. Весь зв'язок між Model і View проходить через Presenter: View через інтерфейс повідомляє Presenter про дії користувача, Presenter звертається до Model, отримує результат і явно викликає методи View для оновлення відображення. Оскільки View описаний інтерфейсом, а не конкретним класом платформи, Presenter легко покрити модульними тестами без залучення реального UI -- це головна практична перевага MVP над MVC, зокрема в класичній розробці під Android.
+
+		\item \textbf{Дайте характеристику шаблону Model -- View -- ViewModel (MVVM).} \\ MVVM -- шаблон, у якому ViewModel взагалі не тримає посилання на View (на відміну від Presenter у MVP). Натомість ViewModel надає спостережуваний стан (наприклад, \texttt{LiveData}/\texttt{StateFlow} в Android Jetpack, чи \texttt{Observable} в інших системах), на який View підписується самостійно через механізм прив'язки даних (data binding). Дії користувача View передає у ViewModel як виклики методів чи команди. Оскільки ViewModel не знає про існування конкретного View, одна ViewModel потенційно може обслуговувати декілька різних View, а зв'язок стає ще слабшим, ніж у MVP.
+
+		\item \textbf{Перелічіть проблеми, з якими стикається шаблон MVC.} \\ Основна проблема MVC -- нечітка межа між View і Controller, яка на практиці часто призводить до того, що один клас виконує обидві ролі (класичний приклад -- <<роздута Activity>> в Android, що бере на себе і обробку дій користувача, і логіку відображення). Це ускладнює модульне тестування, оскільки Controller виявляється прив'язаним до класів платформи, які неможливо інстанціювати поза реальним UI-середовищем. Крім того, за прямого спостереження View за Model зв'язки стають двонапрямленими й заплутаними зі зростанням застосунку, а Controller зі збільшенням кількості екранів схильний накопичувати дедалі більше непов'язаної між собою логіки.
+
+		\item \textbf{Назвіть основні принципи шаблону HMVC.} \\ HMVC (Hierarchical Model -- View -- Controller) будується на кількох принципах: ієрархічна організація застосунку у вигляді дерева незалежних MVC-трійок замість однієї монолітної трійки на весь застосунок; інкапсуляція кожної трійки -- вона не знає про внутрішню реалізацію інших, а взаємодіє з ними лише через їхні контролери, як із <<чорною скринькою>>; контролер як єдина точка входу для своєї трійки, через яку проходять усі запити ззовні; можливість повторно використовувати цілу трійку Model--View--Controller як самостійний, незалежний модуль в інших частинах застосунку чи навіть в інших проєктах.
+
+		\item \textbf{Назвіть види HMVC.} \\ HMVC здебільшого поділяють за рівнем, на якому формується ієрархія трійок. На рівні модулів (module-level HMVC) кожна незалежна функціональна частина застосунку (наприклад, окремий розділ чи фіча) є власною MVC-трійкою, яку головний (front) контролер лише викликає та комбінує результати. На рівні віджетів (widget-level HMVC) окремою трійкою стає кожен UI-компонент, що дозволяє комбінувати незалежні, повторно використовувані фрагменти інтерфейсу в межах однієї сторінки.
+	\end{enumerate}
+
+	\pagebreak
+
+	\section*{Лістинг.}
+
+	\textbf{main.rs}
+
+	\begin{minted}{rust}
+		// Prevents additional console window on Windows in release, DO NOT REMOVE!!
+		#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+		fn main() {
+			lab2_lib::run();
+		}
+	\end{minted}
+
+	\textbf{lib.rs}
+
+	\begin{minted}{rust}
+		mod applicant;
+		mod repository;
+		mod sample;
+		mod screen;
+
+		use repository::Repository;
+		use std::sync::Mutex;
+
+		#[cfg_attr(mobile, tauri::mobile_entry_point)]
+		pub fn run() {
+			if let Err(err) = tauri::Builder::default()
+				.plugin(tauri_plugin_opener::init())
+				.manage(Mutex::new(Repository::new()))
+				.invoke_handler(tauri::generate_handler![
+					screen::failing::get_failing,
+					screen::threshold::get_above_threshold,
+					screen::top::get_top_n,
+					screen::students::list_applicants,
+					screen::students::add_applicant,
+					screen::students::update_applicant,
+				])
+				.run(tauri::generate_context!())
+			{
+				eprintln!("Error occurred while running Tauri application: {err}");
+				std::process::exit(1);
+			}
+		}
+	\end{minted}
+
+	\textbf{applicant.rs}
+
+	\begin{minted}{rust}
+		use serde::{Deserialize, Serialize};
+
+		#[derive(Debug, Clone, Serialize)]
+		pub struct Applicant {
+			pub id: u32,
+			pub last_name: String,
+			pub first_name: String,
+			pub patronymic: String,
+			pub address: String,
+			pub phone: String,
+			pub grades: Vec<u8>,
+		}
+
+		pub const PASSING_GRADE: u8 = 4;
+		pub const BORDERLINE_RANGE: std::ops::Range<f64> = 4.0..6.0;
+
+		impl Applicant {
+			pub fn average_grade(&self) -> f64 {
+				if self.grades.is_empty() {
+					return 0.0;
+				}
+				let sum = f64::from(self.grades.iter().sum::<u8>());
+				#[allow(clippy::cast_precision_loss)]
+				let avg = sum / self.grades.len() as f64;
+
+				(avg * 100.0).round() / 100.0
+			}
+
+			pub fn has_failing_grade(&self) -> bool {
+				self.grades.iter().any(|&g| g < PASSING_GRADE)
+			}
+
+			pub fn is_above_average(&self, threshold: f64) -> bool {
+				self.average_grade() > threshold
+			}
+
+			pub fn is_borderline(&self) -> bool {
+				BORDERLINE_RANGE.contains(&self.average_grade())
+			}
+		}
+
+		#[derive(Debug, Clone, Serialize)]
+		pub struct ApplicantView {
+			#[serde(flatten)]
+			pub applicant: Applicant,
+			pub average: f64,
+		}
+
+		impl From<&Applicant> for ApplicantView {
+			fn from(a: &Applicant) -> Self {
+				Self {
+					applicant: a.clone(),
+					average: a.average_grade(),
+				}
+			}
+		}
+
+		/// Form payload for adding/editing an applicant (no `id` -- the repository
+		/// assigns that on add, and keeps it unchanged on update).
+		#[derive(Debug, Clone, Deserialize)]
+		pub struct ApplicantInput {
+			pub last_name: String,
+			pub first_name: String,
+			pub patronymic: String,
+			pub address: String,
+			pub phone: String,
+			pub grades: Vec<u8>,
+		}
+
+		impl Applicant {
+			pub fn update_by_input(&mut self, input: ApplicantInput) {
+				self.last_name = input.last_name;
+				self.first_name = input.first_name;
+				self.patronymic = input.patronymic;
+				self.address = input.address;
+				self.phone = input.phone;
+				self.grades = input.grades;
+			}
+		}
+
+		#[cfg(test)]
+		mod tests {
+			use super::Applicant;
+			use super::BORDERLINE_RANGE;
+			use crate::sample;
+
+			fn applicant(grades: Vec<u8>) -> Applicant {
+				Applicant {
+					id: 0,
+					last_name: "Kovalov".into(),
+					first_name: "Alex".into(),
+					patronymic: "Oleksiyovuch".into(),
+					address: "Somewhere".into(),
+					phone: "Idk?".into(),
+					grades,
+				}
+			}
+
+			#[test]
+			fn average_grade_rounds_to_two_decimals() {
+				assert_eq!(applicant(vec![7, 8, 9]).average_grade(), 8.0);
+				assert_eq!(applicant(vec![5, 6]).average_grade(), 5.5);
+			}
+
+			#[test]
+			fn detects_failing_grades() {
+				assert!(applicant(vec![3, 10, 10]).has_failing_grade());
+				assert!(!applicant(vec![4, 10, 10]).has_failing_grade());
+			}
+
+			#[test]
+			fn filters_above_threshold() {
+				let applicants = sample::get_applicants();
+				let threshold = 9.0;
+
+				let result: Vec<Applicant> = applicants
+					.into_iter()
+					.filter(|a| a.is_above_average(threshold))
+					.collect();
+
+				assert!(result.iter().all(|a| a.average_grade() > 9.0));
+			}
+
+			#[test]
+			fn top_n_is_sorted_descending_and_limited() {
+				let mut applicants = sample::get_applicants();
+				let top_n = 3;
+
+				applicants.sort_by(|a, b| {
+					let a = a.average_grade();
+					let b = b.average_grade();
+					b.total_cmp(&a)
+				});
+				let result: Vec<Applicant> = applicants.into_iter().take(top_n).collect();
+
+				assert_eq!(result.len(), top_n);
+				assert!(result[0].average_grade() >= result[1].average_grade());
+				assert!(result[1].average_grade() >= result[2].average_grade());
+			}
+
+			#[test]
+			fn borderline_stays_within_range() {
+				let applicants = sample::get_applicants();
+
+				let result: Vec<Applicant> = applicants
+					.into_iter()
+					.filter(|a| a.is_borderline())
+					.collect();
+
+				assert!(
+					result
+						.iter()
+						.all(|a| BORDERLINE_RANGE.contains(&a.average_grade()))
+				);
+			}
+		}
+	\end{minted}
+
+	\textbf{repository.rs}
+
+	\begin{minted}{rust}
+		//! Shared mutable store behind `tauri::State<Mutex<Repository>>`.
+		//!
+		//! Lab 1 could rebuild a fresh sample array on every query since it was
+		//! read-only. Lab 2 needs edits to persist across screens, so this plays
+		//! the role a singleton repository (or a real database) would play behind
+		//! several Activities in a native Android MVC app.
+
+		use crate::applicant::{Applicant, ApplicantInput};
+		use crate::sample;
+
+		pub struct Repository {
+			applicants: Vec<Applicant>,
+			next_id: u32,
+		}
+
+		impl Repository {
+			pub fn new() -> Self {
+				let applicants = sample::get_applicants();
+				let next_id = applicants.iter().map(|a| a.id).max().unwrap_or(0) + 1;
+				Self {
+					applicants,
+					next_id,
+				}
+			}
+
+			pub fn list(&self) -> &[Applicant] {
+				&self.applicants
+			}
+
+			pub fn add(&mut self, input: ApplicantInput) -> Applicant {
+				let applicant = Applicant {
+					id: self.next_id,
+					last_name: input.last_name,
+					first_name: input.first_name,
+					patronymic: input.patronymic,
+					address: input.address,
+					phone: input.phone,
+					grades: input.grades,
+				};
+				self.next_id += 1;
+				self.applicants.push(applicant.clone());
+				applicant
+			}
+
+			pub fn update(
+				&mut self, id: u32, input: ApplicantInput,
+			) -> Result<Applicant, String> {
+				let applicant = self
+					.applicants
+					.iter_mut()
+					.find(|a| a.id == id)
+					.ok_or_else(|| format!("Абітурієнта з ID {id} не знайдено"))?;
+
+				applicant.update_by_input(input);
+
+				Ok(applicant.clone())
+			}
+		}
+
+		impl Default for Repository {
+			fn default() -> Self {
+				Self::new()
+			}
+		}
+	\end{minted}
+
+	\textbf{sample.rs}
+
+	\begin{minted}{rust}
+		use crate::applicant::Applicant;
+
+		pub fn get_applicants() -> Vec<Applicant> {
+			vec![
+			Applicant {
+				id: 1,
+				last_name: "Бондаренко".into(),
+				first_name: "Олена".into(),
+				patronymic: "Іванівна".into(),
+				address: "м. Київ, вул. Хрещатик, 10".into(),
+				phone: "+380501112233".into(),
+				grades: vec![10, 11, 9, 12],
+			},
+			Applicant {
+				id: 2,
+				last_name: "Шевченко".into(),
+				first_name: "Тарас".into(),
+				patronymic: "Григорович".into(),
+				address: "м. Львів, вул. Франка, 5".into(),
+				phone: "+380671234567".into(),
+				grades: vec![3, 5, 4, 6],
+			},
+			Applicant {
+				id: 3,
+				last_name: "Мельник".into(),
+				first_name: "Ірина".into(),
+				patronymic: "Олексіївна".into(),
+				address: "м. Одеса, вул. Дерибасівська, 22".into(),
+				phone: "+380931112244".into(),
+				grades: vec![6, 7, 5, 8],
+			},
+			Applicant {
+				id: 4,
+				last_name: "Ткаченко".into(),
+				first_name: "Андрій".into(),
+				patronymic: "Петрович".into(),
+				address: "м. Харків, вул. Сумська, 15".into(),
+				phone: "+380661234455".into(),
+				grades: vec![2, 3, 4, 5],
+			},
+			Applicant {
+				id: 5,
+				last_name: "Коваль".into(),
+				first_name: "Марія".into(),
+				patronymic: "Сергіївна".into(),
+				address: "м. Дніпро, пр. Яворницького, 30".into(),
+				phone: "+380501239988".into(),
+				grades: vec![12, 12, 11, 12],
+			},
+			Applicant {
+				id: 6,
+				last_name: "Кравець".into(),
+				first_name: "Віктор".into(),
+				patronymic: "Миколайович".into(),
+				address: "м. Запоріжжя, вул. Соборна, 8".into(),
+				phone: "+380671239900".into(),
+				grades: vec![7, 6, 7, 6],
+			},
+			Applicant {
+				id: 7,
+				last_name: "Романюк".into(),
+				first_name: "Софія".into(),
+				patronymic: "Богданівна".into(),
+				address: "м. Івано-Франківськ, вул. Незалежності, 3".into(),
+				phone: "+380931238877".into(),
+				grades: vec![9, 10, 8, 9],
+			},
+			Applicant {
+				id: 8,
+				last_name: "Гончар".into(),
+				first_name: "Олег".into(),
+				patronymic: "Васильович".into(),
+				address: "м. Полтава, вул. Соборності, 12".into(),
+				phone: "+380661237766".into(),
+				grades: vec![4, 3, 5, 4],
+			},
+			Applicant {
+				id: 9,
+				last_name: "Лисенко".into(),
+				first_name: "Наталія".into(),
+				patronymic: "Ігорівна".into(),
+				address: "м. Чернігів, вул. Шевченка, 7".into(),
+				phone: "+380501236655".into(),
+				grades: vec![8, 7, 9, 7],
+			},
+			Applicant {
+				id: 10,
+				last_name: "Захарчук".into(),
+				first_name: "Дмитро".into(),
+				patronymic: "Олександрович".into(),
+				address: "м. Вінниця, вул. Соборна, 20".into(),
+				phone: "+380671235544".into(),
+				grades: vec![5, 6, 5, 6],
+			},
+			]
+		}
+	\end{minted}
+
+	\textbf{screen.rs}
+
+	\begin{minted}{rust}
+		pub mod failing;
+		pub mod students;
+		pub mod threshold;
+		pub mod top;
+	\end{minted}
+
+	\textbf{screen/failing.rs}
+
+	\begin{minted}{rust}
+		//! Завдання (a): абітурієнти, які мають незадовільні оцінки.
+
+		// State<T> must be taken by value in every command here -- that's Tauri's
+		// calling convention, not a real ownership need.
+		#![allow(clippy::needless_pass_by_value)]
+
+		use crate::applicant::ApplicantView;
+		use crate::repository::Repository;
+		use std::sync::{Mutex, PoisonError};
+		use tauri::State;
+
+		#[tauri::command]
+		pub fn get_failing(state: State<'_, Mutex<Repository>>) -> Vec<ApplicantView> {
+			let repo = state.lock().unwrap_or_else(PoisonError::into_inner);
+			repo.list()
+				.iter()
+				.filter(|a| a.has_failing_grade())
+				.map(ApplicantView::from)
+				.collect()
+		}
+	\end{minted}
+
+	\textbf{screen/threshold.rs}
+
+	\begin{minted}{rust}
+		//! Завдання (б): абітурієнти, середній бал у яких вище заданого порогу.
+
+		// State<T> must be taken by value in every command here -- that's Tauri's
+		// calling convention, not a real ownership need.
+		#![allow(clippy::needless_pass_by_value)]
+
+		use crate::applicant::ApplicantView;
+		use crate::repository::Repository;
+		use std::sync::{Mutex, PoisonError};
+		use tauri::State;
+
+		#[tauri::command]
+		pub fn get_above_threshold(
+			state: State<'_, Mutex<Repository>>, threshold: f64,
+		) -> Vec<ApplicantView> {
+			let repo = state.lock().unwrap_or_else(PoisonError::into_inner);
+			repo.list()
+				.iter()
+				.filter(|a| a.is_above_average(threshold))
+				.map(ApplicantView::from)
+				.collect()
+		}
+	\end{minted}
+
+	\textbf{screen/top.rs}
+
+	\begin{minted}{rust}
+		//! Завдання (в): N абітурієнтів з найвищим середнім балом,
+		//! а також повний список тих, хто має напівпрохідний бал.
+
+		// State<T> must be taken by value in every command here -- that's Tauri's
+		// calling convention, not a real ownership need.
+		#![allow(clippy::needless_pass_by_value)]
+
+		use crate::applicant::ApplicantView;
+		use crate::repository::Repository;
+		use serde::Serialize;
+		use std::sync::{Mutex, PoisonError};
+		use tauri::State;
+
+		#[derive(Debug, Clone, Serialize)]
+		pub struct TopNResult {
+			pub top: Vec<ApplicantView>,
+			pub borderline: Vec<ApplicantView>,
+		}
+
+		#[tauri::command]
+		pub fn get_top_n(state: State<'_, Mutex<Repository>>, n: usize) -> TopNResult {
+			// Clone out of the guard immediately so the lock isn't held while we
+			// sort/filter below.
+			let mut applicants = state
+				.lock()
+				.unwrap_or_else(PoisonError::into_inner)
+				.list()
+				.to_vec();
+			applicants.sort_by(|a, b| b.average_grade().total_cmp(&a.average_grade()));
+
+			let top = applicants.iter().take(n).map(ApplicantView::from).collect();
+			let borderline = applicants
+				.iter()
+				.filter(|a| a.is_borderline())
+				.map(ApplicantView::from)
+				.collect();
+
+			TopNResult { top, borderline }
+		}
+	\end{minted}
+
+	\textbf{screen/students.rs}
+
+	\begin{minted}{rust}
+		//! Введення, виведення та редагування даних: список абітурієнтів + форма
+		//! додавання/редагування.
+
+		// State<T> must be taken by value in every command here -- that's Tauri's
+		// calling convention, not a real ownership need.
+		#![allow(clippy::needless_pass_by_value)]
+
+		use crate::applicant::{ApplicantInput, ApplicantView};
+		use crate::repository::Repository;
+		use std::sync::{Mutex, PoisonError};
+		use tauri::State;
+
+		#[tauri::command]
+		pub fn list_applicants(state: State<'_, Mutex<Repository>>) -> Vec<ApplicantView> {
+			let repo = state.lock().unwrap_or_else(PoisonError::into_inner);
+			repo.list().iter().map(ApplicantView::from).collect()
+		}
+
+		#[tauri::command]
+		pub fn add_applicant(
+			state: State<'_, Mutex<Repository>>, input: ApplicantInput,
+		) -> ApplicantView {
+			let mut repo = state.lock().unwrap_or_else(PoisonError::into_inner);
+			ApplicantView::from(&repo.add(input))
+		}
+
+		#[tauri::command]
+		pub fn update_applicant(
+			state: State<'_, Mutex<Repository>>, id: u32, input: ApplicantInput,
+		) -> Result<ApplicantView, String> {
+			let mut repo = state.lock().unwrap_or_else(PoisonError::into_inner);
+			repo.update(id, input).map(|a| ApplicantView::from(&a))
+		}
+	\end{minted}
+
+	\textbf{types.ts}
+
+	\begin{minted}{typescript}
+		// Mirrors src-tauri/src/applicant.rs and the per-screen result shapes --
+		// kept in sync by hand.
+
+		export interface Applicant {
+			id: number;
+			last_name: string;
+			first_name: string;
+			patronymic: string;
+			address: string;
+			phone: string;
+			grades: number[];
+			average: number;
+		}
+
+		// Form payload for add/edit -- no id/average, those are server-assigned.
+		export interface ApplicantInput {
+			last_name: string;
+			first_name: string;
+			patronymic: string;
+			address: string;
+			phone: string;
+			grades: number[];
+		}
+
+		export interface TopNResult {
+			top: Applicant[];
+			borderline: Applicant[];
+		}
+	\end{minted}
+
+	\textbf{main.tsx}
+
+	\begin{minted}{tsx}
+		import React from "react";
+		import ReactDOM from "react-dom/client";
+		import App from "./App";
+
+		ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+		<React.StrictMode>
+		<App />
+		</React.StrictMode>,
+		);
+	\end{minted}
+
+	\textbf{App.tsx}
+
+	\begin{minted}{tsx}
+		import { HashRouter, Route, Routes } from "react-router-dom";
+		import { Home } from "./screens/Home";
+		import { Students } from "./screens/Students";
+		import { Failing } from "./screens/Failing";
+		import { Threshold } from "./screens/Threshold";
+		import { TopN } from "./screens/TopN";
+		import "./App.css";
+
+		// HashRouter gives each screen a real URL and browser-history back-stack
+		// (the closest available parallel to Android's startActivity/finish() --
+		// Tauri's WebView is a single Activity, so there's no such thing as a
+		// literal second Activity here).
+		function App() {
+			return (
+			<HashRouter>
+			<Routes>
+			<Route path="/" element={<Home />} />
+			<Route path="/students" element={<Students />} />
+			<Route path="/failing" element={<Failing />} />
+			<Route path="/threshold" element={<Threshold />} />
+			<Route path="/top-n" element={<TopN />} />
+			</Routes>
+			</HashRouter>
+			);
+		}
+
+		export default App;
+	\end{minted}
+
+	\textbf{components/ApplicantTable.tsx}
+
+	\begin{minted}{tsx}
+		import type { Applicant } from "../types";
+
+		export function ApplicantTable({ rows }: { rows: Applicant[] }) {
+			if (rows.length === 0) {
+				return <p className="empty">— немає —</p>;
+			}
+
+			return (
+			<table>
+			<thead>
+			<tr>
+			<th>ID</th>
+			<th>ПІБ</th>
+			<th>Оцінки</th>
+			<th>Сер. бал</th>
+			</tr>
+			</thead>
+			<tbody>
+			{rows.map((a) => (
+				<tr key={a.id}>
+				<td>{a.id}</td>
+				<td>
+				{a.last_name} {a.first_name} {a.patronymic}
+				</td>
+				<td>{a.grades.join(", ")}</td>
+				<td>{a.average}</td>
+				</tr>
+				))}
+			</tbody>
+			</table>
+			);
+		}
+	\end{minted}
+
+	\textbf{screens/Home.tsx}
+
+	\begin{minted}{tsx}
+		import { Link } from "react-router-dom";
+
+		export function Home() {
+			return (
+			<main className="container">
+			<h1>Лаб. 2 — Абітурієнт</h1>
+			<p className="subtitle">MVC: кожен пункт — окремий екран і своя модель.</p>
+
+			<nav className="menu">
+			<Link className="menu-item" to="/students">
+			Абітурієнти
+			<span>Перегляд, додавання, редагування</span>
+			</Link>
+			<Link className="menu-item" to="/failing">
+			(a) Незадовільні оцінки
+			</Link>
+			<Link className="menu-item" to="/threshold">
+			(б) Поріг середнього балу
+			</Link>
+			<Link className="menu-item" to="/top-n">
+			(в) Топ-N та напівпрохідний бал
+			</Link>
+			</nav>
+			</main>
+			);
+		}
+	\end{minted}
+
+	\textbf{screens/Failing.tsx}
+
+	\begin{minted}{tsx}
+		import { useEffect, useState } from "react";
+		import { invoke } from "@tauri-apps/api/core";
+		import { Link } from "react-router-dom";
+		import { ApplicantTable } from "../components/ApplicantTable";
+		import type { Applicant } from "../types";
+
+		export function Failing() {
+			const [rows, setRows] = useState<Applicant[] | null>(null);
+
+			useEffect(() => {
+				invoke<Applicant[]>("get_failing").then(setRows);
+			}, []);
+
+			return (
+			<main className="container">
+			<Link className="back" to="/">
+			← На головну
+			</Link>
+			<h1>(a) Незадовільні оцінки</h1>
+			<section className="panel">{rows && <ApplicantTable rows={rows} />}</section>
+			</main>
+			);
+		}
+	\end{minted}
+
+	\textbf{screens/Threshold.tsx}
+
+	\begin{minted}{tsx}
+		import { useEffect, useState } from "react";
+		import { invoke } from "@tauri-apps/api/core";
+		import { Link } from "react-router-dom";
+		import { ApplicantTable } from "../components/ApplicantTable";
+		import type { Applicant } from "../types";
+
+		export function Threshold() {
+			// Kept as a string (not a number) so the input always shows exactly
+			// what was typed -- a controlled number-input round-trip otherwise
+			// produces a "05"-style leading-zero glitch.
+			const [thresholdInput, setThresholdInput] = useState("7");
+			const [rows, setRows] = useState<Applicant[] | null>(null);
+
+			async function compute() {
+				const threshold = Number(thresholdInput) || 0;
+				setRows(await invoke<Applicant[]>("get_above_threshold", { threshold }));
+			}
+
+			useEffect(() => {
+				compute();
+			}, []);
+
+			return (
+			<main className="container">
+			<Link className="back" to="/">
+			← На головну
+			</Link>
+			<h1>(б) Поріг середнього балу</h1>
+
+			<form
+			className="controls"
+			onSubmit={(e) => {
+					e.preventDefault();
+					compute();
+			}}
+			>
+			<label>
+			Поріг серед. балу
+			<input
+			type="number"
+			step="0.1"
+			value={thresholdInput}
+			onChange={(e) => setThresholdInput(e.currentTarget.value)}
+			/>
+			</label>
+			<button type="submit">Обчислити</button>
+			</form>
+
+			<section className="panel">{rows && <ApplicantTable rows={rows} />}</section>
+			</main>
+			);
+		}
+	\end{minted}
+
+	\textbf{screens/TopN.tsx}
+
+	\begin{minted}{tsx}
+		import { useEffect, useState } from "react";
+		import { invoke } from "@tauri-apps/api/core";
+		import { Link } from "react-router-dom";
+		import { ApplicantTable } from "../components/ApplicantTable";
+		import type { TopNResult } from "../types";
+
+		export function TopN() {
+			const [nInput, setNInput] = useState("3");
+			const [result, setResult] = useState<TopNResult | null>(null);
+
+			async function compute() {
+				const n = Number(nInput) || 0;
+				setResult(await invoke<TopNResult>("get_top_n", { n }));
+			}
+
+			useEffect(() => {
+				compute();
+			}, []);
+
+			return (
+			<main className="container">
+			<Link className="back" to="/">
+			← На головну
+			</Link>
+			<h1>(в) Топ-N та напівпрохідний бал</h1>
+
+			<form
+			className="controls"
+			onSubmit={(e) => {
+					e.preventDefault();
+					compute();
+			}}
+			>
+			<label>
+			N
+			<input
+			type="number"
+			min={1}
+			value={nInput}
+			onChange={(e) => setNInput(e.currentTarget.value)}
+			/>
+			</label>
+			<button type="submit">Обчислити</button>
+			</form>
+
+			{result && (
+				<>
+				<section className="panel">
+				<h2>Топ-{nInput} за середнім балом</h2>
+				<ApplicantTable rows={result.top} />
+				</section>
+				<section className="panel">
+				<h2>Напівпрохідний бал (повний список)</h2>
+				<ApplicantTable rows={result.borderline} />
+				</section>
+				</>
+				)}
+			</main>
+			);
+		}
+	\end{minted}
+
+	\textbf{screens/Students.tsx}
+
+	\begin{minted}{tsx}
+		import { useEffect, useState, type FormEvent } from "react";
+		import { invoke } from "@tauri-apps/api/core";
+		import { Link } from "react-router-dom";
+		import type { Applicant, ApplicantInput } from "../types";
+
+		const emptyForm = {
+			last_name: "",
+			first_name: "",
+			patronymic: "",
+			address: "",
+			phone: "",
+			gradesText: "",
+		};
+
+		function parseGrades(text: string): number[] {
+			return text
+				.split(/[,\s]+/)
+				.map((token) => Number(token))
+				.filter((n) => Number.isFinite(n) && n >= 0);
+		}
+
+		export function Students() {
+			const [rows, setRows] = useState<Applicant[] | null>(null);
+			const [editingId, setEditingId] = useState<number | null>(null);
+			const [form, setForm] = useState(emptyForm);
+			const [error, setError] = useState<string | null>(null);
+
+			useEffect(() => {
+				invoke<Applicant[]>("list_applicants").then(setRows);
+			}, []);
+
+			function startEdit(a: Applicant) {
+				setEditingId(a.id);
+				setForm({
+					last_name: a.last_name,
+					first_name: a.first_name,
+					patronymic: a.patronymic,
+					address: a.address,
+					phone: a.phone,
+					gradesText: a.grades.join(", "),
+				});
+				setError(null);
+			}
+
+			function cancelEdit() {
+				setEditingId(null);
+				setForm(emptyForm);
+				setError(null);
+			}
+
+			async function submit(e: FormEvent) {
+				e.preventDefault();
+				const input: ApplicantInput = {
+					last_name: form.last_name,
+					first_name: form.first_name,
+					patronymic: form.patronymic,
+					address: form.address,
+					phone: form.phone,
+					grades: parseGrades(form.gradesText),
+				};
+
+				try {
+					if (editingId === null) {
+						const created = await invoke<Applicant>("add_applicant", { input });
+						setRows((prev) => (prev ? [...prev, created] : [created]));
+					} else {
+						const updated = await invoke<Applicant>("update_applicant", {
+							id: editingId,
+							input,
+						});
+						setRows((prev) =>
+							prev ? prev.map((a) => (a.id === editingId ? updated : a)) : prev,
+						);
+					}
+					cancelEdit();
+				} catch (err) {
+					setError(String(err));
+				}
+			}
+
+			return (
+			<main className="container">
+			<Link className="back" to="/">
+			← На головну
+			</Link>
+			<h1>Абітурієнти</h1>
+
+			<form className="form" onSubmit={submit}>
+			<h2>{editingId === null ? "Додати абітурієнта" : `Редагувати ID ${editingId}`}</h2>
+			{error && <p className="error">{error}</p>}
+			<label>
+			Прізвище
+			<input
+			required
+			value={form.last_name}
+			onChange={(e) => setForm({ ...form, last_name: e.currentTarget.value })}
+			/>
+			</label>
+			<label>
+			Ім'я
+			<input
+			required
+			value={form.first_name}
+			onChange={(e) => setForm({ ...form, first_name: e.currentTarget.value })}
+			/>
+			</label>
+			<label>
+			По-батькові
+			<input
+			value={form.patronymic}
+			onChange={(e) => setForm({ ...form, patronymic: e.currentTarget.value })}
+			/>
+			</label>
+			<label>
+			Адреса
+			<input
+			value={form.address}
+			onChange={(e) => setForm({ ...form, address: e.currentTarget.value })}
+			/>
+			</label>
+			<label>
+			Телефон
+			<input
+			value={form.phone}
+			onChange={(e) => setForm({ ...form, phone: e.currentTarget.value })}
+			/>
+			</label>
+			<label>
+			Оцінки (через кому)
+			<input
+			placeholder="10, 11, 9, 12"
+			value={form.gradesText}
+			onChange={(e) => setForm({ ...form, gradesText: e.currentTarget.value })}
+			/>
+			</label>
+			<div className="form-actions">
+			<button type="submit">{editingId === null ? "Додати" : "Зберегти"}</button>
+			{editingId !== null && (
+				<button type="button" onClick={cancelEdit}>
+				Скасувати
+				</button>
+				)}
+			</div>
+			</form>
+
+			<section className="panel">
+			<h2>
+			Список <span className="count">({rows?.length ?? 0})</span>
+			</h2>
+			{rows && rows.length > 0 ? (
+				<table>
+				<thead>
+				<tr>
+				<th>ID</th>
+				<th>ПІБ</th>
+				<th>Адреса</th>
+				<th>Телефон</th>
+				<th>Оцінки</th>
+				<th>Сер. бал</th>
+				<th></th>
+				</tr>
+				</thead>
+				<tbody>
+				{rows.map((a) => (
+					<tr key={a.id}>
+					<td>{a.id}</td>
+					<td>
+					{a.last_name} {a.first_name} {a.patronymic}
+					</td>
+					<td>{a.address}</td>
+					<td>{a.phone}</td>
+					<td>{a.grades.join(", ")}</td>
+					<td>{a.average}</td>
+					<td>
+					<button type="button" onClick={() => startEdit(a)}>
+					Редагувати
+					</button>
+					</td>
+					</tr>
+					))}
+				</tbody>
+				</table>
+				) : (
+				<p className="empty">— немає —</p>
+				)}
+			</section>
+			</main>
+			);
+		}
+	\end{minted}
+
+	\textbf{App.css}
+
+	\begin{minted}{css}
+		:root {
+			font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+			font-size: 16px;
+			line-height: 24px;
+			font-weight: 400;
+
+			color: #0f0f0f;
+			background-color: #f6f6f6;
+
+			font-synthesis: none;
+			text-rendering: optimizeLegibility;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			-webkit-text-size-adjust: 100%;
+		}
+
+		.container {
+			margin: 0 auto;
+			max-width: 720px;
+			padding: 2rem 1rem 4rem;
+		}
+
+		h1 {
+			text-align: center;
+		}
+
+		.subtitle {
+			text-align: center;
+			color: #8a8a8a;
+			margin-top: -0.5rem;
+		}
+
+		.back {
+			display: inline-block;
+			color: #8a8a8a;
+			text-decoration: none;
+			margin-bottom: 1rem;
+		}
+
+		.back:hover {
+			color: #396cd8;
+		}
+
+		.menu {
+			display: flex;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+
+		.menu-item {
+			display: flex;
+			flex-direction: column;
+			border: 1px solid #dcdcdc;
+			border-radius: 10px;
+			padding: 0.9rem 1.1rem;
+			color: inherit;
+			text-decoration: none;
+			font-weight: 500;
+		}
+
+		.menu-item:hover {
+			border-color: #396cd8;
+		}
+
+		.menu-item span {
+			font-weight: 400;
+			font-size: 0.85em;
+			color: #8a8a8a;
+		}
+
+		.form {
+			display: flex;
+			flex-direction: column;
+			gap: 0.75rem;
+			border: 1px solid #dcdcdc;
+			border-radius: 10px;
+			padding: 1rem 1.1rem;
+			margin-bottom: 1.5rem;
+		}
+
+		.form h2 {
+			font-size: 1em;
+			margin: 0;
+		}
+
+		.form label {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+			font-size: 0.85em;
+		}
+
+		.form input {
+			width: 100%;
+			box-sizing: border-box;
+		}
+
+		.form-actions {
+			display: flex;
+			gap: 0.5rem;
+		}
+
+		.error {
+			color: #d1453b;
+			margin: 0;
+		}
+
+		.controls {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: end;
+			gap: 1rem;
+			justify-content: center;
+			margin-bottom: 2rem;
+		}
+
+		.controls label {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+			font-size: 0.85em;
+		}
+
+		input,
+		button {
+			border-radius: 8px;
+			border: 1px solid transparent;
+			padding: 0.6em 1.2em;
+			font-size: 1em;
+			font-weight: 500;
+			font-family: inherit;
+			color: #0f0f0f;
+			background-color: #ffffff;
+			transition: border-color 0.25s;
+			box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+			outline: none;
+		}
+
+		input {
+			width: 6em;
+		}
+
+		button {
+			cursor: pointer;
+		}
+
+		button:hover {
+			border-color: #396cd8;
+		}
+		button:active {
+			border-color: #396cd8;
+			background-color: #e8e8e8;
+		}
+
+		.panel {
+			border: 1px solid #dcdcdc;
+			border-radius: 10px;
+			padding: 0.75rem 1rem 1rem;
+			margin-bottom: 1rem;
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.panel h2 {
+			font-size: 1em;
+			margin: 0 0 0.6rem;
+		}
+
+		.count {
+			color: #8a8a8a;
+			font-weight: 400;
+		}
+
+		.empty {
+			color: #8a8a8a;
+			margin: 0;
+		}
+
+		table {
+			/* min- not plain width: lets the table grow past the panel on narrow
+				screens instead of cramming/wrapping cells to fit -- that's what makes
+				.panel's overflow-x: auto actually have something to scroll. */
+			min-width: 100%;
+			border-collapse: collapse;
+			font-size: 0.9em;
+		}
+
+		th,
+		td {
+			text-align: left;
+			padding: 0.3em 0.5em;
+			border-bottom: 1px solid #eaeaea;
+			white-space: nowrap;
+		}
+
+		th {
+			color: #8a8a8a;
+			font-weight: 500;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root {
+				color: #f6f6f6;
+				background-color: #2f2f2f;
+			}
+
+			input,
+			button {
+				color: #ffffff;
+				background-color: #0f0f0f98;
+			}
+			button:active {
+				background-color: #0f0f0f69;
+			}
+
+			.panel,
+			.menu-item,
+			.form {
+				border-color: #4a4a4a;
+			}
+
+			th,
+			td {
+				border-bottom-color: #3f3f3f;
+			}
+		}
+	\end{minted}
+\end{document}
