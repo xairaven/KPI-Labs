@@ -3,12 +3,15 @@
 [![LaTeX](https://img.shields.io/badge/LaTeX-008080?style=for-the-badge&logo=latex&logoColor=black)](#)
 [![Rust](https://img.shields.io/badge/Rust-fde7d5?style=for-the-badge&logo=rust&logoColor=black)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](#)
+[![draw.io](https://img.shields.io/badge/draw.io-F08705?style=for-the-badge&logo=diagramsdotnet&logoColor=white)](#)
 
-1. Проектування програмних систем для мобільних пристроїв
+1. Бізнес-аналіз в ІТ
+2. Проектування програмних систем для мобільних пристроїв
 
 Використовуйте розміщені матеріали **виключно** для самоперевірки.
 
 
 Технічний стек | Дисципліна | Англійською
 -------------- | ---------- | -----------------
+draw.io | [Бізнес-аналіз в ІТ](./Business-Analysis/) | IT Business Analysis
 Rust, TypeScript, React | [Проектування програмних систем для мобільних пристроїв](./Mobile-Systems-Design/) | Designing Software Systems for Mobile Devices
