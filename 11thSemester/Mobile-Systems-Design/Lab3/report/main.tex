@@ -1,0 +1,284 @@
+\documentclass[14pt, a4paper]{extreport}
+
+\usepackage{kpi-lab}
+\input{data}
+
+\begin{document}
+	\pagenumbering{gobble}
+	
+	\begin{titlepage}
+		\begin{center}
+			\normalsize
+			Національний технічний університет України\\
+			«Київський політехнічний інститут імені Ігоря Сікорського» \\[0.5em]
+			Факультет інформатики та обчислювальної техніки\\
+			Кафедра обчислювальної техніки
+			
+			\vfill
+			
+			{\large \textbf{ЗВІТ}\\[0.5em]}
+			{з лабораторної роботи №\LabNumber \\}
+			{з дисципліни <<\CourseTitle>>}
+			
+			\vspace{2em}
+			
+			{\textbf{<<\Topic>>}}
+			
+			\vspace{1em}
+			
+			{\textbf{Варіант №\Variant}}
+			
+			\vfill
+			
+			\begin{flushright}
+				Виконав: \\ студент \CourseNumber{} курсу, групи \StudentGroup \\
+				\StudentName \\[1em]
+				Перевірив: \\ \Teacher
+			\end{flushright}
+			
+			\vfill
+			
+			\begin{flushright}
+				Дата здачі: \DTMtoday
+			\end{flushright}
+			
+			\vspace{5em}
+			КИЇВ -- \ReportYear
+		\end{center}
+	\end{titlepage}
+	
+	\clearpage
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+	
+	\subsection*{Мета} 
+	
+	Вивчити основні засади програмування для мобільних пристроїв, провести їх класифікацію, опанувати основні середовища розробки додатків -- Android Studio та PHPStorm.
+	
+	\subsection*{Завдання}
+	
+	Додати у програму, розроблену у лабораторній роботі №2, можливості введення, виведення та редагування даних відповідно до варіанту. Під час запуску програма повинна зчитувати дані з файлу. При закінченні роботи треба зберігати дані у файл. Зі зміною стану життєвого циклу Activity записувати інформацію до журналу. Запустити програму на емуляторі.
+	
+	\subsection*{Завдання за варіантом}
+	
+	Доменна область: Абітурієнт. 
+	
+	Поля:  ID, Прізвище, Ім'я, По-батькові, Адреса, Телефон, Оцінки. 
+	
+	Створити масив об'єктів. 
+	
+	Вивести:
+	
+	\begin{enumerate}[label=\alph*.]
+		\item список абітурієнтів, які мають незадовільні оцінки;
+		
+		\item список абітурієнтів, середній бал у яких вище заданого;
+		
+		\item вибрати задане число \texttt{N} абітурієнтів, що мають найбільш високій середній бал (вивести також повний список абітурієнтів, які мають напівпрохідний бал).
+	\end{enumerate}
+	
+	\section*{Хід роботи.}
+
+	Для виконання роботи використано застосунок, розроблений у другій лабораторній роботі, без жодної зміни архітектури MVC чи базового стеку -- Rust, Tauri, React з TypeScript. Повторно не розглядається введення та редагування абітурієнтів -- це вже реалізовано в минулій роботі. Нижче описано лише те, що додано саме в межах цієї роботи: зчитування й збереження даних у файл, журналювання зміни стану Activity та видалення абітурієнтів.
+
+	Зчитування та запис даних реалізовано в новому модулі \texttt{storage}: функція \texttt{load} читає JSON-файл \texttt{applicants.json} і десеріалізує його в масив, а якщо файл відсутній або пошкоджений (наприклад, після першого встановлення застосунку), повертає початковий зразок із колекції в коді, попередньо залишивши попередження в журналі. Функція \texttt{save} серіалізує поточний масив абітурієнтів у форматований JSON і перезаписує файл.  Він зберігається безпосередньо в каталозі даних застосунку -- \texttt{app\_data\_dir()} на Android повертає \texttt{activity.dataDir.absolutePath}, корінь приватного каталогу застосунку, а не його підкаталог \texttt{files/}.  Це підтверджено відповідною командою для його перегляду:
+	
+	\begin{minted}{bash}
+		adb shell run-as com.xairaven.lab3 cat applicants.json
+	\end{minted}
+	
+	Вище використовується утиліта Android Debug Bridge (ADB), яка дозволяє комунікувати хостовій системі з емулятором.
+	
+	\image[width=18cm]{14.5cm}{persistence-file}
+	
+	Завантаження даних виконується в блоці \texttt{setup} основного модулю застосунку, ще до того, як репозиторій стає керованим станом Tauri -- це гарантує, що жоден контролер не отримає доступ до сховища раніше, ніж воно буде заповнене даними з файлу.
+
+	Для журналювання зміни стану життєвого циклу Activity підключено плагін \texttt{tauri-plugin-log} разом із крейтом \texttt{log}. Замість білдеру Tauri використано пару \texttt{build(...)} і замикання \texttt{app.run}, що дозволяє перехоплювати події після побудови застосунку. Оброблено події \texttt{Resumed} та \texttt{Suspended} (доступні лише під час запуску на мобільному пристрої) -- це не довільна імітація, а справжні події, які Tauri генерує безпосередньо з \texttt{onResume}/\texttt{onPause} єдиної реальної Activity застосунку. \texttt{Exit} та \texttt{CloseRequested} оброблено як аналоги для десктопного запуску під час розробки. Збереження даних у файл викликається саме в обробниках \texttt{Suspended}/\texttt{Exit}/\texttt{CloseRequested}, а не після кожної зміни даних.
+
+	Коректність реалізації перевірено на емуляторі Android -- під час згортання застосунку в журналі з'являється запис про \texttt{Suspended} й виконується збереження, під час розгортання -- запис про \texttt{Resumed}. Перемикання між екранами (маршрутами \texttt{HashRouter}) жодного запису в журналі не створює, оскільки це зміна стану JavaScript у межах тієї самої Activity, а не подія життєвого циклу Android. 
+	
+	\image[width=18cm]{6cm}{logs}
+	
+	Персистентність перевірено повним циклом: абітурієнта відредаговано, застосунок згорнуто, після чого при повторному запуску зчитані з файлу дані відповідали останньому відредагованому стану, а не початковому зразку з коду.
+
+	Для завершеності операцій введення/виведення/редагування було реалізовано також видалення абітурієнта. В репозиторій додано метод \texttt{delete}, який повертає помилку, якщо абітурієнта з вказаним \texttt{ID} не існує. На боці Rust додано відповідну команду, на боці React -- кнопку <<Видалити>>.
+	
+	\image{4cm}{delete-button}
+	
+	При видаленні з'являється діалогове вікно для підтвердження.
+	
+	\image{4cm}{delete-confirmation}
+
+	Варто окремо зупинитися на тому, що саме мається на увазі під <<станом життєвого циклу Activity>> в цій роботі, оскільки в минулій роботі вже піднімалося питання кількох Activity. Реальна \texttt{Activity} в Android -- це компонент, яким керує сама операційна система, а не код застосунку: екземпляр створюється викликом \texttt{startActivity(Intent)}, отримує власний запис у стеку задач (back stack), і проходить власний життєвий цикл \texttt{onCreate $\rightarrow$ onStart $\rightarrow$ onResume $\rightarrow$ onPause $\rightarrow$ onStop $\rightarrow$ onDestroy} (або \texttt{onRestart $\rightarrow$ onStart $\rightarrow$ onResume}, якщо користувач повертається до неї, не знищивши). Кожна Activity може бути незалежно знищена й відновлена системою (наприклад, при нестачі пам'яті чи повороті екрана), для чого існують \texttt{onSaveInstanceState}/\texttt{onRestoreInstanceState}.
+
+	Tauri-застосунок має рівно одну таку Activity (\texttt{MainActivity}, що монтує єдиний WebView) на весь час роботи програми -- вона створюється один раз при запуску й знищується один раз при завершенні. Саме цю, цілком реальну, Activity журналює основний модуль у цій роботі. <<Кілька Activity>> реалізовано як структурну аналогію в межах цієї єдиної Activity: власний маршрут \texttt{HashRouter} (власна адреса та запис в історії навігації браузера), власний модуль-Controller і власний компонент-View на кожен екран -- тобто відтворено розподіл відповідальності та відчуття <<переходу вперед/назад>>, але не сам механізм: під час переходу між екранами жодного разу не викликається \texttt{startActivity()}, не створюється новий об'єкт Activity, не додається запис у реальний стек задач Android, і -- що підтверджено журналом саме в цій роботі -- жодна подія життєвого циклу Android не виникає.
+
+	Використання кількох справжніх Activity натомість додало б цій задачі зайву вагу: кожна Activity вимагала б власного дублювання обробки життєвого циклу, передачі даних між екранами лише через \texttt{Intent}-екстра чи статичний singleton (що так само довелося б захищати від паралельного доступу, як \texttt{Repository} в цій роботі), повільніші переходи (створення нового вікна й поверхні замість перемальовування вмісту) та складніше спільне тестування логіки, розкиданої по різних класах Activity. Саме тому сучасна Android-розробка (Jetpack Navigation Component, а згодом Jetpack Compose) відмовилася від <<одна Activity на екран>> на користь архітектури з єдиною Activity, що утримує навігаційний граф, а роль окремого екрана виконують Fragment або Composable-функція -- тобто фактично той самий підхід, що й у цій роботі, лише замість Fragment/Composable використано React-компонент і маршрут \texttt{HashRouter}. Кілька реальних Activity лишаються доречним і єдино правильним рішенням для принципово незалежних точок входу (обробник \texttt{Intent} від іншої програми, deep link, окремий модуль у великому проєкті) -- але не для набору тісно пов'язаних екранів одного невеликого застосунку, як у цій роботі.
+
+	\subsection*{Висновок}
+
+	У цій лабораторній роботі до застосунку <<Абітурієнт>>, розробленого на MVC в минулій роботі, додано збереження стану між запусками -- дані зчитуються з JSON-файлу під час старту (з запасним варіантом -- початковим зразком, якщо файл відсутній чи пошкоджений) і записуються назад у файл при згортанні або завершенні роботи застосунку. Також реалізовано журналювання зміни стану життєвого циклу Activity, яке спирається на справжні події \texttt{onResume}/\texttt{onPause} єдиної Activity Tauri-застосунку, а не на довільну імітацію. Для завершеності операцій над даними додано видалення абітурієнта з підтвердженням. Коректність персистентності та журналювання перевірено на емуляторі Android: через \texttt{logcat} підтверджено появу записів про зміну стану лише при реальному згортанні/розгортанні/завершенні застосунку (а не при переході між екранами), а через консоль -- що відредаговані дані дійсно зберігаються у файлі та коректно зчитуються при повторному запуску. Окремо обґрунтовано, чому єдина Activity, властива обраному стеку (Tauri), не є недоліком: вона відповідає підходу, якого сучасна Android-розробка сама дотримується останніми роками, залишаючи кілька справжніх Activity доречними лише для принципово незалежних точок входу в застосунок.
+
+	\section*{Контрольні запитання.}
+
+	\begin{enumerate}
+		\item \textbf{Класифікуйте мобільні пристрої та назвіть основні їх особливості.} Мобільні пристрої прийнято класифікувати за кількома ознаками, зокрема за призначенням і форм-фактором, де виділяють смартфони -- універсальні пристрої з повноцінною ОС, стільниковим зв'язком та доступом до магазинів застосунків, планшети, що мають більший екран і здебільшого орієнтовані на споживання контенту й продуктивність (не завжди зі стільниковим модемом), та фаблети як проміжний форм-фактор між ними. Крім того, існують носимі пристрої (смарт-годинники, фітнес-трекери, AR/VR-гарнітури) з обмеженими ресурсами для автономної або допоміжної роботи зі смартфоном, електронні книги з енергоощадними e-ink дисплеями, а також вбудовані мобільні пристрої, такі як бортові комп'ютери, термінали оплати та IoT-рішення, які є вузькоспеціалізованими і часто не мають власного екрана чи повноцінного інтерфейсу. За операційною системою пристрої здебільшого поділяються на Android, iOS/iPadOS та менш поширені чи спеціалізовані ОС (HarmonyOS, KaiOS, RTOS). Серед основних особливостей мобільних пристроїв варто виділити їхню портативність і компактність, автономне живлення від акумулятора, яке накладає жорсткі обмеження на енергоспоживання, сенсорний екран як основний спосіб введення та багатий набір вбудованих сенсорів (акселерометр, гіроскоп, GPS, камера, біометрія). Їм також притаманна наявність різноманітних каналів зв'язку (стільниковий, Wi-Fi, Bluetooth, NFC), порівняно обмежені обчислювальні ресурси та пам'ять, велика апаратна фрагментація через різноманіття моделей та версій ОС, і, зрештою, розповсюдження програмного забезпечення переважно через централізовані магазини застосунків (Google Play, App Store) з використанням суворих моделей дозволів (permissions) та ізольованого середовища (sandboxing) для кожної програми.
+
+		\item \textbf{Охарактеризуйте середовище розробки Android Studio.} \\ Android Studio -- це офіційне інтегроване середовище розробки (IDE) для платформи Android від Google, створене на базі IntelliJ IDEA від JetBrains. Серед його ключових можливостей -- повноцінна підтримка Kotlin та Java, а також можливість роботи з нативним C/C++ кодом через Android NDK. Середовище використовує систему збірки на основі Gradle, що забезпечує гнучку конфігурацію залежностей, варіантів збірки та роботу з багатомодульними проєктами. Вбудований менеджер віртуальних пристроїв (AVD Manager) разом з емулятором дозволяє запускати й тестувати застосунки на різних версіях ОС і розмірах екранів без необхідності мати фізичний девайс. Розробникам доступний візуальний редактор макетів (Layout Editor) із підтримкою ConstraintLayout, попереднім переглядом у реальному часі та одночасним редагуванням XML і Jetpack Compose. Інтелектуальний редактор коду пропонує автодоповнення, рефакторинг та статичний аналіз із лінтером. Для оптимізації застосунків використовуються інструменти профілювання (Android Profiler), що аналізують навантаження на CPU, пам'ять, мережу та енергоспоживання, а APK/Bundle Analyzer допомагає контролювати розмір фінальної збірки. Також передбачена пряма інтеграція з \texttt{adb} та \texttt{Logcat} для перегляду журналів у реальному часі, вбудовані утиліти для роботи з ресурсами (наприклад, Vector Asset Studio) та зв'язок із хмарними сервісами на кшталт Firebase. Оскільки Android Studio побудована на платформі IntelliJ, вона повністю успадковує її екосистему плагінів, потужну систему контролю версій, зручну навігацію по коду та просунутий дебагер.
+	\end{enumerate}
+
+	\pagebreak
+
+	\section*{Лістинг.}
+
+	\textbf{lib.rs}
+
+	\begin{minted}{rust}
+		mod applicant;
+		mod repository;
+		mod sample;
+		mod screen;
+		mod storage;
+		
+		use repository::Repository;
+		use std::sync::{Mutex, PoisonError};
+		use tauri::{AppHandle, Manager, RunEvent, WindowEvent};
+		
+		const DATA_FILE_NAME: &str = "applicants.json";
+		
+		#[cfg_attr(mobile, tauri::mobile_entry_point)]
+		pub fn run() {
+			let app = tauri::Builder::default()
+			.plugin(tauri_plugin_opener::init())
+			.plugin(tauri_plugin_log::Builder::new().build())
+			.setup(|app| {
+				let data_dir = app.path().app_data_dir()?;
+				std::fs::create_dir_all(&data_dir)?;
+				
+				let applicants = storage::load(&data_dir.join(DATA_FILE_NAME));
+				app.manage(Mutex::new(Repository::from_applicants(applicants)));
+				
+				Ok(())
+			})
+			.invoke_handler(tauri::generate_handler![
+			screen::failing::get_failing,
+			screen::threshold::get_above_threshold,
+			screen::top::get_top_n,
+			screen::students::list_applicants,
+			screen::students::add_applicant,
+			screen::students::update_applicant,
+			screen::students::delete_applicant,
+			])
+			.build(tauri::generate_context!());
+			
+			let app = match app {
+				Ok(app) => app,
+				Err(err) => {
+					eprintln!("Error occurred while building Tauri application: {err}");
+					std::process::exit(1);
+				},
+			};
+			
+			app.run(|app_handle, event| match event {
+				RunEvent::Exit => {
+					log::info!("Activity lifecycle: onDestroy (Exit) — saving applicants");
+					persist(app_handle);
+				},
+				// WindowEvent::Suspended/Resumed are the real Activity lifecycle —
+				// Tauri dispatches them straight from onPause()/onResume() on
+				// Android, unlike Lab 2's HashRouter, which only simulates one.
+				#[cfg(mobile)]
+				RunEvent::WindowEvent {
+					event: WindowEvent::Resumed,
+					..
+				} => {
+					log::info!("Activity lifecycle: onResume (Resumed)");
+				},
+				#[cfg(mobile)]
+				RunEvent::WindowEvent {
+					event: WindowEvent::Suspended,
+					..
+				} => {
+					log::info!("Activity lifecycle: onPause (Suspended) — saving applicants");
+					persist(app_handle);
+				},
+				RunEvent::WindowEvent {
+					event: WindowEvent::Focused(focused),
+					..
+				} => {
+					log::info!("Activity lifecycle: window focus changed to {focused}");
+				},
+				RunEvent::WindowEvent {
+					event: WindowEvent::CloseRequested { .. },
+					..
+				} => {
+					log::info!("Activity lifecycle: CloseRequested — saving applicants");
+					persist(app_handle);
+				},
+				_ => {},
+			});
+		}
+		
+		fn persist(app_handle: &AppHandle) {
+			let Some(state) = app_handle.try_state::<Mutex<Repository>>() else {
+				log::error!("Failed to save: repository state is not found");
+				return;
+			};
+			
+			let Ok(data_dir) = app_handle.path().app_data_dir() else {
+				log::error!("Failed to save: app data directory not found");
+				return;
+			};
+			
+			let applicants = state
+			.lock()
+			.unwrap_or_else(PoisonError::into_inner)
+			.list()
+			.to_vec();
+			
+			if let Err(err) = storage::save(&data_dir.join(DATA_FILE_NAME), &applicants) {
+				log::error!("{err}");
+			}
+		}
+	\end{minted}
+	
+	\textbf{storage.rs}
+	
+	\begin{minted}{rust}
+		//! Persisting applicants to a JSON file in the app's data directory.
+		//!
+		//! Loaded once on startup (falling back to the Lab 2 sample seed if the
+		//! file is missing or unreadable) and saved once on suspend/exit
+		
+		use crate::applicant::Applicant;
+		use crate::sample;
+		use std::path::Path;
+		
+		pub fn load(path: &Path) -> Vec<Applicant> {
+			let result = std::fs::read_to_string(path)
+			.map_err(|err| err.to_string())
+			.and_then(|contents| {
+				serde_json::from_str(&contents).map_err(|err| err.to_string())
+			});
+			
+			match result {
+				Ok(applicants) => applicants,
+				Err(err) => {
+					log::warn!(
+					"Failed to load {path}: {err}. Using initial data.",
+					path = path.display(),
+					);
+					sample::get_applicants()
+				},
+			}
+		}
+		
+		pub fn save(path: &Path, applicants: &[Applicant]) -> Result<(), String> {
+			let json = serde_json::to_string_pretty(applicants)
+			.map_err(|err| format!("Failed to serialize applicants: {err}"))?;
+			
+			std::fs::write(path, json)
+			.map_err(|err| format!("Failed to write {}: {err}", path.display()))
+		}
+	\end{minted}
+\end{document}
