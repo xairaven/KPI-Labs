@@ -1,0 +1,266 @@
+\documentclass[14pt, a4paper]{extreport}
+
+\usepackage{kpi-lab}
+\input{data}
+
+\begin{document}
+	\pagenumbering{gobble}
+	
+	\begin{titlepage}
+		\begin{center}
+			\normalsize
+			Національний технічний університет України\\
+			«Київський політехнічний інститут імені Ігоря Сікорського» \\[0.5em]
+			Факультет інформатики та обчислювальної техніки\\
+			Кафедра обчислювальної техніки
+			
+			\vfill
+			
+			{\large \textbf{ЗВІТ}\\[0.5em]}
+			{з лабораторної роботи №\LabNumber \\}
+			{з дисципліни <<\CourseTitle>>}
+			
+			\vspace{2em}
+			
+			{\textbf{<<\Topic>>}}
+			
+			\vspace{1em}
+			
+			{\textbf{Варіант №\Variant}}
+			
+			\vfill
+			
+			\begin{flushright}
+				Виконав: \\ студент \CourseNumber{} курсу, групи \StudentGroup \\
+				\StudentName \\[1em]
+				Перевірив: \\ \Teacher
+			\end{flushright}
+			
+			\vfill
+			
+			\begin{flushright}
+				Дата здачі: \DTMtoday
+			\end{flushright}
+			
+			\vspace{5em}
+			КИЇВ -- \ReportYear
+		\end{center}
+	\end{titlepage}
+	
+	\clearpage
+	\pagenumbering{arabic}
+	\setcounter{page}{2}
+	
+	\subsection*{Мета} 
+	
+	Вивчити принципи використання та керування базами даних в операційній системі Android.
+	
+	\subsection*{Завдання}
+	
+	Додати у програму, розроблену у лабораторній роботі №5, функціонал, що виконує збереження всіх даних програми в БД Android та вибірку їх за потреби.
+	
+	\subsection*{Завдання за варіантом}
+	
+	Доменна область: Абітурієнт. 
+	
+	Поля:  ID, Прізвище, Ім'я, По-батькові, Адреса, Телефон, Оцінки. 
+	
+	Створити масив об'єктів. 
+	
+	Вивести:
+	
+	\begin{enumerate}[label=\alph*.]
+		\item список абітурієнтів, які мають незадовільні оцінки;
+		
+		\item список абітурієнтів, середній бал у яких вище заданого;
+		
+		\item вибрати задане число \texttt{N} абітурієнтів, що мають найбільш високій середній бал (вивести також повний список абітурієнтів, які мають напівпрохідний бал).
+	\end{enumerate}
+	
+	\section*{Хід роботи.}
+
+	За основу взято застосунок з п'ятої лабораторної роботи без жодних змін до його архітектури, стеку (Rust, Tauri, React з TypeScript) чи наявних екранів. Змінено лише шар зберігання даних -- файл \texttt{storage.rs}, решта модулів та усі команди залишились незмінними.
+	
+	Для роботи з базою даних обрано крейт \texttt{rusqlite} -- прямі Rust-прив'язки до SQLite, підключені через crates.io з функціональністю \texttt{bundled}, яка компілює SQLite з вихідного коду і тим самим дозволяє крейту збиратися під Android без додаткових налаштувань NDK. Альтернативою розглядався офіційний плагін \texttt{tauri-plugin-sql}, проте його ідіоматичне використання передбачає виклик SQL безпосередньо з фронтенду (через JS-пакет \texttt{@tauri-apps/plugin-sql}), що означало би звернення View-рівня напряму до бази даних, оминаючи рівень бізнес-логіки -- класичне порушення пошарової (N-layer) архітектури, яку застосунок дотримується починаючи з другої лабораторної роботи (Controller у Rust відповідає за всю бізнес-логіку й доступ до даних, View лише викликає \texttt{invoke()}). \texttt{rusqlite} же використовується виключно на боці Rust, усередині \texttt{storage.rs}, і жодним чином не змінює цю межу.
+	
+	У модулі \texttt{storage} створено таблицю \texttt{applicants} із колонками, що відповідають полям \texttt{Applicant} (\texttt{id}, \texttt{last\_name}, \texttt{first\_name}, \texttt{patronymic}, \texttt{address}, \texttt{phone}). Оцінки, оскільки SQLite не має типу <<масив>>, зберігаються як текстовий рядок через кому і розбираються назад у масив при читанні. Функція завантаження створює таблицю за потреби і заповнює її початковими даними лише тоді, коли файл бази даних не існував до відкриття з'єднання (тобто це справді перший запуск) -- якщо користувач раніше видалив усіх абітурієнтів і таблиця порожня, повторне заповнення зразковими даними не відбувається. Функція збереження повністю перезаписує таблицю (видалення усіх рядків, після чого послідовні вставки поточним станом абітурієнтів) -- точний аналог того, як раніше повністю перезаписувався JSON-файл.
+	
+	Місце викликів команд сховища у головному модулі не змінилося: дані читаються один раз під час налаштування, а зберігаються функцією \texttt{persist} при подіях життєвого циклу Activity -- \texttt{RunEvent::Exit}, \texttt{WindowEvent::Suspended} (на мобільній платформі) та \texttt{WindowEvent::CloseRequested}, із тим самим журналюванням, що й раніше. Команди додавання, редагування та видалення абітурієнта лише змінюють спільний \texttt{Repository} у пам'яті. Збереження у базу даних відбувається пізніше, при найближчій з цих подій, і в цей момент \texttt{persist()} бере повний знімок поточного стану \texttt{Repository} -- тож база буде актуальною на момент зміни стану \texttt{Activity}.
+	
+	Коректність перевірено на емуляторі Android: абітурієнтів додано, одного відредаговано, одного видалено, після чого застосунок згорнуто (подія \texttt{Suspended}) і перезапущено -- список відображав саме той стан, у якому його залишили.
+
+	\subsection*{Висновок}
+
+	У цій лабораторній роботі до застосунку <<Абітурієнт>> додано збереження всіх даних у базі даних Android замість файлового сховища у форматі JSON, яке використовувалося в попередніх роботах.
+	
+	\section*{Контрольні запитання.}
+
+	\begin{enumerate}
+		\item \textbf{Назвіть основні етапи встановлення бази даних MySQL.} Процес встановлення MySQL на сучасних операційних системах зазвичай розпочинається із завантаження відповідного пакета через системний менеджер пакунків, після чого відбувається розпакування та інсталяція бінарних файлів. Далі адміністратор ініціалізує системну таблицю та директорію даних за допомогою спеціальної утиліти, запускає фонову службу бази даних і обов'язково виконує скрипт безпеки для встановлення пароля користувача root, видалення анонімних користувачів та блокування віддаленого доступу з привілеями адміністратора.\\
+		
+		\item \textbf{Назвіть основні етапи заповнення бази даних MySQL.} Заповнення бази даних розпочинається з підключення до сервера через клієнтський інтерфейс та створення нової логічної бази даних із подальшим проектуванням схеми шляхом створення таблиць із чітко визначеними типами даних і ключами. Безпосереднє додавання записів здійснюється через виконання SQL-запитів \texttt{INSERT INTO} для одиничних або пакетних вставок, або ж за допомогою утиліт масового імпорту на кшталт \texttt{LOAD DATA INFILE} для максимально швидкого завантаження великих масивів інформації з текстових файлів чи CSV безпосередньо у сховище.
+		
+		\item \textbf{Опишіть довготривале зберігання даних мобільного додатка.} Довготривале зберігання даних у мобільних додатках забезпечує персистентність інформації між запусками програми або після перезавантаження пристрою шляхом запису в енергонезалежну пам'ять. Для цього розробники зберігають прості конфігураційні пари ключ-значення у спеціальних файлах, записують сирі бінарні чи текстові дані безпосередньо у внутрішнє ізольоване файлове сховище пристрою, використовують локальні реляційні бази даних для складної структурованої інформації, а також періодично синхронізують локальний стан із віддаленими хмарними серверами.
+		
+		\item \textbf{Опишіть локальні бази даних та SQLite.} Локальні бази даних функціонують безпосередньо на клієнтському пристрої без розгортання окремого серверного процесу чи наявності мережевого з'єднання, забезпечуючи миттєвий доступ до структурованої інформації. Найпопулярнішим рішенням у цій ніші є SQLite -- компактна реляційна система керування базами даних, написана на мові C, яка зберігає всю структуру, таблиці, індекси та дані в єдиному кросплатформному файлі на диску, повністю підтримує транзакції ACID та інтегрована на рівні платформи у більшість сучасних мобільних операційних систем.
+		
+		\item \textbf{Як відбувається зберігання серій та позицій у базі даних?} Зберігання серій (наприклад, заголовків документів чи замовлень) та їхніх позицій (конкретних рядків або товарів у цих документах) реалізується через класичний зв'язок <<один до багатьох>> за допомогою двох окремих реляційних таблиць. Головна таблиця зберігає загальні атрибути серії, такі як унікальний ідентифікатор та статус, тоді як підлегла таблиця містить деталі кожної позиції та обов'язковий зовнішній ключ, який вказує на ідентифікатор відповідного запису в головній таблиці, що гарантує цілісність даних та дозволяє ефективно об'єднувати інформацію через SQL-оператор \texttt{JOIN}.
+	\end{enumerate}
+
+	\pagebreak
+
+	\section*{Лістинг.}
+
+	\textbf{storage.rs}
+
+	\begin{minted}{rust}
+		//! Persisting applicants to a SQLite database in the app's data directory.
+		//!
+		//! Loaded once on startup (seeding the Lab 2 sample data if the database is
+		//! brand new) and saved as a full snapshot on suspend/exit, same as the
+		//! JSON file this replaces — only the storage backend changed.
+		
+		use crate::applicant::Applicant;
+		use crate::sample;
+		use rusqlite::{Connection, params};
+		use std::path::Path;
+		
+		fn ensure_table(conn: &Connection) -> rusqlite::Result<()> {
+			conn.execute(
+			"CREATE TABLE IF NOT EXISTS applicants (
+			id INTEGER PRIMARY KEY,
+			last_name TEXT NOT NULL,
+			first_name TEXT NOT NULL,
+			patronymic TEXT NOT NULL,
+			address TEXT NOT NULL,
+			phone TEXT NOT NULL,
+			grades TEXT NOT NULL
+			)",
+			[],
+			)?;
+			
+			Ok(())
+		}
+		
+		fn grades_to_text(grades: &[u8]) -> String {
+			grades
+			.iter()
+			.map(ToString::to_string)
+			.collect::<Vec<_>>()
+			.join(",")
+		}
+		
+		fn grades_from_text(text: &str) -> Result<Vec<u8>, String> {
+			if text.is_empty() {
+				return Ok(Vec::new());
+			}
+			
+			text.split(',')
+			.map(|token| {
+				token
+				.parse::<u8>()
+				.map_err(|err| format!("Invalid grade {token:?}: {err}"))
+			})
+			.collect()
+		}
+		
+		fn read_all(conn: &Connection) -> Result<Vec<Applicant>, String> {
+			let mut statement = conn
+			.prepare(
+			"SELECT id, last_name, first_name, patronymic, address, phone, grades
+			FROM applicants ORDER BY id",
+			)
+			.map_err(|err| err.to_string())?;
+			
+			let rows = statement
+			.query_map([], |row| {
+				Ok((
+				row.get::<_, u32>(0)?,
+				row.get::<_, String>(1)?,
+				row.get::<_, String>(2)?,
+				row.get::<_, String>(3)?,
+				row.get::<_, String>(4)?,
+				row.get::<_, String>(5)?,
+				row.get::<_, String>(6)?,
+				))
+			})
+			.map_err(|err| err.to_string())?;
+			
+			rows.map(|row| {
+				let (id, last_name, first_name, patronymic, address, phone, grades) =
+				row.map_err(|err| err.to_string())?;
+				
+				Ok(Applicant {
+					id,
+					last_name,
+					first_name,
+					patronymic,
+					address,
+					phone,
+					grades: grades_from_text(&grades)?,
+				})
+			})
+			.collect()
+		}
+		
+		fn write_all(conn: &Connection, applicants: &[Applicant]) -> Result<(), String> {
+			conn.execute("DELETE FROM applicants", [])
+			.map_err(|err| err.to_string())?;
+			
+			for applicant in applicants {
+				conn.execute(
+				"INSERT INTO applicants
+				(id, last_name, first_name, patronymic, address, phone, grades)
+				VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+				params![
+				applicant.id,
+				applicant.last_name,
+				applicant.first_name,
+				applicant.patronymic,
+				applicant.address,
+				applicant.phone,
+				grades_to_text(&applicant.grades),
+				],
+				)
+				.map_err(|err| err.to_string())?;
+			}
+			
+			Ok(())
+		}
+		
+		pub fn load(path: &Path) -> Vec<Applicant> {
+			let is_new = !path.exists();
+			
+			let result = Connection::open(path)
+			.map_err(|err| err.to_string())
+			.and_then(|conn| {
+				ensure_table(&conn).map_err(|err| err.to_string())?;
+				
+				if is_new {
+					Ok(sample::get_applicants())
+				} else {
+					read_all(&conn)
+				}
+			});
+			
+			match result {
+				Ok(applicants) => applicants,
+				Err(err) => {
+					log::warn!(
+					"Failed to load {path}: {err}. Using initial data.",
+					path = path.display(),
+					);
+					sample::get_applicants()
+				},
+			}
+		}
+		
+		pub fn save(path: &Path, applicants: &[Applicant]) -> Result<(), String> {
+			let conn = Connection::open(path)
+			.map_err(|err| format!("Failed to open {}: {err}", path.display()))?;
+			
+			ensure_table(&conn).map_err(|err| err.to_string())?;
+			write_all(&conn, applicants)
+		}
+	\end{minted}
+\end{document}
